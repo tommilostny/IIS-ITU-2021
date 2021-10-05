@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Fituska.Server.Entities
 {
@@ -12,8 +13,10 @@ namespace Fituska.Server.Entities
 
         public Question Question {  get; set; }
 
-        public Guid ApplicationUserId {  get; set; }
+        public Guid AuthorId {  get; set; }
 
-        public ApplicationUser ApplicationUser {  get; set; }
+        public User Author {  get; set; }
+        public DateTime CreationTime {  get; set; }
+        public List<User> UsersSawQuestion {  get; set; }
     }
 }

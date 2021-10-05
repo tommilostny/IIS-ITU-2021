@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Fituska.Server.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class ApplicationDbContext : ApiAuthorizationDbContext<User>
     {
         public ApplicationDbContext(
             DbContextOptions options,

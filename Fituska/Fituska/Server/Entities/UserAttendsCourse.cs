@@ -10,7 +10,7 @@ namespace Fituska.Server.Entities
 
         public Guid ApplicationUserId { get; set; }
 
-        public ApplicationUser ApplicationUser {  get; set; }
+        public User ApplicationUser {  get; set; }
 
         public Guid CourseId {  get; set; }
 
