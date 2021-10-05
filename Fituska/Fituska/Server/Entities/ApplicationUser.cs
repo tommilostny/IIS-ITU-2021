@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 
-namespace Fituska.Server.Models
+namespace Fituska.Server.Entities
 {
     public class ApplicationUser : IdentityUser
     {
