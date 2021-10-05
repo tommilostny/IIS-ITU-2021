@@ -8,9 +8,9 @@ namespace Fituska.Server.Entities
 
         public short AttendingYear {  get; set; }
 
-        public Guid ApplicationUserId { get; set; }
+        public Guid UserId { get; set; }
 
-        public User ApplicationUser {  get; set; }
+        public User User {  get; set; }
 
         public Guid CourseId {  get; set; }
 
