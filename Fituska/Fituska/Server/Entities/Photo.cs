@@ -2,10 +2,8 @@
 
 namespace Fituska.Server.Entities
 {
-    public class Photo
+    public class Photo : EntityBase
     {
-        public Guid Id {  get; set; }
-
         public byte[] Content {  get; set; }
     }
 }

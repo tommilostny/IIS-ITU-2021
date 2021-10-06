@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Fituska.Server.Entities
 {
-    public class File
+    public class File : EntityBase
     {
-        public Guid Id {  get; set; }
         public string Name {  get; set; }
         public byte[] Content {  get; set; }
         public Guid QuestionId {  get; set; }

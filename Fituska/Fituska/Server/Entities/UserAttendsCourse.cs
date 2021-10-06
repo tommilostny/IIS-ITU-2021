@@ -2,10 +2,8 @@
 
 namespace Fituska.Server.Entities
 {
-    public class UserAttendsCourse
+    public class UserAttendsCourse : EntityBase
     {
-        public Guid Id {  get; set; }
-
         public short AttendingYear {  get; set; }
 
         public Guid UserId { get; set; }

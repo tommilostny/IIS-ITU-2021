@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Fituska.Server.Entities
 {
-    public class Discussion
+    public class Discussion : EntityBase
     {
-        [Key]
-        public Guid Id {  get; set; }
         public string Text {  get; set; }
         public Guid AuthorId {  get; set; }
         public User Author {  get; set; }

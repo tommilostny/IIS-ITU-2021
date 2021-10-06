@@ -3,9 +3,8 @@ using Fituska.Server.Enums;
 
 namespace Fituska.Server.Entities
 {
-    public class Course
+    public class Course : EntityBase
     {
-        public Guid Id {  get; set; }
         public short AcademicYear {  get; set; }
         public string Name {  get; set; }
         public string Shortcut {  get; set; }
