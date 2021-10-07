@@ -7,9 +7,8 @@ using Fituska.Server.Entities.Interfaces;
 
 namespace Fituska.Server.Entities
 {
-    public class User : IdentityUser , IEntity
+    public class User : IdentityUser<Guid> , IEntity
     {
-        public new Guid Id {  get; set; }
         public string Name {  get; set; }
         public string Surname {  get; set; }
         public string DiscordUserName { get; set; }

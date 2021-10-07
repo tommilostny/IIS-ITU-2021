@@ -1,5 +1,6 @@
 ﻿using System;
 using Fituska.Server.Enums;
+using System.Collections.Generic;
 
 namespace Fituska.Server.Entities
 {
@@ -13,5 +14,6 @@ namespace Fituska.Server.Entities
         public byte Credits {  get; set; }
         public YearOfStudy YearOfStudy {  get; set; }
         public Semester Semester {  get; set; }
+        public List<User> Users { get; set; }
     }
 }

@@ -4,32 +4,29 @@ using Fituska.Server.Repositories.Interfaces;
 using Fituska.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Fituska.Server.Data;
 
 namespace Fituska.Server.Repositories
 {
     public class UserRepository : IAppRepository<User>
     {
-        private readonly AppDbContext database;
-        public UserRepository(AppDbContext database)
+        private readonly ApplicationDbContext database;
+        public UserRepository(ApplicationDbContext database)
         {
             this.database = database;
         }
 
-        private void LoadUserCourses(User user)
-        {
-            if (user != null) return;
-                //user.AttendingCourses = database.Courses.Where(course => course.)
-        }
-
         public IList<User> GetAll()
         {
-            var users = database.Users.ToList();
+            var users = database.Users.Include(user => user.AttendingCourses).ToList();
             return users;
         }
 
         public User GetById(Guid id)
         {
-            var user = database.Users.Find(id);
+            var user = database.Users
+                .Include(user => user.AttendingCourses)
+                .SingleOrDefault(user => user.Id == id);
             return user;
         }
 

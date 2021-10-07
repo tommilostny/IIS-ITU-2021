@@ -7,6 +7,9 @@ using Xunit;
 using Fituska.Server.Entities;
 using System.Text;
 using System.Collections.Generic;
+using Fituska.Server.Data;
+using Microsoft.Extensions.Caching.Memory;
+
 namespace DALTests.Fixtures
 {
     public class IntegrationTest : IClassFixture<ApiWebApplicationFactory>
@@ -23,13 +26,12 @@ namespace DALTests.Fixtures
                   .Build();
         }
 
-        public DbContextOptions<AppDbContext> SetupDbContextOptions()
+        public DbContextOptions<ApplicationDbContext> SetupDbContextOptions()
         {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
-
-            var context = new AppDbContext(options);
+            var context = new ApplicationDbContext(options);
             context.Users.Add(
                    new User
                    {

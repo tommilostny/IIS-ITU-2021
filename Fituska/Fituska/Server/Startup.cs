@@ -21,9 +21,7 @@ namespace Fituska.Server
         }
 
         public IConfiguration Configuration { get; }
-
         private const string ProductionConnectionString = "Fituska";
-
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -37,8 +35,7 @@ namespace Fituska.Server
             services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentityServer()
-                .AddApiAuthorization<User, ApplicationDbContext>();
+            services.AddIdentityServer().AddAspNetIdentity<User>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
