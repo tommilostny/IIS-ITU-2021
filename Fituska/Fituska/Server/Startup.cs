@@ -36,7 +36,6 @@ namespace Fituska.Server
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer().AddAspNetIdentity<User>();
-
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 

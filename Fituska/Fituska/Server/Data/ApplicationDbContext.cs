@@ -17,7 +17,7 @@ namespace Fituska.Server.Data
         }
 
         public DbSet<Answer> Answers { get; set; }
-        public DbSet<Category> Category { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Discussion> Discussions { get; set; }
         public DbSet<File> Files { get; set; }

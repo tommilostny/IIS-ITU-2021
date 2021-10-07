@@ -111,7 +111,7 @@ namespace DALTests.Fixtures
                     Url = "www.iss.org"
                 }
               );
-            context.Category.Add(
+            context.Categories.Add(
                 new Category
                 {
                     Id = new Guid("69949177 - 2e41 - 4e1d - 8b6f - 7d50ac8190cf"),

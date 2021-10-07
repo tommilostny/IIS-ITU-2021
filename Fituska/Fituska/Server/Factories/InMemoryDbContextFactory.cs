@@ -15,7 +15,7 @@ namespace Fituska.Server.Factories
         public ApplicationDbContext Create()
         {
             var contextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            contextOptionsBuilder.UseInMemoryDatabase(databaseName);
+            contextOptionsBuilder.UseInMemoryDatabase(databaseName).;
 
             return new ApplicationDbContext(contextOptionsBuilder.Options);
         }
