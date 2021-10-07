@@ -13,8 +13,7 @@ namespace Fituska.Server.Entities
         public User Author {  get; set; }
         public Guid OriginId {  get; set; }
         public Discussion OriginDiscussion {  get; set;}
-        public Guid FileId {  get; set; }
-        public File File {  get; set; }
+        public List<File> File {  get; set; }
         public DateTime CreationTime {  get; set; }
         public Guid AnswerId {  get; set; }
         public Answer Answer {  get; set; }

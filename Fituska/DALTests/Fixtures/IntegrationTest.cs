@@ -178,7 +178,6 @@ namespace DALTests.Fixtures
                 Id = new Guid("88849177-2e41-4e1d-8b6f-7d50ac8190cf"),
                 AnswerId = new Guid("05149177 - 2e41 - 4e1d - 8b6f - 7d50ac8190cf"),
                 AuthorId = new Guid("25949177-2e41-4e1d-8b6f-7d50ac8190cf"),
-                FileId = new Guid("84549177-2e41-4e1d-8b6f-7d50ac8190cf"),
                 Text = "Nope!",
                 CreationTime = new DateTime(2021, 10, 7, 8, 10, 15, 500)
             });

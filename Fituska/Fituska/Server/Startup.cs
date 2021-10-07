@@ -1,9 +1,11 @@
 using Fituska.Server.Data;
 using Fituska.Server.Entities;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,12 +34,16 @@ namespace Fituska.Server
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+            //   .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddAuthentication();
+            services.AddIdentity<User, UserRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
-            services.AddIdentityServer().AddAspNetIdentity<User>();
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
+            services.AddIdentityServer().AddDeveloperSigningCredential()
+                .AddAspNetIdentity<User>();
+
 
             services.AddControllersWithViews();
             services.AddRazorPages();

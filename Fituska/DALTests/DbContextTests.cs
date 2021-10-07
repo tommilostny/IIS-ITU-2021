@@ -19,15 +19,17 @@ namespace DALTests
         {
             dbContextFactory = new InMemoryDbContextFactory(nameof(DbContextTests));
             dbContext = dbContextFactory.Create();
-            dbContext.Database.Migrate();
         }
 
-        public async Task InitializeAsync() => await dbContext.Database.EnsureCreatedAsync();
+        public async Task InitializeAsync()
+        {
+            await dbContext.Database.EnsureCreatedAsync();
+        }
 
         public async Task DisposeAsync() => await dbContext.DisposeAsync();
 
         [Fact]
-        public void AddNewMusicBandTest()
+        public void AddNewUserTest()
         {
             //Arrange
             var newUser = new User
