@@ -50,16 +50,18 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Fituska.Server", Version = "v1" });
 });
 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    var roleManager = builder.Services.BuildServiceProvider().GetService<RoleManager<IdentityRole>>();
-    var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<IdentityUser>>();
+    var serviceProvider = builder.Services.BuildServiceProvider();
+    var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
     if (roleManager is not null && userManager is not null)
+    {
         await SeedRolesAndUsers.Seed(roleManager, userManager);
-    
+    }
     app.UseDeveloperExceptionPage();
 }
 app.UseSwagger();
@@ -72,6 +74,6 @@ app.UseCors("FituskaCorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(ednpoints => app.MapControllers());
+app.UseEndpoints(endpoints => app.MapControllers());
 
 app.Run();
