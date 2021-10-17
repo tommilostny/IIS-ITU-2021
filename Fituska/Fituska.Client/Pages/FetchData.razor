@@ -9,7 +9,8 @@
 
 @if (forecasts == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Pro zobrazení této stránky nemáte potřebná práva.</em></p>
+    <p>Prosím, <a href="/signin">přihlaste se</a>.</p>
 }
 else
 {
@@ -37,11 +38,19 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    private WeatherForecast[]? forecasts = null;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        var user = (await AuthenticationState).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>(ApiEndpoints._weatherForecastUrl);
+        }
     }
 
     public class WeatherForecast

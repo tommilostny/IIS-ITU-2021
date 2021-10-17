@@ -37,14 +37,15 @@ public class UserController : ControllerBase
             Email = user.EmailAddress,
             UserName = user.EmailAddress
         };
-        var identityResult = await _userManager.CreateAsync(identityUser, user.Password);
+        var userIdentityResult = await _userManager.CreateAsync(identityUser, user.Password);
+        var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, "Administrator");
 
-        if (identityResult.Succeeded)
+        if (userIdentityResult.Succeeded && roleIdentityResult.Succeeded)
         {
-            return Ok(new { identityResult.Succeeded });
+            return Ok(new { userIdentityResult.Succeeded });
         }
         string errors = "Registrace selhala s následujícími chybami:";
-        foreach (var error in identityResult.Errors)
+        foreach (var error in userIdentityResult.Errors)
         {
             errors += $"\n{error.Code}: {error.Description}";
         }
