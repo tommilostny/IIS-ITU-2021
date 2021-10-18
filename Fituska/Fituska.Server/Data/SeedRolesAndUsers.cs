@@ -1,36 +1,39 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Fituska.Server.Entities;
+using Fituska.Shared.Static;
+using Microsoft.AspNetCore.Identity;
 
 namespace Fituska.Server.Data;
 
 internal static class SeedRolesAndUsers
 {
-    internal static async Task Seed(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+    internal static async Task Seed(RoleManager<IdentityRole<Guid>> roleManager, UserManager<UserEntity> userManager)
     {
-        await SeedAdministratorRole(roleManager);
+        await SeedRoles(roleManager);
         await SeedAdministratorUser(userManager);
     }
 
-    private static async Task SeedAdministratorRole(RoleManager<IdentityRole> roleManager)
+    private static async Task SeedRoles(RoleManager<IdentityRole<Guid>> roleManager)
     {
-        bool adminRoleExists = await roleManager.RoleExistsAsync("Administrator");
-
-        if (!adminRoleExists)
+        foreach (var roleName in RoleNames.GetAll())
         {
-            var adminRole = new IdentityRole
+            if (await roleManager.RoleExistsAsync(roleName))
+                continue;
+
+            var role = new IdentityRole<Guid>
             {
-                Name = "Administrator"
+                Name = roleName
             };
-            await roleManager.CreateAsync(adminRole);
+            await roleManager.CreateAsync(role);
         }
     }
 
-    private static async Task SeedAdministratorUser(UserManager<IdentityUser> userManager)
+    private static async Task SeedAdministratorUser(UserManager<UserEntity> userManager)
     {
         bool adminUserExists = await userManager.FindByEmailAsync("admin@fituska.net") is not null;
 
         if  (!adminUserExists)
         {
-            var adminUser = new IdentityUser
+            var adminUser = new UserEntity
             {
                 UserName = "admin@fituska.net",
                 Email = "admin@fituska.net"
@@ -39,7 +42,7 @@ internal static class SeedRolesAndUsers
 
             if (identityResult.Succeeded)
             {
-                await userManager.AddToRoleAsync(adminUser, "Administrator");
+                await userManager.AddToRoleAsync(adminUser, RoleNames._adminRoleName);
             }
         }
     }

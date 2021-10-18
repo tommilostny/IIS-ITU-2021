@@ -23,10 +23,10 @@ public partial class SignIn : ComponentBase
         if (httpResponseMessage.IsSuccessStatusCode)
         {
             var jsonWebToken = await httpResponseMessage.Content.ReadAsStringAsync();
-            await LocalStorageService.SetItemAsync("bearerToken", jsonWebToken);
+            await LocalStorageService.SetItemAsync(JwtNames._bearerToken, jsonWebToken);
             await AuthenticationStateProvider.SignIn();
 
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", jsonWebToken);
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames._bearer, jsonWebToken);
             _signInSuccess = true;
         }
         else

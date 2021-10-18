@@ -47,7 +47,7 @@ else
     {
         var user = (await AuthenticationState).User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user?.Identity?.IsAuthenticated == true)
         {
             forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>(ApiEndpoints._weatherForecastUrl);
         }

@@ -1,4 +1,5 @@
-﻿using Fituska.Shared.Models;
+﻿using Fituska.Server.Entities;
+using Fituska.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,12 @@ namespace Fituska.Server.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<UserEntity> _signInManager;
+    private readonly UserManager<UserEntity> _userManager;
     private readonly IConfiguration _configuration;
 
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IConfiguration configuration)
+    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -32,10 +33,12 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Register([FromBody] UserModel user)
     {
         // TODO: Use e-mail as username?
-        var identityUser = new IdentityUser
+        // TODO: Proper user mapping.
+        var identityUser = new UserEntity
         {
             Email = user.EmailAddress,
-            UserName = user.EmailAddress
+            UserName = user.EmailAddress,
+            RegistrationDate = DateTime.UtcNow,
         };
         var userIdentityResult = await _userManager.CreateAsync(identityUser, user.Password);
         var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, "Administrator");
@@ -70,7 +73,7 @@ public class UserController : ControllerBase
 
     [NonAction]
     [ApiExplorerSettings(IgnoreApi = true)]
-    private async Task<string> CreateJsonWebToken(IdentityUser identityUser)
+    private async Task<string> CreateJsonWebToken(UserEntity identityUser)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
@@ -79,7 +82,7 @@ public class UserController : ControllerBase
         {
             new Claim(JwtRegisteredClaimNames.Sub, identityUser.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, identityUser.Id)
+            new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString())
         };
         var roleNames = await _userManager.GetRolesAsync(identityUser);
         claims.AddRange(roleNames.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));

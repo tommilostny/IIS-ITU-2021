@@ -3,6 +3,7 @@ using System;
 using Fituska.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fituska.Server.Data.Migrations
 {
     [DbContext(typeof(FituskaDbContext))]
-    partial class FituskaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211018165056_InitialWithEntities")]
+    partial class InitialWithEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0-rc.2.21480.5");
@@ -272,6 +274,7 @@ namespace Fituska.Server.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DiscordUsername")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -282,12 +285,14 @@ namespace Fituska.Server.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("LastLoginDate")
+                    b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
@@ -313,7 +318,7 @@ namespace Fituska.Server.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid?>("PhotoID")
+                    b.Property<Guid>("PhotoID")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("RegistrationDate")
@@ -635,7 +640,9 @@ namespace Fituska.Server.Data.Migrations
 
                     b.HasOne("Fituska.Server.Entities.PhotoEntity", "Photo")
                         .WithMany()
-                        .HasForeignKey("PhotoID");
+                        .HasForeignKey("PhotoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Photo");
                 });

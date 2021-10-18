@@ -1,4 +1,5 @@
 using Fituska.Server.Data;
+using Fituska.Server.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,8 @@ builder.Services.AddDbContext<FituskaDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
-    .AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<UserEntity>()
+    .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<FituskaDbContext>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,8 +57,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     var serviceProvider = builder.Services.BuildServiceProvider();
-    var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
-    var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+    var roleManager = serviceProvider.GetService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = serviceProvider.GetService<UserManager<UserEntity>>();
     if (roleManager is not null && userManager is not null)
     {
         await SeedRolesAndUsers.Seed(roleManager, userManager);
