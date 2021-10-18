@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace Fituska.Server.Enums;
 
-namespace Fituska.Server.Enums
+public enum QuestionVote
 {
-    public enum QuestionVote
-    {
-        Dislike, Like
-    }
+    Dislike, Like
 }
