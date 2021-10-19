@@ -19,6 +19,29 @@
             <ValidationMessage For="@(() => _userToRegister.Password)" />
         </div>
 
+        <div class="form-group my-3">
+            <label for="discord">Discord uživatelské jméno:</label>
+            <InputText id="discord" class="form-control" @bind-Value="_userToRegister.DiscordUsername" />
+            <ValidationMessage For="@(() => _userToRegister.DiscordUsername)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="photo">Profilový obrázek:</label>
+            <InputFile id="photo" class="form-control" @bind-Value="_userToRegister.Photo" />
+            <ValidationMessage For="@(() => _userToRegister.Photo)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="role">Role:</label>
+            <InputSelect id="role" class="form-control" @bind-Value="_userToRegister.RoleName">
+                @foreach (var role in RoleNames.GetAll())
+                {
+                    <option>@role</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => _userToRegister.RoleName)" />
+        </div>
+
         <ValidationSummary />
 
         <button type="submit" class="btn btn-primary btn-lg">Registrovat</button>

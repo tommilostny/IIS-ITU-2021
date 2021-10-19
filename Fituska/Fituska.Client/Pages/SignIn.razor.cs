@@ -11,7 +11,7 @@ public partial class SignIn : ComponentBase
     [Inject]
     private FituskaAuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-    private UserModel _userToSignIn = new();
+    private readonly UserSignInModel _userToSignIn = new();
     private bool _signInSuccess = false;
     private bool _signInFailure = false;
 
@@ -28,8 +28,8 @@ public partial class SignIn : ComponentBase
 
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames._bearer, jsonWebToken);
             _signInSuccess = true;
+            return;
         }
-        else
-            _signInFailure = true;
+        _signInFailure = true;
     }
 }

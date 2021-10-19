@@ -5,9 +5,10 @@ public partial class Register : ComponentBase
     [Inject]
     private HttpClient Http { get; set; }
 
-    private UserModel _userToRegister = new()
+    private readonly UserRegistrationModel _userToRegister = new()
     {
-        EmailAddress = "xlogin01@vutbr.cz"
+        EmailAddress = "xlogin01@vutbr.cz",
+        RoleName = RoleNames._studentRoleName
     };
     private bool _registerSuccess = false;
     private bool _registerFailure = false;

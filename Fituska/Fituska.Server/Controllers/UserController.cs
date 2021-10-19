@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     [Route("register")]
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> Register([FromBody] UserModel user)
+    public async Task<IActionResult> Register([FromBody] UserRegistrationModel user)
     {
         // TODO: Use e-mail as username?
         // TODO: Proper user mapping.
@@ -38,13 +38,19 @@ public class UserController : ControllerBase
         {
             Email = user.EmailAddress,
             UserName = user.EmailAddress,
+            DiscordUsername = user.DiscordUsername,
             RegistrationDate = DateTime.UtcNow,
         };
         var userIdentityResult = await _userManager.CreateAsync(identityUser, user.Password);
-        var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, "Administrator");
+        var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, user.RoleName);
 
         if (userIdentityResult.Succeeded && roleIdentityResult.Succeeded)
         {
+            //TODO: PhotoRepository?
+            //if (user.Photo is not null)
+            //{
+            //
+            //}
             return Ok(new { userIdentityResult.Succeeded });
         }
         string errors = "Registrace selhala s následujícími chybami:";
@@ -59,7 +65,7 @@ public class UserController : ControllerBase
     [Route("signin")]
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> SignIn([FromBody] UserModel user)
+    public async Task<IActionResult> SignIn([FromBody] UserSignInModel user)
     {
         var signInResult = await _signInManager.PasswordSignInAsync(user.EmailAddress, user.Password, isPersistent: false, lockoutOnFailure: false);
         if (signInResult.Succeeded)
