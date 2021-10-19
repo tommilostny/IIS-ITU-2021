@@ -29,9 +29,7 @@ internal static class SeedRolesAndUsers
 
     private static async Task SeedAdministratorUser(UserManager<UserEntity> userManager)
     {
-        bool adminUserExists = await userManager.FindByEmailAsync("admin@fituska.net") is not null;
-
-        if  (!adminUserExists)
+        if  (await userManager.FindByEmailAsync("admin@fituska.net") is null)
         {
             var adminUser = new UserEntity
             {

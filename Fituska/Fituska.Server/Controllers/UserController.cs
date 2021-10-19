@@ -42,16 +42,20 @@ public class UserController : ControllerBase
             RegistrationDate = DateTime.UtcNow,
         };
         var userIdentityResult = await _userManager.CreateAsync(identityUser, user.Password);
-        var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, user.RoleName);
 
-        if (userIdentityResult.Succeeded && roleIdentityResult.Succeeded)
+        if (userIdentityResult.Succeeded)
         {
+            var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, user.RoleName);
+            if (roleIdentityResult.Succeeded)
+            {
+                var success = userIdentityResult.Succeeded && roleIdentityResult.Succeeded;
+                return Ok(new { success });
+            }
             //TODO: PhotoRepository?
             //if (user.Photo is not null)
             //{
             //
             //}
-            return Ok(new { userIdentityResult.Succeeded });
         }
         string errors = "Registrace selhala s následujícími chybami:";
         foreach (var error in userIdentityResult.Errors)
