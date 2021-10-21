@@ -1,0 +1,59 @@
+﻿@page "/register"
+
+<h3>Registrace</h3>
+
+@if (!_registerSuccess)
+{
+    <EditForm Model="_userToRegister" OnValidSubmit="RegisterAsync">
+        <DataAnnotationsValidator />
+
+        <div class="form-group my-3">
+            <label for="e-mail">E-mail:</label>
+            <InputText id="e-mail" class="form-control" @bind-Value="_userToRegister.EmailAddress" />
+            <ValidationMessage For="@(() => _userToRegister.EmailAddress)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="password">Heslo:</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="_userToRegister.Password" />
+            <ValidationMessage For="@(() => _userToRegister.Password)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="discord">Discord uživatelské jméno:</label>
+            <InputText id="discord" class="form-control" @bind-Value="_userToRegister.DiscordUsername" />
+            <ValidationMessage For="@(() => _userToRegister.DiscordUsername)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="photo">Profilový obrázek:</label>
+            <InputFile id="photo" class="form-control" @bind-Value="_userToRegister.Photo" />
+            <ValidationMessage For="@(() => _userToRegister.Photo)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="role">Role:</label>
+            <InputSelect id="role" class="form-control" @bind-Value="_userToRegister.RoleName">
+                @foreach (var role in RoleNames.GetAll())
+                {
+                    <option>@role</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => _userToRegister.RoleName)" />
+        </div>
+
+        <ValidationSummary />
+
+        <button type="submit" class="btn btn-primary btn-lg">Registrovat</button>
+
+        @if (_registerFailure)
+        {
+            <p class="my-3 text-danger">@_registerErrorMessage</p>
+        }
+    </EditForm>
+}
+else
+{
+    <h4>Registrace proběhla úspěšně!</h4>
+    <a href="/signin" class="btn btn-success btn-lg">Přejít na přihlášení</a>
+}
