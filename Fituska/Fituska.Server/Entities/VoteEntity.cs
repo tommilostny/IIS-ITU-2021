@@ -1,6 +1,4 @@
-﻿using Fituska.Server.Enums;
-
-namespace Fituska.Server.Entities;
+﻿namespace Fituska.Server.Entities;
 
 public class VoteEntity : EntityBase
 {

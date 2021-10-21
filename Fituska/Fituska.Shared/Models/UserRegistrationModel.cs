@@ -1,7 +1,4 @@
-﻿using Fituska.Shared.Static;
-using System.ComponentModel.DataAnnotations;
-
-namespace Fituska.Shared.Models;
+﻿namespace Fituska.Shared.Models;
 
 public class UserRegistrationModel : UserSignInModel
 {

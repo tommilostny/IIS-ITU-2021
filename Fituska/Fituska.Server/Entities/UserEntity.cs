@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Fituska.Server.Entities.Interfaces;
-using System.Diagnostics.CodeAnalysis;
+﻿using Fituska.Server.Entities.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Fituska.Server.Entities;
 

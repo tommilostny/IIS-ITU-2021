@@ -1,6 +1,4 @@
-﻿using Fituska.Server.Enums;
-
-namespace Fituska.Server.Entities;
+﻿namespace Fituska.Server.Entities;
 
 public class CourseEntity : EntityBase
 {
@@ -20,5 +18,5 @@ public class CourseEntity : EntityBase
     
     public Semester Semester { get; set; }
     
-    public List<UserEntity> Users { get; set; }
+    public List<CourseAttendanceEntity> Users { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿using Fituska.Server.Entities;
-using Fituska.Shared.Static;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Fituska.Server.Data;
 
@@ -40,7 +38,7 @@ internal static class SeedRolesAndUsers
 
             if (identityResult.Succeeded)
             {
-                await userManager.AddToRoleAsync(adminUser, RoleNames._adminRoleName);
+                await userManager.AddToRoleAsync(adminUser, RoleNames.AdminRoleName);
             }
         }
     }

@@ -49,7 +49,7 @@ else
 
         if (user?.Identity?.IsAuthenticated == true)
         {
-            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>(ApiEndpoints._weatherForecastUrl);
+            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>(ApiEndpoints.WeatherForecastUrl);
         }
     }
 

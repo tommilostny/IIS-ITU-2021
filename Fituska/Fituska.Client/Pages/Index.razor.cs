@@ -13,12 +13,12 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        if (await LocalStorageService.ContainKeyAsync(JwtNames._bearerToken))
+        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
         {
-            var savedToken = await LocalStorageService.GetItemAsync<string>(JwtNames._bearerToken);
+            var savedToken = await LocalStorageService.GetItemAsync<string>(JwtNames.BearerToken);
             await AuthenticationStateProvider.SignIn();
 
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames._bearer, savedToken);
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames.Bearer, savedToken);
             StateHasChanged();
         }
         await base.OnInitializedAsync();

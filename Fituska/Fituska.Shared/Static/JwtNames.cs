@@ -2,6 +2,6 @@
 
 public static class JwtNames
 {
-    public const string _bearer = "bearer";
-    public const string _bearerToken = $"{_bearer}Token";
+    public const string Bearer = "bearer";
+    public const string BearerToken = $"{Bearer}Token";
 }

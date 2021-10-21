@@ -1,4 +1,4 @@
-﻿namespace Fituska.Server.Enums;
+﻿namespace Fituska.Shared.Enums;
 
 public enum Semester
 {

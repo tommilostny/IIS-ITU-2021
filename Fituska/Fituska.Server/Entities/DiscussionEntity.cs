@@ -12,7 +12,7 @@ public class DiscussionEntity : EntityBase
 
     public DiscussionEntity OriginDiscussion { get; set; }
 
-    public List<FileEntity> File { get; set; }
+    public List<FileEntity> Files { get; set; }
 
     public DateTime CreationTime { get; set; }
 

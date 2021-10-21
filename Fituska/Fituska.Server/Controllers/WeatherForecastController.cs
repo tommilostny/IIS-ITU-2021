@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
 namespace Fituska.Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Roles = "Administrator")]
+[Authorize(Roles = RoleNames.AdminRoleName)]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] _summaries = new[]

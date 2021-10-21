@@ -8,7 +8,7 @@ public partial class Register : ComponentBase
     private readonly UserRegistrationModel _userToRegister = new()
     {
         EmailAddress = "xlogin01@vutbr.cz",
-        RoleName = RoleNames._studentRoleName
+        RoleName = RoleNames.StudentRoleName
     };
     private bool _registerSuccess = false;
     private bool _registerFailure = false;
@@ -17,7 +17,7 @@ public partial class Register : ComponentBase
     private async Task RegisterAsync()
     {
         _registerFailure = false;
-        var httpResponseMessage = await Http.PostAsJsonAsync(ApiEndpoints._registerUrl, _userToRegister);
+        var httpResponseMessage = await Http.PostAsJsonAsync(ApiEndpoints.RegisterUrl, _userToRegister);
 
         if (httpResponseMessage.IsSuccessStatusCode)
             _registerSuccess = true;

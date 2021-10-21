@@ -18,7 +18,5 @@ public class QuestionEntity : EntityBase
     
     public DateTime CreationTime { get; set; }
     
-    public Guid QuestionVoteId { get; set; }
-    
     public List<VoteEntity> UsersVoteQuestion { get; set; }
 }

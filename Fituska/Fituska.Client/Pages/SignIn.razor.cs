@@ -18,15 +18,15 @@ public partial class SignIn : ComponentBase
     private async Task SignInAsync()
     {
         _signInFailure = false;
-        var httpResponseMessage = await Http.PostAsJsonAsync(ApiEndpoints._signInUrl, _userToSignIn);
+        var httpResponseMessage = await Http.PostAsJsonAsync(ApiEndpoints.SignInUrl, _userToSignIn);
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
             var jsonWebToken = await httpResponseMessage.Content.ReadAsStringAsync();
-            await LocalStorageService.SetItemAsync(JwtNames._bearerToken, jsonWebToken);
+            await LocalStorageService.SetItemAsync(JwtNames.BearerToken, jsonWebToken);
             await AuthenticationStateProvider.SignIn();
 
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames._bearer, jsonWebToken);
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames.Bearer, jsonWebToken);
             _signInSuccess = true;
             return;
         }

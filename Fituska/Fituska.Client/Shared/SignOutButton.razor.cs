@@ -13,9 +13,9 @@ public partial class SignOutButton : ComponentBase
 
     private async Task SignOutAsync()
     {
-        if (await LocalStorageService.ContainKeyAsync(JwtNames._bearerToken))
+        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
         {
-            await LocalStorageService.RemoveItemAsync(JwtNames._bearerToken);
+            await LocalStorageService.RemoveItemAsync(JwtNames.BearerToken);
             AuthenticationStateProvider.SignOut();
         }
         StateHasChanged();

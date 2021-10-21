@@ -2,17 +2,17 @@
 
 public static class RoleNames
 {
-    public const string _adminRoleName = "Administrator";
-    public const string _moderatorRoleName = "Moderator";
-    public const string _studentRoleName = "Student";
-    public const string _lecturerRoleName = "Lecturer";
+    public const string AdminRoleName = "Administrator";
+    public const string ModeratorRoleName = "Moderator";
+    public const string StudentRoleName = "Student";
+    public const string LecturerRoleName = "Lecturer";
 
     /// <summary> Iterator over available role name constants. </summary>
     public static IEnumerable<string> GetAll()
     {
-        yield return _studentRoleName;
-        yield return _lecturerRoleName;
-        yield return _moderatorRoleName;
-        yield return _adminRoleName;
+        yield return StudentRoleName;
+        yield return LecturerRoleName;
+        yield return ModeratorRoleName;
+        yield return AdminRoleName;
     }
 }
