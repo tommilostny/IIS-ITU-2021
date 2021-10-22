@@ -9,4 +9,14 @@ public class CategoryEntity : EntityBase
     public Guid CourseId { get; set; }
 
     public CourseEntity Course { get; set; }
+
+    public override bool Equals(object? category)
+    {
+        return GetHashCode() == category?.GetHashCode();
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, Name, Description, CourseId);
+    }
 }

@@ -19,4 +19,21 @@ public class CourseEntity : EntityBase
     public Semester Semester { get; set; }
     
     public List<CourseAttendanceEntity> Users { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        if(GetHashCode() != obj?.GetHashCode()) return false;
+        CourseEntity? course = obj as CourseEntity;
+        if (Description != course?.Description) return false;
+        if (Url != course?.Url) return false;
+        if( YearOfStudy != course?.YearOfStudy) return false;
+        if (Credits != course.Credits) return false;
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, AcademicYear, Name);
+    }
+
 }

@@ -19,4 +19,14 @@ public class DiscussionEntity : EntityBase
     public Guid AnswerId { get; set; }
 
     public AnswerEntity Answer { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        return GetHashCode() == obj?.GetHashCode();
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, AuthorId, Text, OriginId, CreationTime);
+    }
 }

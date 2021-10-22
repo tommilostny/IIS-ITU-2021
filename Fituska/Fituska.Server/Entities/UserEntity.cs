@@ -1,5 +1,6 @@
 ﻿using Fituska.Server.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Fituska.Server.Entities;
 
@@ -21,33 +22,20 @@ public class UserEntity : IdentityUser<Guid>, IEntity
 
     public List<CourseAttendanceEntity> AttendingCourses { get; set; }
 
-    //public override bool Equals(object obj)
-    //{
-    //    if (obj is not User) return false;
-    //    User comparingUser = obj as User;
-    //    return Id == comparingUser.Id;
-    //}
-    //
-    //private sealed class UserEqualityComparer : IEqualityComparer<User>
-    //{
-    //    public bool Equals(User x, User y)
-    //    {
-    //        if (ReferenceEquals(x, y)) return true;
-    //        if (x is null) return false;
-    //        if (y is null) return false;
-    //        if (x.GetType() != y.GetType()) return false;
-    //        if (x.Id != y.Id) return false;
-    //        if (x.Name != y.Name) return false;
-    //        if (x.DiscordUserName != y.DiscordUserName) return false;
-    //        if (x.Email != y.Email) return false;
-    //        if (x.UserName != y.UserName) return false;
-    //        if (x.RegistrationDate != y.RegistrationDate) return false;
-    //        return true;
-    //    }
-    //
-    //    public int GetHashCode([DisallowNull] User obj)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
+    public override bool Equals(object? comparingObject)
+    {
+        if (comparingObject is not UserEntity userEntity) return false;
+        if (GetHashCode() != userEntity.GetHashCode()) return false;
+        if(DiscordUsername != userEntity.DiscordUsername) return false;
+        if(RegistrationDate != userEntity.RegistrationDate) return false;
+        if(AttendingCourses != userEntity.AttendingCourses) return false;
+        if(LastLoginDate != userEntity.LastLoginDate) return false;
+        if(Email != userEntity.Email) return false;
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, FirstName, LastName, PasswordHash);
+    }
 }
