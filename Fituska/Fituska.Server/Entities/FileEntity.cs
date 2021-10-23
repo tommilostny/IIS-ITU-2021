@@ -20,7 +20,12 @@ public class FileEntity : EntityBase
 
     public override bool Equals(object? obj)
     {
-        return GetHashCode() == obj?.GetHashCode();
+        if (GetHashCode() != obj?.GetHashCode()) return false;
+        FileEntity? file = (FileEntity?)obj;
+        if (Content == null && file?.Content == null) return true;
+        bool? same = Content?.SequenceEqual(file?.Content!);
+        if (same is null) return false;
+        return true;
     }
 
     public override int GetHashCode()
