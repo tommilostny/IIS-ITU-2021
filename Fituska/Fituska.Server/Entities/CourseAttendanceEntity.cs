@@ -1,5 +1,4 @@
 ﻿namespace Fituska.Server.Entities;
-
 public class CourseAttendanceEntity : EntityBase
 {
     public short AttendingYear { get; set; }

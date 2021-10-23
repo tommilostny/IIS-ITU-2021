@@ -1,5 +1,4 @@
 ﻿namespace Fituska.Server.Entities;
-
 public class DiscussionEntity : EntityBase
 {
     public string Text { get; set; }

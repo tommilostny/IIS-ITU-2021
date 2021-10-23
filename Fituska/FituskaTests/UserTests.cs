@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Fituska.Server.Data;
-using Fituska.Server.Entities;
-using Fituska.Server.Factories;
-using Nemesis.Essentials.Design;
-
-namespace FituskaTests.DAL;
+﻿namespace FituskaTests.DAL;
 public class UserTests : IAsyncLifetime
 {
     private readonly IDbContextFactory dbContextFactory;

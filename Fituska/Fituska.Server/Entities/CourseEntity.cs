@@ -1,5 +1,4 @@
 ﻿namespace Fituska.Server.Entities;
-
 public class CourseEntity : EntityBase
 {
     public short AcademicYear { get; set; }
@@ -17,8 +16,8 @@ public class CourseEntity : EntityBase
     public YearOfStudy YearOfStudy { get; set; }
     
     public Semester Semester { get; set; }
-    
-    public List<CourseAttendanceEntity> Users { get; set; }
+
+    public ValueCollection<CourseAttendanceEntity> Users { get; set; } = new ValueCollection<CourseAttendanceEntity>();
 
     public override bool Equals(object? obj)
     {

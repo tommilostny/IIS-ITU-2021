@@ -13,12 +13,12 @@ public class QuestionEntity : EntityBase
     public Guid CategoryId { get; set; }
     
     public CategoryEntity Category { get; set; }
-    
-    public List<AnswerEntity> Answers { get; set; }
+
+    public ValueCollection<AnswerEntity> Answers { get; set; } = new ValueCollection<AnswerEntity>();
     
     public DateTime CreationTime { get; set; }
-    
-    public List<VoteEntity> UsersVoteQuestion { get; set; }
+
+    public ValueCollection<VoteEntity> UsersVoteQuestion { get; set; } = new ValueCollection<VoteEntity>();
 
     public override bool Equals(object? obj)
     {

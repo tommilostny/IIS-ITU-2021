@@ -1,7 +1,4 @@
-﻿//using AutoMapper;
-
-namespace Fituska.Server.Entities;
-
+﻿namespace Fituska.Server.Entities;
 public class AnswerEntity : EntityBase
 {
     public string Text { get; set; }
@@ -15,8 +12,8 @@ public class AnswerEntity : EntityBase
     public UserEntity User { get; set; }
     
     public DateTime CreationTime { get; set; }
-    
-    public List<UserEntity> UsersSawQuestion { get; set; }
+
+    public ValueCollection<UserEntity> UsersSawQuestion { get; set; } = new ValueCollection<UserEntity>();
 
     public override bool Equals(object? answerObject)
     {

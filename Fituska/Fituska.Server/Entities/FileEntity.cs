@@ -1,5 +1,4 @@
 ﻿namespace Fituska.Server.Entities;
-
 public class FileEntity : EntityBase
 {
     public string Name { get; set; }
