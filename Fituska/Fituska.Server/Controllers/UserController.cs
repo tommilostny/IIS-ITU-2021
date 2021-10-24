@@ -2,6 +2,8 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Fituska.Server.Facedes;
+using Fituska.Server.Models.ListModels;
 
 namespace Fituska.Server.Controllers;
 
@@ -9,16 +11,18 @@ namespace Fituska.Server.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly SignInManager<UserEntity> _signInManager;
-    private readonly UserManager<UserEntity> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly SignInManager<UserEntity> signInManager;
+    private readonly UserManager<UserEntity> userManager;
+    private readonly IConfiguration configuration;
+    private readonly UserFacade userFacade;
 
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration)
+    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, UserFacade userFacade)
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _configuration = configuration;
+        this.signInManager = signInManager;
+        this.userManager = userManager;
+        this.configuration = configuration;
+        this.userFacade = userFacade;
     }
 
     /// <summary> fituska.net/api/user/register </summary>
@@ -36,11 +40,11 @@ public class UserController : ControllerBase
             DiscordUsername = user.DiscordUsername,
             RegistrationDate = DateTime.UtcNow,
         };
-        var userIdentityResult = await _userManager.CreateAsync(identityUser, user.Password);
+        var userIdentityResult = await userManager.CreateAsync(identityUser, user.Password);
 
         if (userIdentityResult.Succeeded)
         {
-            var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, user.RoleName);
+            var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, user.RoleName);
             if (roleIdentityResult.Succeeded)
             {
                 var success = userIdentityResult.Succeeded && roleIdentityResult.Succeeded;
@@ -66,10 +70,10 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SignIn([FromBody] UserSignInModel user)
     {
-        var signInResult = await _signInManager.PasswordSignInAsync(user.EmailAddress, user.Password, isPersistent: false, lockoutOnFailure: false);
+        var signInResult = await signInManager.PasswordSignInAsync(user.EmailAddress, user.Password, isPersistent: false, lockoutOnFailure: false);
         if (signInResult.Succeeded)
         {
-            var identityUser = await _userManager.FindByNameAsync(user.EmailAddress);
+            var identityUser = await userManager.FindByNameAsync(user.EmailAddress);
             var jsonWebToken = await CreateJsonWebToken(identityUser);
             return Ok(jsonWebToken);
         }
@@ -80,7 +84,7 @@ public class UserController : ControllerBase
     [ApiExplorerSettings(IgnoreApi = true)]
     private async Task<string> CreateJsonWebToken(UserEntity identityUser)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
 
         var claims = new List<Claim>
@@ -89,17 +93,24 @@ public class UserController : ControllerBase
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString())
         };
-        var roleNames = await _userManager.GetRolesAsync(identityUser);
+        var roleNames = await userManager.GetRolesAsync(identityUser);
         claims.AddRange(roleNames.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
 
         var jwtSecurityToken = new JwtSecurityToken
         (
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Issuer"],
+            issuer: configuration["Jwt:Issuer"],
+            audience: configuration["Jwt:Issuer"],
             claims: claims,
             expires: DateTime.UtcNow.AddDays(28),
             signingCredentials: credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+    }
+
+    [HttpGet]
+    [Route("user" + nameof(GetAll))]
+    public ActionResult<List<UserListModel>> GetAll()
+    {
+        return userFacade.GetAll();
     }
 }

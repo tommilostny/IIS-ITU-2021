@@ -1,9 +1,9 @@
 ﻿using Fituska.Server.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 
 namespace Fituska.Server.Entities;
-
 public class UserEntity : IdentityUser<Guid>, IEntity
 {
     public string? FirstName { get; set; }
@@ -20,7 +20,7 @@ public class UserEntity : IdentityUser<Guid>, IEntity
 
     public PhotoEntity? Photo { get; set; }
 
-    public List<CourseAttendanceEntity> AttendingCourses { get; set; }
+    public ValueCollection<CourseAttendanceEntity> AttendingCourses { get; set; } = new();
 
     public override bool Equals(object? comparingObject)
     {
@@ -28,7 +28,7 @@ public class UserEntity : IdentityUser<Guid>, IEntity
         if (GetHashCode() != userEntity.GetHashCode()) return false;
         if(DiscordUsername != userEntity.DiscordUsername) return false;
         if(RegistrationDate != userEntity.RegistrationDate) return false;
-        if(AttendingCourses != userEntity.AttendingCourses) return false;
+        if(!AttendingCourses.SequenceEqual(userEntity.AttendingCourses)) return false;
         if(LastLoginDate != userEntity.LastLoginDate) return false;
         if(Email != userEntity.Email) return false;
         return true;
@@ -37,5 +37,13 @@ public class UserEntity : IdentityUser<Guid>, IEntity
     public override int GetHashCode()
     {
         return HashCode.Combine(Id, FirstName, LastName, PasswordHash);
+    }
+
+    public class UserEntityMapperProfile : Profile
+    {
+        public UserEntityMapperProfile()
+        {
+            CreateMap<UserEntity, UserEntity>();
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace FituskaTests.DAL;
+﻿using Microsoft.EntityFrameworkCore;
+using Nemesis.Essentials.Design;
+
+namespace FituskaTests.DAL;
 public class UserTests : IAsyncLifetime
 {
     private readonly IDbContextFactory dbContextFactory;
@@ -39,6 +42,45 @@ public class UserTests : IAsyncLifetime
         using var testDbContext = dbContextFactory.Create();
         var retrievedUser = testDbContext.Users.SingleOrDefault(user => user.Id == newUser.Id);
         Assert.StrictEqual(newUser, retrievedUser);
+    }
+
+    [Fact]
+    public void AddNewUserWithCourseAttendenc()
+    {
+        //Arrange
+        UserEntity? newUser = new()
+        {
+            FirstName = "Michal",
+            LastName = "Rivola",
+            DiscordUsername = "RivolaCz",
+            Email = "email",
+            PasswordHash = "password512hash",
+            UserName = "Rivola",
+            AttendingCourses = new ValueCollection<CourseAttendanceEntity>() {
+                new CourseAttendanceEntity(){
+                    Course = new CourseEntity
+                    {
+                        AcademicYear = 2021,
+                        Credits = 5,
+                        Description = "Description",
+                        Name = "Signály a systémy",
+                        Semester = Fituska.Shared.Enums.Semester.Winter,
+                        Url = "www.sss.com",
+                        Shortcut = "ISS"
+                    },
+                    
+                },
+            }
+        };
+
+        //Act
+        dbContext.Users.Add(newUser);
+        dbContext.SaveChanges();
+
+        //Assert
+        using var testDbContext = dbContextFactory.Create();
+        var retrievedUser = testDbContext.Users.Include(user => user.AttendingCourses).ThenInclude(attendingCourses => attendingCourses.Course).SingleOrDefault(user => user.Id == newUser.Id);
+        Assert.Equal(newUser, retrievedUser);
     }
 }
 

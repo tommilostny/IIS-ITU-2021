@@ -13,7 +13,8 @@ public class CourseAttendanceEntity : EntityBase
 
     public override bool Equals(object? courseAttendence)
     {
-        return GetHashCode() == courseAttendence?.GetHashCode();
+        if (GetHashCode() != (courseAttendence?.GetHashCode())) return false;
+        return true;
     }
 
     public override int GetHashCode()
