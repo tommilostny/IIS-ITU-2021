@@ -1,19 +1,13 @@
-﻿using Fituska.Server.Entities.Interfaces;
-using Fituska.Server.Factories;
-using Fituska.Server.Models.DetailModels;
-using Fituska.Server.Models.ListModels;
-using Microsoft.EntityFrameworkCore.Query;
-using Fituska.Server.Data;
-using System.Linq;
-
-namespace Fituska.Server.Repositories
+﻿using Fituska.DAL.Entities.Interfaces;
+using Fituska.DAL.Factories;
+namespace Fituska.DAL.Repositories
 {
     public class UserRepository : IRepository<UserEntity>
     {
         private readonly FituskaDbContext database;
-        public UserRepository(FituskaDbContext database)
+        public UserRepository(IDbContextFactory database)
         {
-            this.database = database;
+            this.database = (FituskaDbContext)database;
         }
 
         public void Delete(IEntity entity)
@@ -23,7 +17,7 @@ namespace Fituska.Server.Repositories
 
         public void Delete(Guid entityID)
         {
-            UserEntity? user =  database.Users.Find(entityID);
+            UserEntity? user = database.Users.Find(entityID);
             Delete(user!);
         }
 
@@ -36,7 +30,6 @@ namespace Fituska.Server.Repositories
         {
             return database.Users.ToList();
         }
-
         public IEntity GetByID(Guid entityID)
         {
             var user = database.Users.First(user => user.Id == entityID);

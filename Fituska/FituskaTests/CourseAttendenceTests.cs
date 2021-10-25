@@ -1,5 +1,4 @@
 ﻿namespace FituskaTests.DAL;
-
 public class CourseAttendenceTests : IAsyncLifetime
 {
     private readonly IDbContextFactory dbContextFactory;

@@ -1,8 +1,8 @@
-﻿using Fituska.Server.Entities.Interfaces;
+﻿using Fituska.DAL.Entities.Interfaces;
 using Fituska.Server.Models;
 
-namespace Fituska.Server.Repositories;
-public interface IRepository<TEntity> where TEntity: IEntity
+namespace Fituska.DAL.Repositories;
+public interface IRepository<TEntity> where TEntity : IEntity
 {
     IEntity InsertOrUpdate(IEntity model);
     void Delete(IEntity entity);

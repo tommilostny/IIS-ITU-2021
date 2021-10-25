@@ -2,8 +2,10 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Fituska.Server.Facedes;
 using Fituska.Server.Models.ListModels;
+using Fituska.DAL.Repositories;
+using AutoMapper;
+using Microsoft.Extensions.Configuration;
 
 namespace Fituska.Server.Controllers;
 
@@ -14,15 +16,16 @@ public class UserController : ControllerBase
     private readonly SignInManager<UserEntity> signInManager;
     private readonly UserManager<UserEntity> userManager;
     private readonly IConfiguration configuration;
-    private readonly UserFacade userFacade;
-
+    private readonly UserRepository userRepository;
+    private readonly IMapper mapper;
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, UserFacade userFacade)
+    public UserController(SignInManager<UserEntity> _signInManager, UserManager<UserEntity> _userManager, IConfiguration _configuration, UserRepository _userRepository, IMapper _mapper)
     {
-        this.signInManager = signInManager;
-        this.userManager = userManager;
-        this.configuration = configuration;
-        this.userFacade = userFacade;
+        signInManager = _signInManager;
+        userManager = _userManager;
+        configuration = _configuration;
+        userRepository = _userRepository;
+        mapper = _mapper;
     }
 
     /// <summary> fituska.net/api/user/register </summary>
@@ -111,6 +114,6 @@ public class UserController : ControllerBase
     [Route("user" + nameof(GetAll))]
     public ActionResult<List<UserListModel>> GetAll()
     {
-        return userFacade.GetAll();
+        return mapper.Map<List<UserListModel>>(userRepository.GetAll());
     }
 }

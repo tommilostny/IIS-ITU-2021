@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Fituska.Server.Entities.Interfaces;
+using Fituska.DAL.Entities.Interfaces;
 
-namespace Fituska.Server.Entities;
+namespace Fituska.DAL.Entities;
 
 public class EntityBase : IEntity
 {

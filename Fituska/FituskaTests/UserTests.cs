@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Fituska.DAL.Factories;
+using Microsoft.EntityFrameworkCore;
 using Nemesis.Essentials.Design;
 
 namespace FituskaTests.DAL;

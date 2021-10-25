@@ -1,4 +1,4 @@
-﻿namespace Fituska.Server.Entities;
+﻿namespace Fituska.DAL.Entities;
 public class DiscussionEntity : EntityBase
 {
     public string Text { get; set; }

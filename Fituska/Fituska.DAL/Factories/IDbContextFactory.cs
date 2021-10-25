@@ -1,6 +1,6 @@
 ﻿using Fituska.Server.Data;
 
-namespace Fituska.Server.Factories;
+namespace Fituska.DAL.Factories;
 
 public interface IDbContextFactory
 {

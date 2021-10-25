@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Fituska.Server.Data;
 
-namespace Fituska.Server.Factories;
+namespace Fituska.DAL.Factories;
 
 public class InMemoryDbContextFactory : IDbContextFactory
 {
