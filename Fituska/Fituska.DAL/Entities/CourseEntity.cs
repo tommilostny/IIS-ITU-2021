@@ -1,4 +1,6 @@
-﻿namespace Fituska.DAL.Entities;
+﻿using Fituska.Shared.Enums;
+
+namespace Fituska.DAL.Entities;
 public class CourseEntity : EntityBase
 {
     public short AcademicYear { get; set; }

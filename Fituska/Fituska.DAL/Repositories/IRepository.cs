@@ -1,5 +1,4 @@
 ﻿using Fituska.DAL.Entities.Interfaces;
-using Fituska.Server.Models;
 
 namespace Fituska.DAL.Repositories;
 public interface IRepository<TEntity> where TEntity : IEntity

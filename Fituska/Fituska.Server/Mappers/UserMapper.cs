@@ -1,8 +1,5 @@
 ﻿using Fituska.Server.Models.DetailModels;
 using Fituska.Server.Models.ListModels;
-using Fituska.Server.Entities;
-
-
 
 namespace Fituska.Server.Mappers;
 public class UserMapper
