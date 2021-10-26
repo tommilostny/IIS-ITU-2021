@@ -1,4 +1,5 @@
 ﻿namespace Fituska.DAL.Entities;
+
 public class PhotoEntity : EntityBase
 {
     public byte[]? Content { get; set; }
