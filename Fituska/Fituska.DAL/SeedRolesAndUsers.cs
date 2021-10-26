@@ -32,7 +32,8 @@ public static class SeedRolesAndUsers
             var adminUser = new UserEntity
             {
                 UserName = "admin@fituska.net",
-                Email = "admin@fituska.net"
+                Email = "admin@fituska.net",
+                RegistrationDate = DateTime.UtcNow,
             };
             var identityResult = await userManager.CreateAsync(adminUser, "Password1!");
 
