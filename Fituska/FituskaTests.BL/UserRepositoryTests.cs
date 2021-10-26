@@ -1,16 +1,17 @@
 namespace FituskaTests.BL;
+
 public class UserRepositoryTests
 {
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
     private readonly UserRepository userRepository;
     private readonly IMapper mapper;
-    public UserRepositoryTests(IMapper _mapper)
+    public UserRepositoryTests(IMapper mapper)
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(UserRepositoryTests));
         dbContext = dbContextFactory.Create();
-        userRepository = new UserRepository(dbContextFactory);
-        mapper = _mapper;
+        userRepository = new UserRepository(dbContext);
+        this.mapper = mapper;
     }
 
     public async Task InitializeAsync() => await dbContext.Database.EnsureCreatedAsync();
@@ -49,10 +50,11 @@ public class UserRepositoryTests
         using var database = dbContextFactory.Create();
         var usersFromDb = database.Users.ToList();
 
-        List<UserListModel> listModels = new List<MusicBandListModel>();
-        foreach (MusicBandEntity bandFromDb in bandsFromDb)
-        {
-            listModels.Add(MusicBandMapper.MapEntityToListModel(bandFromDb));
-        }
+        //TODO :D
+        //List<UserListModel> listModels = new List<MusicBandListModel>();
+        //foreach (MusicBandEntity bandFromDb in bandsFromDb)
+        //{
+        //    listModels.Add(MusicBandMapper.MapEntityToListModel(bandFromDb));
+        //}
     }
 }

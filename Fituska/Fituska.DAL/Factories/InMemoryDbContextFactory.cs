@@ -3,17 +3,17 @@
 namespace Fituska.DAL.Factories;
 public class InMemoryDbContextFactory : IDbContextFactory
 {
-    private readonly string _databaseName;
+    private readonly string databaseName;
 
     public InMemoryDbContextFactory(string databaseName)
     {
-        _databaseName = databaseName;
+        this.databaseName = databaseName;
     }
 
     public FituskaDbContext Create()
     {
         var contextOptionsBuilder = new DbContextOptionsBuilder<FituskaDbContext>();
-        contextOptionsBuilder.UseInMemoryDatabase(_databaseName);
+        contextOptionsBuilder.UseInMemoryDatabase(databaseName);
 
         return new FituskaDbContext(contextOptionsBuilder.Options);
     }

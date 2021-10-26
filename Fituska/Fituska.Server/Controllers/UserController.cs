@@ -17,13 +17,13 @@ public class UserController : ControllerBase
     private readonly IMapper mapper;
 
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<UserEntity> _signInManager, UserManager<UserEntity> _userManager, IConfiguration _configuration, UserRepository _userRepository, IMapper _mapper)
+    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, UserRepository userRepository, IMapper mapper)
     {
-        signInManager = _signInManager;
-        userManager = _userManager;
-        configuration = _configuration;
-        userRepository = _userRepository;
-        mapper = _mapper;
+        this.signInManager = signInManager;
+        this.userManager = userManager;
+        this.configuration = configuration;
+        this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
     /// <summary> fituska.net/api/user/register </summary>
