@@ -20,11 +20,9 @@ jobs:
       with:
         dotnet-version: 6.x.x
         include-prerelease: true
-    - name: Go to Fituska folder
-      run: cd Fituska
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Fituska/Fituska.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build Fituska/Fituska.sln --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test Fituska/Fituska.sln --no-build --verbosity normal
