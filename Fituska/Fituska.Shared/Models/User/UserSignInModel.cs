@@ -1,11 +1,11 @@
 ﻿namespace Fituska.Shared.Models;
 
-public class UserSignInModel
+public record UserSignInModel : ModelBase
 {
     [Required]
     [EmailAddress]
     [Display(Name = "E-mailová adresa")]
-    public string EmailAddress { get; set; }
+    public string Email { get; set; }
 
     [Required]
     [DataType(DataType.Password)]

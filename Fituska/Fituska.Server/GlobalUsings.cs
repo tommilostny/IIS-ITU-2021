@@ -1,4 +1,5 @@
-﻿global using Fituska.DAL.Entities;
+﻿global using AutoMapper;
+global using Fituska.DAL.Entities;
 global using Fituska.Shared.Enums;
 global using Fituska.Shared.Models;
 global using Fituska.Shared.Static;

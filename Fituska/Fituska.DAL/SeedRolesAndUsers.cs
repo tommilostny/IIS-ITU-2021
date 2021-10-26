@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Fituska.Server.Data;
+namespace Fituska.DAL;
 
-internal static class SeedRolesAndUsers
+public static class SeedRolesAndUsers
 {
-    internal static async Task Seed(RoleManager<IdentityRole<Guid>> roleManager, UserManager<UserEntity> userManager)
+    public static async Task Seed(RoleManager<IdentityRole<Guid>> roleManager, UserManager<UserEntity> userManager)
     {
         await SeedRoles(roleManager);
         await SeedAdministratorUser(userManager);

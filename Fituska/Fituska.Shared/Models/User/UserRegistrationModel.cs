@@ -1,6 +1,6 @@
 ﻿namespace Fituska.Shared.Models;
 
-public class UserRegistrationModel : UserSignInModel
+public record UserRegistrationModel : UserSignInModel
 {
     [StringLength(maximumLength: 64)]
     [Display(Name = "Discord")]

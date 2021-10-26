@@ -2,10 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Fituska.Server.Models.ListModels;
 using Fituska.DAL.Repositories;
-using AutoMapper;
-using Microsoft.Extensions.Configuration;
 
 namespace Fituska.Server.Controllers;
 
@@ -18,6 +15,7 @@ public class UserController : ControllerBase
     private readonly IConfiguration configuration;
     private readonly UserRepository userRepository;
     private readonly IMapper mapper;
+
     /// <summary> fituska.net/api/user </summary>
     public UserController(SignInManager<UserEntity> _signInManager, UserManager<UserEntity> _userManager, IConfiguration _configuration, UserRepository _userRepository, IMapper _mapper)
     {
@@ -34,15 +32,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Register([FromBody] UserRegistrationModel user)
     {
-        // TODO: Use e-mail as username?
-        // TODO: Proper user mapping.
-        var identityUser = new UserEntity
-        {
-            Email = user.EmailAddress,
-            UserName = user.EmailAddress,
-            DiscordUsername = user.DiscordUsername,
-            RegistrationDate = DateTime.UtcNow,
-        };
+        var identityUser = mapper.Map<UserEntity>(user);
         var userIdentityResult = await userManager.CreateAsync(identityUser, user.Password);
 
         if (userIdentityResult.Succeeded)
@@ -73,10 +63,10 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SignIn([FromBody] UserSignInModel user)
     {
-        var signInResult = await signInManager.PasswordSignInAsync(user.EmailAddress, user.Password, isPersistent: false, lockoutOnFailure: false);
+        var signInResult = await signInManager.PasswordSignInAsync(user.Email, user.Password, isPersistent: false, lockoutOnFailure: false);
         if (signInResult.Succeeded)
         {
-            var identityUser = await userManager.FindByNameAsync(user.EmailAddress);
+            var identityUser = await userManager.FindByNameAsync(user.Email);
             var jsonWebToken = await CreateJsonWebToken(identityUser);
             return Ok(jsonWebToken);
         }

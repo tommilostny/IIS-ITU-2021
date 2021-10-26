@@ -1,11 +1,9 @@
-using Fituska.Server.Data;
+using Fituska.DAL;
+using Fituska.DAL.Repositories;
+using Fituska.Server.MapperProfiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,10 +17,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-//TODO: Change to UseSqlServer.
+//TODO: Change to UseSqlServer
 builder.Services.AddDbContext<FituskaDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DesignTimeConnection"));
 });
 
 builder.Services.AddDefaultIdentity<UserEntity>()
@@ -51,6 +49,10 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Fituska.Server", Version = "v1" });
 });
+
+builder.Services.AddScoped<UserRepository>();
+
+builder.Services.AddAutoMapper(typeof(EntityBase), typeof(ModelBase), typeof(UserMapperProfiles));
 
 
 var app = builder.Build();
