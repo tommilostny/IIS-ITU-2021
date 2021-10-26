@@ -13,8 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.2.106'
+    - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.0-rc.2.21480.5
         include-prerelease: true
