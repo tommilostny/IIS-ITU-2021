@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Fituska.DAL.Entities.Interfaces;
+﻿using Fituska.DAL.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Fituska.DAL.Entities;
@@ -36,13 +35,5 @@ public class UserEntity : IdentityUser<Guid>, IEntity
     public override int GetHashCode()
     {
         return HashCode.Combine(Id, FirstName, LastName, PasswordHash);
-    }
-
-    public class UserEntityMapperProfile : Profile
-    {
-        public UserEntityMapperProfile()
-        {
-            CreateMap<UserEntity, UserEntity>();
-        }
     }
 }

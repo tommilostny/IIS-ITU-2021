@@ -100,8 +100,8 @@ public class UserController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
     }
 
-    [HttpGet]
     [Route("user" + nameof(GetAll))]
+    [HttpGet]
     public ActionResult<List<UserListModel>> GetAll()
     {
         return mapper.Map<List<UserListModel>>(userRepository.GetAll());
