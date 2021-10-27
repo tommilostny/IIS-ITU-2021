@@ -2,9 +2,10 @@
 using Fituska.Shared.Models.Category;
 using Fituska.Shared.Models.User;
 using Fituska.Shared.Models.Vote;
+using Nemesis.Essentials.Design;
 
 namespace Fituska.Shared.Models.Question;
-public record QuestionListModel : ModelBase
+public record QuestionDetailModel : ModelBase
 {
     public string? Title { get; set; }
     public string? Text { get; set; }

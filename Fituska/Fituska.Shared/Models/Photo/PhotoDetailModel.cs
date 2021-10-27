@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fituska.Shared.Models.Photo;
 
-public class PhotoModel
+public record PhotoDetailModel : ModelBase
 {
-
+    public byte[]? Content { get; set; }
 }

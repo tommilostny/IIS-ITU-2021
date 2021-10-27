@@ -3,7 +3,6 @@
 public class PhotoEntity : EntityBase
 {
     public byte[]? Content { get; set; }
-
     public override bool Equals(object? obj)
     {
         if (obj == null) return false;
