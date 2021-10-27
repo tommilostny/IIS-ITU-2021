@@ -1,4 +1,6 @@
-﻿namespace Fituska.Client.Pages;
+﻿using Fituska.Shared.Models.User;
+
+namespace Fituska.Client.Pages;
 
 public partial class Register : ComponentBase
 {

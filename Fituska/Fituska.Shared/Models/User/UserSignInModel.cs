@@ -1,5 +1,4 @@
-﻿namespace Fituska.Shared.Models;
-
+﻿namespace Fituska.Shared.Models.User;
 public record UserSignInModel : ModelBase
 {
     [Required]

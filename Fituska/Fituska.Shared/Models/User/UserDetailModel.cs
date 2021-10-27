@@ -1,4 +1,4 @@
-﻿namespace Fituska.Shared.Models;
+﻿namespace Fituska.Shared.Models.User;
 
 public record UserDetailModel : ModelBase
 {
@@ -14,7 +14,7 @@ public record UserDetailModel : ModelBase
 
     public Guid? PhotoID { get; set; }
 
-    //public PhotoEntity? Photo { get; set; }
+    public PhotoModel? Photo { get; set; }
 
-    //public ValueCollection<CourseAttendanceEntity> AttendingCourses { get; set; } = new();
+    public List<CourseAttendencyModel> AttendingCourses { get; set; } = new();
 }

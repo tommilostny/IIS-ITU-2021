@@ -1,4 +1,6 @@
-﻿namespace Fituska.BL.MapperProfiles;
+﻿using Fituska.Shared.Models.User;
+
+namespace Fituska.BL.MapperProfiles;
 
 public class UserMapperProfiles : Profile
 {

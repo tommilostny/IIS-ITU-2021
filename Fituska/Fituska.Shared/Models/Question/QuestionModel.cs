@@ -1,4 +1,4 @@
-﻿namespace Fituska.Shared.Models;
+﻿namespace Fituska.Shared.Models.Question;
 
 //TODO: list/detail model??
 public class QuestionModel
