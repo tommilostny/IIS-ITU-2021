@@ -9,11 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fituska.API", "Fituska.API\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fituska.Shared", "Fituska.Shared\Fituska.Shared.csproj", "{E26436C1-923C-4666-ACA1-5EEE5B628686}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6E4480BE-3AA8-4E93-A1E3-33437E3B6E2C}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fituska.DAL.Tests", "Fituska.DAL.Tests\Fituska.DAL.Tests.csproj", "{F0C87573-9167-4A70-B4D8-2521FC4970D0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fituska.DAL", "Fituska.DAL\Fituska.DAL.csproj", "{097770B5-D675-4186-8742-5D0057667AF8}"

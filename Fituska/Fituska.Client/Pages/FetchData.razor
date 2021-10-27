@@ -39,13 +39,13 @@ else
 
 @code {
     [CascadingParameter]
-    protected Task<AuthenticationState> AuthenticationState { get; set; }
+    protected Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private WeatherForecast[]? forecasts = null;
 
     protected override async Task OnInitializedAsync()
     {
-        var user = (await AuthenticationState).User;
+        var user = (await AuthenticationState!).User;
 
         if (user?.Identity?.IsAuthenticated == true)
         {
