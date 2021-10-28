@@ -14,7 +14,7 @@ public record UserDetailModel : ModelBase
 
     public Guid? PhotoID { get; set; }
 
-    public PhotoDetailModel? Photo { get; set; }
+    public byte[]? Photo { get; set; }
 
     public List<CourseAttendencyDetailModel> AttendingCourses { get; set; } = new();
 }

@@ -1,4 +1,6 @@
-﻿namespace Fituska.BL.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Fituska.BL.Repositories;
 
 public class UserRepository : IRepository<UserEntity>
 {
@@ -11,7 +13,12 @@ public class UserRepository : IRepository<UserEntity>
 
     public void Delete(IEntity entity)
     {
-        database.Users.Remove((UserEntity)entity);
+        var user = (UserEntity)entity;
+        if (user != null)
+        {
+            database.Users.Remove(user);
+            database.SaveChanges();
+        }
     }
 
     public void Delete(Guid entityID)
@@ -20,9 +27,21 @@ public class UserRepository : IRepository<UserEntity>
         Delete(user!);
     }
 
-    public IEntity InsertOrUpdate(IEntity model)
+    public IEntity Insert(IEntity model)
     {
-        throw new NotImplementedException();
+        UserEntity user = (UserEntity)model;
+        database.Users.Add(user);
+        database.SaveChanges();
+        return user;
+    }
+
+    public IEntity Update(IEntity model)
+    {
+        UserEntity user = (UserEntity)model;
+        var manufacturerForUpdate = database.Users.Attach(user);
+        manufacturerForUpdate.State = EntityState.Modified;
+        database.SaveChanges();
+        return user;
     }
 
     public IEnumerable<IEntity> GetAll()

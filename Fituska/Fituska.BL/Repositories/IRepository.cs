@@ -2,7 +2,8 @@
 
 public interface IRepository<TEntity> where TEntity : IEntity
 {
-    IEntity InsertOrUpdate(IEntity model);
+    IEntity Insert(IEntity model);
+    IEntity Update(IEntity model);
     void Delete(IEntity entity);
     void Delete(Guid entityID);
     IEntity GetByID(Guid entityID);

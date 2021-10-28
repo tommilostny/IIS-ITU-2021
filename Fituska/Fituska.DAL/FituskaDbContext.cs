@@ -16,7 +16,6 @@ public class FituskaDbContext : IdentityDbContext<UserEntity, IdentityRole<Guid>
     public DbSet<CourseEntity> Courses { get; set; }
     public DbSet<DiscussionEntity> Discussions { get; set; }
     public DbSet<FileEntity> Files { get; set; }
-    public DbSet<PhotoEntity> Photos { get; set; }
     public DbSet<QuestionEntity> Question { get; set; }
     public DbSet<VoteEntity> Votes { get; set; }
 }

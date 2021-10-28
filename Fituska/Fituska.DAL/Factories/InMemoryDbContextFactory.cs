@@ -13,7 +13,8 @@ public class InMemoryDbContextFactory : IDbContextFactory
     public FituskaDbContext Create()
     {
         var contextOptionsBuilder = new DbContextOptionsBuilder<FituskaDbContext>();
-        contextOptionsBuilder.UseInMemoryDatabase(databaseName);
+        contextOptionsBuilder.UseInMemoryDatabase(databaseName)
+            .EnableSensitiveDataLogging();
 
         return new FituskaDbContext(contextOptionsBuilder.Options);
     }
