@@ -7,11 +7,14 @@ public class AnswerEntity : EntityBase
     public Guid UserId { get; set; }
     public UserEntity User { get; set; }
     public DateTime CreationTime { get; set; }
-    public ValueCollection<UserEntity> UsersSawQuestion { get; set; } = new ValueCollection<UserEntity>();
+    public ValueCollection<UserSawAnswer> UsersSawAnswer { get; set; } = new ValueCollection<UserSawAnswer>();
 
     public override bool Equals(object? answerObject)
     {
-        return GetHashCode() == answerObject?.GetHashCode();
+        var answer = (AnswerEntity?)answerObject;
+        if(GetHashCode() != answer?.GetHashCode()) return false;
+        if (!UsersSawAnswer.SequenceEqual(answer.UsersSawAnswer)) return false;
+        return true;
     }
 
     public override int GetHashCode()

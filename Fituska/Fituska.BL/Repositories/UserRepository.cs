@@ -38,8 +38,8 @@ public class UserRepository : IRepository<UserEntity>
     public IEntity Update(IEntity model)
     {
         UserEntity user = (UserEntity)model;
-        var manufacturerForUpdate = database.Users.Attach(user);
-        manufacturerForUpdate.State = EntityState.Modified;
+        var userForUpdate = database.Users.Attach(user);
+        userForUpdate.State = EntityState.Modified;
         database.SaveChanges();
         return user;
     }

@@ -55,11 +55,11 @@ public class UserRepositoryTests
     {
         UserEntity user = new()
         {
-            FirstName = "Name",
-            LastName = "Surname",
+            FirstName = "InsertName",
+            LastName = "InserSurname",
             AccessFailedCount = 0,
-            DiscordUsername = "DiscordName",
-            Email = "email",
+            DiscordUsername = "InsertDiscordName",
+            Email = "Insertemail",
             EmailConfirmed = true,
             RegistrationDate = new DateTime(2021, 10, 10, 10, 59, 50),
         };
@@ -68,6 +68,8 @@ public class UserRepositoryTests
         using var database = dbContextFactory.Create();
         var userFromDb = database.Users.Find(user.Id);
         Assert.StrictEqual(user, userFromDb);
+        database.Users.Remove(userFromDb);
+        database.SaveChanges();
     }
     // TODO : Users persisting through tests
     [Fact]
@@ -103,12 +105,8 @@ public class UserRepositoryTests
         List<UserEntity> usersFromDb = (List<UserEntity>)userRepository.GetAll();
 
         Assert.True(usersFromDb.SequenceEqual(users));
-        /*for (int i = 0; i < users.Count; i++)
-        {
-            Assert.StrictEqual(users[i],usersFromDb[i]);
-        }
         Assert.NotStrictEqual(users[0], usersFromDb[1]);
-        Assert.NotStrictEqual(users[1], usersFromDb[0]);*/
+        Assert.NotStrictEqual(users[1], usersFromDb[0]);
     }
 
     [Fact]
