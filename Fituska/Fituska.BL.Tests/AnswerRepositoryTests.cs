@@ -1,4 +1,5 @@
 namespace Fituska.BL.Tests;
+using Microsoft.EntityFrameworkCore;
 
 public class AnswerRepositoryTests
 {
@@ -38,7 +39,10 @@ public class AnswerRepositoryTests
 
         answerRepository.Insert(answer);
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers.Find(answer.Id);
+        var answerFromDB = database.Answers
+            .Include(answer => answer.UsersSawAnswer)
+            .ThenInclude(userSawQuestion => userSawQuestion.User)
+            .First(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         database.Answers.Remove(answerFromDB);
         database.SaveChanges();
@@ -47,19 +51,12 @@ public class AnswerRepositoryTests
     [Fact]
     public void GetAllAnswers()
     {
-        List<AnswerEntity> Answers = new()
-        {
-            new AnswerEntity
-            {
-            },
-            new AnswerEntity
-            {
-            },
-            
-        };
+        dbContext.Answers.RemoveRange(dbContext.Answers);
+        List<AnswerEntity> Answers = new(){};
+        Answers.Add(SeedData());
+        Answers.Add(SeedData());
         dbContext.Answers.AddRange(Answers);
         dbContext.SaveChanges();
-
         using var database = dbContextFactory.Create();
         List<AnswerEntity> AnswersFromDb = (List<AnswerEntity>)answerRepository.GetAll();
 
@@ -75,14 +72,17 @@ public class AnswerRepositoryTests
         dbContext.Answers.Add(answer);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers.Find(answer.Id);
+        var answerFromDB = database.Answers
+            .Include(answers => answers.UsersSawAnswer)
+            .ThenInclude(userSawAnswers => userSawAnswers.User)
+            .First(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
-        //answerFromDB.FirstName = "UpdatedName";
-        //answerFromDB.LastName = "UpdatedLastName";
-        //answerFromDB.DiscordUsername = "UpdatedDiscordUsername";
-        //answerFromDB.PasswordHash = "UpdatedPasswordHash";
+        answerFromDB.Text = "UpdatedText";
         answer = (AnswerEntity)answerRepository.Update(answer);
-        var updatedUserFromDb = database.Answers.Find(answer.Id);
+        var updatedUserFromDb = database.Answers
+            .Include(answers => answers.UsersSawAnswer)
+            .ThenInclude(userSawAnswers => userSawAnswers.User)
+            .First(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answerFromDB, updatedUserFromDb);
     }
 
@@ -93,7 +93,10 @@ public class AnswerRepositoryTests
         dbContext.Answers.Add(answer);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers.Find(answer.Id);
+        var answerFromDB = database.Answers
+            .Include(answer => answer.UsersSawAnswer)
+            .ThenInclude(usersSawQuestion => usersSawQuestion.User)
+            .First(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerRepository.Delete(answer);
         var deletedAnswer = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);
@@ -107,7 +110,10 @@ public class AnswerRepositoryTests
         dbContext.Answers.Add(answer);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers.Find(answer.Id);
+        var answerFromDB = database.Answers
+            .Include(answer => answer.UsersSawAnswer)
+            .ThenInclude(usersSawQuestion => usersSawQuestion.User)
+            .First(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerRepository.Delete(answer.Id);
         var deletedUser = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);

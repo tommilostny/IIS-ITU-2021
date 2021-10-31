@@ -48,12 +48,14 @@ public class AnswerRepository : IRepository<AnswerEntity>
     {
         return database.Answers
             .Include(answer => answer.UsersSawAnswer)
+            .ThenInclude(userSawQuestion => userSawQuestion.User)
             .ToList();
     }
     public IEntity GetByID(Guid entityID)
     {
         var answer = database.Answers
             .Include(answer => answer.UsersSawAnswer)
+            .ThenInclude(userSawQuestion => userSawQuestion.User)
             .First(answer => answer.Id == entityID);
         return answer;
     }

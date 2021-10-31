@@ -46,11 +46,17 @@ public class UserRepository : IRepository<UserEntity>
 
     public IEnumerable<IEntity> GetAll()
     {
-        return database.Users.ToList();
+        return database.Users
+            .Include(user => user.AttendingCourses)
+            .ThenInclude(attendingCourse => attendingCourse.Course)
+            .ToList();
     }
     public IEntity GetByID(Guid entityID)
     {
-        var user = database.Users.First(user => user.Id == entityID);
+        var user = database.Users
+            .Include(user=> user.AttendingCourses)
+            .ThenInclude(attendingCourse => attendingCourse.Course)
+            .First(user => user.Id == entityID);
         return user;
     }
 }

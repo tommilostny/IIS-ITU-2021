@@ -18,4 +18,7 @@ public class FituskaDbContext : IdentityDbContext<UserEntity, IdentityRole<Guid>
     public DbSet<FileEntity> Files { get; set; }
     public DbSet<QuestionEntity> Question { get; set; }
     public DbSet<VoteEntity> Votes { get; set; }
+    public DbSet<UserSawAnswer> UsersSawAnswers { get; set; }
+    public DbSet<UserSawQuestion> UsersSawQuestions { get; set; }
+
 }
