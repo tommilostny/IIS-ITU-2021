@@ -13,16 +13,14 @@ public class UserController : ControllerBase
     private readonly SignInManager<UserEntity> signInManager;
     private readonly UserManager<UserEntity> userManager;
     private readonly IConfiguration configuration;
-    private readonly UserRepository userRepository;
     private readonly IMapper mapper;
 
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, UserRepository userRepository, IMapper mapper)
+    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, IMapper mapper)
     {
         this.signInManager = signInManager;
         this.userManager = userManager;
         this.configuration = configuration;
-        this.userRepository = userRepository;
         this.mapper = mapper;
     }
 
@@ -102,9 +100,14 @@ public class UserController : ControllerBase
 
     [Route(nameof(GetAll))]
     [HttpGet]
-    public ActionResult<List<UserListModel>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return mapper.Map<List<UserListModel>>(userRepository.GetAll());
+        var result = new List<UserEntity>();
+        foreach (var role in RoleNames.GetAll())
+        {
+            result.AddRange(await userManager.GetUsersInRoleAsync(role));
+        }
+        return Ok(mapper.Map<List<UserListModel>>(result));
     }
 
     [HttpDelete("delete/{id}")]

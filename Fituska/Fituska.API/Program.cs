@@ -47,8 +47,6 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Fituška API", Version = "v1" });
 });
 
-builder.Services.AddScoped<UserRepository>();
-
 builder.Services.AddAutoMapper(typeof(EntityBase), typeof(ModelBase), typeof(UserMapperProfiles));
 
 
@@ -56,17 +54,20 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    var serviceProvider = builder.Services.BuildServiceProvider();
-    var roleManager = serviceProvider.GetService<RoleManager<IdentityRole<Guid>>>();
-    var userManager = serviceProvider.GetService<UserManager<UserEntity>>();
-    if (roleManager is not null && userManager is not null)
+    using (var serviceProvider = builder.Services.BuildServiceProvider())
     {
-        await SeedRolesAndUsers.Seed(roleManager, userManager);
+        var roleManager = serviceProvider.GetService<RoleManager<IdentityRole<Guid>>>();
+        var userManager = serviceProvider.GetService<UserManager<UserEntity>>();
+        if (roleManager is not null && userManager is not null)
+        {
+            await SeedRolesAndUsers.Seed(roleManager, userManager);
+        }
     }
     app.UseDeveloperExceptionPage();
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fituška API v1"));
 }
-app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fituška API v1"));
 
 app.UseHttpsRedirection();
 app.UseRouting();
