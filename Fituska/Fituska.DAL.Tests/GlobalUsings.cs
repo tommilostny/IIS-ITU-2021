@@ -5,3 +5,4 @@ global using Xunit;
 global using Fituska.DAL.Entities;
 global using Fituska.DAL.Factories;
 global using Fituska.DAL;
+global using Microsoft.EntityFrameworkCore;

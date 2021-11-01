@@ -11,20 +11,14 @@ public class UserRepository : IRepository<UserEntity>
         this.database = database;
     }
 
-    public void Delete(IEntity entity)
+    public void Delete(Guid entityID)
     {
-        var user = (UserEntity)entity;
+        UserEntity? user = database.Users.Find(entityID);
         if (user != null)
         {
             database.Users.Remove(user);
             database.SaveChanges();
         }
-    }
-
-    public void Delete(Guid entityID)
-    {
-        UserEntity? user = database.Users.Find(entityID);
-        Delete(user!);
     }
 
     public IEntity Insert(IEntity model)

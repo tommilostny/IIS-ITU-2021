@@ -11,20 +11,14 @@ public class CategoryRepository : IRepository<CategoryEntity>
         this.database = database;
     }
 
-    public void Delete(IEntity entity)
+    public void Delete(Guid entityID)
     {
-        var category = (CategoryEntity)entity;
+        CategoryEntity? category = database.Categories.Find(entityID);
         if (category != null)
         {
             database.Categories.Remove(category);
             database.SaveChanges();
         }
-    }
-
-    public void Delete(Guid entityID)
-    {
-        CategoryEntity? ansnwer = database.Categories.Find(entityID);
-        Delete(ansnwer!);
     }
 
     public IEntity Insert(IEntity model)

@@ -11,20 +11,14 @@ public class AnswerRepository : IRepository<AnswerEntity>
         this.database = database;
     }
 
-    public void Delete(IEntity entity)
+    public void Delete(Guid entityID)
     {
-        var answer = (AnswerEntity)entity;
+        AnswerEntity? answer = database.Answers.Find(entityID);
         if (answer != null)
         {
             database.Answers.Remove(answer);
             database.SaveChanges();
         }
-    }
-
-    public void Delete(Guid entityID)
-    {
-        AnswerEntity? ansnwer = database.Answers.Find(entityID);
-        Delete(ansnwer!);
     }
 
     public IEntity Insert(IEntity model)

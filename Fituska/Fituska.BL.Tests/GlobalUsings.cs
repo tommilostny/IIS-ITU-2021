@@ -7,4 +7,4 @@ global using Fituska.BL.Repositories;
 global using Fituska.DAL;
 global using Fituska.DAL.Entities;
 global using Fituska.DAL.Factories;
-global using AutoMapper;
+global using Nemesis.Essentials.Design;

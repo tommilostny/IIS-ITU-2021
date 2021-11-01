@@ -21,15 +21,21 @@ public class CategoryTests : IAsyncLifetime
         var newCategory = new CategoryEntity
         {
             Name = "Půlsemestrálka",
-            Description = "Ptejte se k půlsemestrálce"
+            Description = "Ptejte se k půlsemestrálce",
+            Course = new CourseEntity()
+            {
+                Name = "Signály a systémy",
+                Shortcut = "ISS",               
+            }
         };
-
         dbContext.Categories.Add(newCategory);
         dbContext.SaveChanges();
 
         //Assert
         using var testDbContext = dbContextFactory.Create();
-        var retrievedCategory = testDbContext.Categories.SingleOrDefault(category => category.Id == newCategory.Id);
+        var retrievedCategory = testDbContext.Categories
+            .Include(category => category.Course)
+            .First(category => category.Id == newCategory.Id);
         Assert.StrictEqual(newCategory, retrievedCategory);
     }
 }

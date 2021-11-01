@@ -137,31 +137,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public void DeleteUserByEntityReference()
-    {
-        UserEntity user = new()
-        {
-            FirstName = "Name",
-            LastName = "Surname",
-            AccessFailedCount = 0,
-            DiscordUsername = "DiscordName",
-            Email = "email",
-            EmailConfirmed = true,
-            RegistrationDate = new DateTime(2021, 10, 10, 10, 59, 50),
-        };
-
-        dbContext.Users.Add(user);
-        dbContext.SaveChanges();
-        using var database = dbContextFactory.Create();
-        var userFromDb = database.Users.Find(user.Id);
-        Assert.StrictEqual(user, userFromDb);
-        userRepository.Delete(user);
-        var deletedUser = database.Users.FirstOrDefault(deletingUser => deletingUser.Id == user.Id);
-        Assert.Null(deletedUser);
-    }
-
-    [Fact]
-    public void DeleteUserById()
+    public void DeleteUser()
     {
         UserEntity user = new()
         {

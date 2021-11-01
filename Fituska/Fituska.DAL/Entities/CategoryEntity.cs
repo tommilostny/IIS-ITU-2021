@@ -10,9 +10,12 @@ public class CategoryEntity : EntityBase
 
     public CourseEntity Course { get; set; }
 
-    public override bool Equals(object? category)
+    public override bool Equals(object? obj)
     {
-        return GetHashCode() == category?.GetHashCode();
+        CategoryEntity? category = obj as CategoryEntity;
+        if (GetHashCode() != obj?.GetHashCode()) return false;
+        if (!Course.Equals(category?.Course)) return false;
+        return true;
     }
 
     public override int GetHashCode()

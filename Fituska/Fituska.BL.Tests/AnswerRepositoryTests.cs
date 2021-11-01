@@ -87,24 +87,7 @@ public class AnswerRepositoryTests
     }
 
     [Fact]
-    public void DeleteAnswerByEntityReference()
-    {
-        AnswerEntity answer = SeedData();
-        dbContext.Answers.Add(answer);
-        dbContext.SaveChanges();
-        using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers
-            .Include(answer => answer.UsersSawAnswer)
-            .ThenInclude(usersSawQuestion => usersSawQuestion.User)
-            .First(answerToFind => answerToFind.Id == answer.Id);
-        Assert.StrictEqual(answer, answerFromDB);
-        answerRepository.Delete(answer);
-        var deletedAnswer = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);
-        Assert.Null(deletedAnswer);
-    }
-
-    [Fact]
-    public void DeleteAnswerById()
+    public void DeleteAnswer()
     {
         AnswerEntity answer = SeedData();
         dbContext.Answers.Add(answer);
@@ -116,8 +99,8 @@ public class AnswerRepositoryTests
             .First(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerRepository.Delete(answer.Id);
-        var deletedUser = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);
-        Assert.Null(deletedUser);
+        var deletedAnswer = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);
+        Assert.Null(deletedAnswer);
     }
 
     public AnswerEntity SeedData()
