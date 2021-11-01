@@ -1,4 +1,6 @@
-﻿namespace Fituska.Client.Pages;
+﻿using Fituska.Shared.Models.User;
+
+namespace Fituska.Client.Pages;
 
 public partial class Register : ComponentBase
 {
@@ -7,7 +9,7 @@ public partial class Register : ComponentBase
 
     private readonly UserRegistrationModel _userToRegister = new()
     {
-        EmailAddress = "xlogin01@vutbr.cz",
+        Email = "xlogin01@vutbr.cz",
         RoleName = RoleNames.StudentRoleName
     };
     private bool _registerSuccess = false;
