@@ -20,7 +20,11 @@ builder.Services.AddDbContext<FituskaDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DesignTimeConnection"));
 });
 
-builder.Services.AddDefaultIdentity<UserEntity>()
+builder.Services.AddDefaultIdentity<UserEntity>(options => 
+{
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+})
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<FituskaDbContext>();
 
