@@ -42,7 +42,7 @@ public class AnswerRepositoryTests
         var answerFromDB = database.Answers
             .Include(answer => answer.UsersSawAnswer)
             .ThenInclude(userSawQuestion => userSawQuestion.User)
-            .First(answerToFind => answerToFind.Id == answer.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         database.Answers.Remove(answerFromDB);
         database.SaveChanges();
@@ -75,14 +75,14 @@ public class AnswerRepositoryTests
         var answerFromDB = database.Answers
             .Include(answers => answers.UsersSawAnswer)
             .ThenInclude(userSawAnswers => userSawAnswers.User)
-            .First(answerToFind => answerToFind.Id == answer.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerFromDB.Text = "UpdatedText";
         answer = (AnswerEntity)answerRepository.Update(answer);
         var updatedUserFromDb = database.Answers
             .Include(answers => answers.UsersSawAnswer)
             .ThenInclude(userSawAnswers => userSawAnswers.User)
-            .First(answerToFind => answerToFind.Id == answer.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answerFromDB, updatedUserFromDb);
     }
 
@@ -96,7 +96,7 @@ public class AnswerRepositoryTests
         var answerFromDB = database.Answers
             .Include(answer => answer.UsersSawAnswer)
             .ThenInclude(usersSawQuestion => usersSawQuestion.User)
-            .First(answerToFind => answerToFind.Id == answer.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerRepository.Delete(answer.Id);
         var deletedAnswer = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);

@@ -13,10 +13,13 @@ public class DiscussionRepository : IRepository<DiscussionEntity>
 
     public void Delete(Guid entityID)
     {
-        DiscussionEntity? discussion = database.Discussions.Find(entityID);
+        DiscussionEntity? discussion = database.Discussions
+            .Include(discussion => discussion.Files)
+            .FirstOrDefault(discussion => discussion.Id == entityID);
         if (discussion != null)
         {
             discussion.Text = "Deleted";
+            //discussion.Files
             //TODO: Co všechno budeme mazat ??
             Update(discussion);
             database.SaveChanges();
@@ -49,14 +52,14 @@ public class DiscussionRepository : IRepository<DiscussionEntity>
     }
     public IEntity GetByID(Guid entityID)
     {
-        DiscussionEntity? discussion = database.Discussions.First(discussion => discussion.Id == entityID);
+        DiscussionEntity? discussion = database.Discussions.FirstOrDefault(discussion => discussion.Id == entityID);
         DiscussionEntity? lastDiscussion = discussion;
         DiscussionEntity? currentDiscussion = database.Discussions.FirstOrDefault(discussion => discussion.Id == discussion.OriginId);
         while (currentDiscussion != null)
         {
             lastDiscussion.OriginDiscussion = currentDiscussion;
             lastDiscussion = currentDiscussion;
-            currentDiscussion = database.Discussions.First(discussion => discussion.Id == lastDiscussion.OriginId);
+            currentDiscussion = database.Discussions.FirstOrDefault(discussion => discussion.Id == lastDiscussion.OriginId);
         }
         return discussion;
     }

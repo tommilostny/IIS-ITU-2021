@@ -38,7 +38,7 @@ public class FileRepositoryTests
         fileRepository.Insert(file);
         using var database = dbContextFactory.Create();
         var fileFromDb = database.Files
-            .First(fileToFind => fileToFind.Id == file.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == file.Id);
         Assert.StrictEqual(file, fileFromDb);
         database.Files.Remove(fileFromDb);
         database.SaveChanges();
@@ -68,12 +68,12 @@ public class FileRepositoryTests
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var fileFromDb = database.Files
-            .First(fileToFind => fileToFind.Id == file.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == file.Id);
         Assert.StrictEqual(file, fileFromDb);
         file.Content = new byte[0];
         file = (FileEntity)fileRepository.Update(file);
         var updatedUserFromDb = database.Files
-            .First(fileToFind => fileToFind.Id == file.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == file.Id);
         Assert.StrictEqual(fileFromDb, updatedUserFromDb);
     }
 
@@ -85,7 +85,7 @@ public class FileRepositoryTests
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var fileFromDb = database.Files
-            .First(fileToFind => fileToFind.Id == file.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == file.Id);
         Assert.StrictEqual(file, fileFromDb);
         fileRepository.Delete(file.Id);
         var deletedCategory = database.Files.FirstOrDefault(deletingUser => deletingUser.Id == file.Id);

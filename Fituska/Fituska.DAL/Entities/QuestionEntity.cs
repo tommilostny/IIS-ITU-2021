@@ -9,8 +9,7 @@ public class QuestionEntity : EntityBase
     public CategoryEntity Category { get; set; }
     public ValueCollection<AnswerEntity> Answers { get; set; } = new ValueCollection<AnswerEntity>();
     public DateTime CreationTime { get; set; }
-    public ValueCollection<UserSawQuestion> UserSawQuestions { get; set; } = new ValueCollection<UserSawQuestion>();
-    public ValueCollection<VoteEntity> UsersVoteQuestion { get; set; } = new ValueCollection<VoteEntity>();
+    public ValueCollection<UserSawQuestion> UserSawQuestions { get; set; } = new ValueCollection<UserSawQuestion>();  
 
     public override bool Equals(object? obj)
     {

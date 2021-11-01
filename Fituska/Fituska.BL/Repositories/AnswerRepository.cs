@@ -43,6 +43,7 @@ public class AnswerRepository : IRepository<AnswerEntity>
         return database.Answers
             .Include(answer => answer.UsersSawAnswer)
             .ThenInclude(userSawQuestion => userSawQuestion.User)
+            .Include(answer => answer.UsersVoteAnswers)
             .ToList();
     }
     public IEntity GetByID(Guid entityID)
@@ -50,7 +51,8 @@ public class AnswerRepository : IRepository<AnswerEntity>
         var answer = database.Answers
             .Include(answer => answer.UsersSawAnswer)
             .ThenInclude(userSawQuestion => userSawQuestion.User)
-            .First(answer => answer.Id == entityID);
+            .Include(answer => answer.UsersVoteAnswers)
+            .FirstOrDefault(answer => answer.Id == entityID);
         return answer;
     }
 }

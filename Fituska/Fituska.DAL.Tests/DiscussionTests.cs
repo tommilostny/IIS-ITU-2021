@@ -32,7 +32,7 @@ public class DiscussionTests : IAsyncLifetime
         //Assert
         using var testDbContext = dbContextFactory.Create();
         var retrievedDiscussion = testDbContext.Discussions
-            .First(discussion => discussion.Id == newDiscussion.Id);
+            .FirstOrDefault(discussion => discussion.Id == newDiscussion.Id);
         Assert.StrictEqual(newDiscussion, retrievedDiscussion);
     }
 
@@ -71,7 +71,7 @@ public class DiscussionTests : IAsyncLifetime
             .Include(file => file.Files)
             .Include(file => file.Author)
             .Include(file => file.Answer)
-            .First(discussion => discussion.Id == newDiscussion.Id);
+            .FirstOrDefault(discussion => discussion.Id == newDiscussion.Id);
         Assert.StrictEqual(newDiscussion, retrievedDiscussion);
     }
 

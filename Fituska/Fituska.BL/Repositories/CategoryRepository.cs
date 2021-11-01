@@ -48,7 +48,7 @@ public class CategoryRepository : IRepository<CategoryEntity>
     {
         var category = database.Categories
             .Include(category => category.Course)
-            .First(category => category.Id == entityID);
+            .FirstOrDefault(category => category.Id == entityID);
         return category;
     }
 }

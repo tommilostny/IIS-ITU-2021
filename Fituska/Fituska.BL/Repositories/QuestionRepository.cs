@@ -41,12 +41,17 @@ public class QuestionRepository : IRepository<QuestionEntity>
     public IEnumerable<IEntity> GetAll()
     {
         IEnumerable<IEntity> discussions = database.Questions
+            .Include(question => question.UserSawQuestions)
+            .Include(question => question.Answers)
             .ToList();
         return discussions;
     }
     public IEntity GetByID(Guid entityID)
     {
-        QuestionEntity? question = database.Questions.First(question => question.Id == entityID);
+        QuestionEntity? question = database.Questions
+            .Include(question => question.UserSawQuestions)
+            .Include(question => question.Answers)
+            .FirstOrDefault(question => question.Id == entityID);
         return question;
     }
 }

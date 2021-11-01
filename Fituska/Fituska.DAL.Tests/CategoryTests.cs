@@ -35,7 +35,7 @@ public class CategoryTests : IAsyncLifetime
         using var testDbContext = dbContextFactory.Create();
         var retrievedCategory = testDbContext.Categories
             .Include(category => category.Course)
-            .First(category => category.Id == newCategory.Id);
+            .FirstOrDefault(category => category.Id == newCategory.Id);
         Assert.StrictEqual(newCategory, retrievedCategory);
     }
 }

@@ -41,7 +41,7 @@ public class CategoryRepositoryTests
         using var database = dbContextFactory.Create();
         var categoryFromDB = database.Categories
             .Include(category => category.Course)
-            .First(answerToFind => answerToFind.Id == category.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == category.Id);
         Assert.StrictEqual(category, categoryFromDB);
         database.Categories.Remove(categoryFromDB);
         database.SaveChanges();
@@ -73,13 +73,13 @@ public class CategoryRepositoryTests
         using var database = dbContextFactory.Create();
         var categoryFromDB = database.Categories
             .Include(categories => categories.Course)
-            .First(answerToFind => answerToFind.Id == category.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == category.Id);
         Assert.StrictEqual(category, categoryFromDB);
         categoryFromDB.Course.Semester = Shared.Enums.Semester.Summer;
         category = (CategoryEntity)categoryRepository.Update(category);
         var updatedUserFromDb = database.Categories
             .Include(categories => categories.Course)
-            .First(answerToFind => answerToFind.Id == category.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == category.Id);
         Assert.StrictEqual(categoryFromDB, updatedUserFromDb);
     }
 
@@ -92,7 +92,7 @@ public class CategoryRepositoryTests
         using var database = dbContextFactory.Create();
         var categoryFromDB = database.Categories
             .Include(category => category.Course)
-            .First(answerToFind => answerToFind.Id == category.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == category.Id);
         Assert.StrictEqual(category, categoryFromDB);
         categoryRepository.Delete(category.Id);
         var deletedCategory = database.Categories.FirstOrDefault(deletingUser => deletingUser.Id == category.Id);

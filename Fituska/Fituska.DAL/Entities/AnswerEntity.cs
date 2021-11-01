@@ -8,7 +8,7 @@ public class AnswerEntity : EntityBase
     public UserEntity User { get; set; }
     public DateTime CreationTime { get; set; }
     public ValueCollection<UserSawAnswer> UsersSawAnswer { get; set; } = new ValueCollection<UserSawAnswer>();
-
+    public ValueCollection<VoteEntity> UsersVoteAnswers { get; set; } = new ValueCollection<VoteEntity>();
     public override bool Equals(object? answerObject)
     {
         var answer = (AnswerEntity?)answerObject;

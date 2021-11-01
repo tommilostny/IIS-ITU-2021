@@ -46,7 +46,7 @@ public class FileRepository : IRepository<FileEntity>
     }
     public IEntity GetByID(Guid entityID)
     {
-        FileEntity? file = database.Files.First(file => file.Id == entityID);
+        FileEntity? file = database.Files.FirstOrDefault(file => file.Id == entityID);
         return file;
     }
 }

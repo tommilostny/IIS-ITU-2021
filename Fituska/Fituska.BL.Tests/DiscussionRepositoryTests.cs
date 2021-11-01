@@ -33,7 +33,7 @@ public class DiscussionRepositoryTests
         discussionRepository.Insert(discussion);
         using var database = dbContextFactory.Create();
         var discussionFromDb = database.Discussions
-            .First(discussionToFind => discussionToFind.Id == discussion.Id);
+            .FirstOrDefault(discussionToFind => discussionToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
         database.Discussions.Remove(discussionFromDb);
         database.SaveChanges();
@@ -80,12 +80,12 @@ public class DiscussionRepositoryTests
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var discussionFromDb = database.Discussions
-            .First(answerToFind => answerToFind.Id == discussion.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
         discussionFromDb.Text = "Updated text";
         discussion = (DiscussionEntity)discussionRepository.Update(discussion);
         var updatedUserFromDb = database.Discussions
-            .First(answerToFind => answerToFind.Id == discussion.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussionFromDb, updatedUserFromDb);
     }
 
@@ -97,7 +97,7 @@ public class DiscussionRepositoryTests
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var discussionFromDb = database.Discussions
-            .First(answerToFind => answerToFind.Id == discussion.Id);
+            .FirstOrDefault(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
         discussionRepository.Delete(discussionFromDb.Id);
         var deletedDiscussion = database.Discussions.FirstOrDefault(deletingUser => deletingUser.Id == discussion.Id);

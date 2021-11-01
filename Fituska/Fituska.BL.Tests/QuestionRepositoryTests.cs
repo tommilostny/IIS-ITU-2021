@@ -18,7 +18,7 @@ public class QuestionRepositoryTests
 
 
     [Fact]
-    public void GetFileById()
+    public void GetQuestionById()
     {
         QuestionEntity question = SeedData();
 
@@ -31,21 +31,21 @@ public class QuestionRepositoryTests
 
 
     [Fact]
-    public void InsertFiles()
+    public void InsertQuestion()
     {
         QuestionEntity question = SeedData();
 
         fileRepository.Insert(question);
         using var database = dbContextFactory.Create();
         var questionFromDb = database.Questions
-            .First(fileToFind => fileToFind.Id == question.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(question, questionFromDb);
         database.Questions.Remove(questionFromDb);
         database.SaveChanges();
     }
 
     [Fact]
-    public void GetAllFiles()
+    public void GetAllQuestions()
     {
         dbContext.Questions.RemoveRange(dbContext.Questions);
         List<QuestionEntity> Questions = new() { };
@@ -61,31 +61,31 @@ public class QuestionRepositoryTests
     }
 
     [Fact]
-    public void UpdateFile()
+    public void UpdateQuestion()
     {
         QuestionEntity question = SeedData();
         dbContext.Questions.Add(question);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var questionFromDb = database.Questions
-            .First(fileToFind => fileToFind.Id == question.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(question, questionFromDb);
         question.Title = "Updated Title";
         question = (QuestionEntity)fileRepository.Update(question);
         var updatedUserFromDb = database.Questions
-            .First(fileToFind => fileToFind.Id == question.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(questionFromDb, updatedUserFromDb);
     }
 
     [Fact]
-    public void DeleteFiles()
+    public void DeleteQuestion()
     {
         QuestionEntity question = SeedData();
         dbContext.Questions.Add(question);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var questionFromDb = database.Questions
-            .First(fileToFind => fileToFind.Id == question.Id);
+            .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(question, questionFromDb);
         fileRepository.Delete(question.Id);
         var deletedCategory = database.Questions.FirstOrDefault(deletingUser => deletingUser.Id == question.Id);

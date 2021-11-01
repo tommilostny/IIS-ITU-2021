@@ -19,7 +19,7 @@ public class VoteTests : IAsyncLifetime
     {
         var newVote = new VoteEntity
         {
-            Vote = Fituska.Shared.Enums.QuestionVote.Like,
+            Vote = Shared.Enums.QuestionVote.Like,
         };
 
         dbContext.Votes.Add(newVote);

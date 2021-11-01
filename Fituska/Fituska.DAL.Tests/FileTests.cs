@@ -31,7 +31,7 @@ public class FileTests : IAsyncLifetime
         //Assert
         using var testDbContext = dbContextFactory.Create();
         var retrievedFile = testDbContext.Files
-            .First(file => file.Id == newFile.Id);
+            .FirstOrDefault(file => file.Id == newFile.Id);
         Assert.StrictEqual(newFile, retrievedFile);
     }
 
@@ -54,7 +54,7 @@ public class FileTests : IAsyncLifetime
         using var testDbContext = dbContextFactory.Create();
         var retrievedFile = testDbContext.Files
             .Include(file => file.Answer)
-            .First(file => file.Id == newFile.Id);
+            .FirstOrDefault(file => file.Id == newFile.Id);
         Assert.StrictEqual(newFile, retrievedFile);
     }
 
@@ -77,7 +77,7 @@ public class FileTests : IAsyncLifetime
         using var testDbContext = dbContextFactory.Create();
         var retrievedFile = testDbContext.Files
             .Include(file => file.Discussion)
-            .First(file => file.Id == newFile.Id);
+            .FirstOrDefault(file => file.Id == newFile.Id);
         Assert.StrictEqual(newFile, retrievedFile);
     }
 
@@ -100,7 +100,7 @@ public class FileTests : IAsyncLifetime
         using var testDbContext = dbContextFactory.Create();
         var retrievedFile = testDbContext.Files
             .Include(file => file.Question)
-            .First(file => file.Id == newFile.Id);
+            .FirstOrDefault(file => file.Id == newFile.Id);
         Assert.StrictEqual(newFile, retrievedFile);
     }
 
