@@ -23,7 +23,7 @@ public class DiscussionTests : IAsyncLifetime
         var newDiscussion = new DiscussionEntity
         {
             CreationTime = new DateTime(2021, 10, 22, 17, 16, 50, 150),
-            Text = "Sin + cos = arctg ?",          
+            Text = "Sin + cos = arctg ?",
         };
 
         dbContext.Discussions.Add(newDiscussion);
@@ -57,9 +57,9 @@ public class DiscussionTests : IAsyncLifetime
                 new FileEntity()
                 {
                     Name = "Graph",
-                    Content = new byte[]{1,2,3,4,5,6,7,8,9}, 
+                    Content = new byte[]{1,2,3,4,5,6,7,8,9},
                 }
-            },            
+            },
         };
 
         dbContext.Discussions.Add(newDiscussion);
@@ -106,7 +106,7 @@ public class DiscussionTests : IAsyncLifetime
         nestedDiscussion2.OriginId = nestedDiscussion1.Id;
         dbContext.Discussions.Add(nestedDiscussion2);
         dbContext.SaveChanges();
-       
+
         //Assert
         using var testDbContext = dbContextFactory.Create();
         DiscussionEntity? retrievedDiscussion = testDbContext.Discussions

@@ -1,6 +1,4 @@
-﻿using Fituska.DAL.Factories;
-
-namespace Fituska.DAL.Tests;
+﻿namespace Fituska.DAL.Tests;
 public class FileTests : IAsyncLifetime
 {
     private readonly IDbContextFactory dbContextFactory;
@@ -43,11 +41,11 @@ public class FileTests : IAsyncLifetime
         var newFile = new FileEntity
         {
             Name = "luxusnívideosešumem.wav",
-            Content = new byte[] { 1,5,6,255},
+            Content = new byte[] { 1, 5, 6, 255 },
             Answer = new AnswerEntity()
             {
-                CreationTime = new DateTime(2021,12,9),
-                Text = "Tady je odpověď s obrázkem",              
+                CreationTime = new DateTime(2021, 12, 9),
+                Text = "Tady je odpověď s obrázkem",
             },
         };
         dbContext.Files.Add(newFile);
@@ -70,7 +68,7 @@ public class FileTests : IAsyncLifetime
             Discussion = new DiscussionEntity()
             {
                 CreationTime = new DateTime(2021, 12, 9),
-                Text = "Tady je odpověď s obrázkem",            
+                Text = "Tady je odpověď s obrázkem",
             },
         };
         dbContext.Files.Add(newFile);
@@ -93,7 +91,7 @@ public class FileTests : IAsyncLifetime
             Question = new QuestionEntity()
             {
                 Text = "Text",
-                Title = "Title",              
+                Title = "Title",
             }
         };
         dbContext.Files.Add(newFile);

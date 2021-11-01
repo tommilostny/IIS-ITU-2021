@@ -25,7 +25,7 @@ public class CategoryTests : IAsyncLifetime
             Course = new CourseEntity()
             {
                 Name = "Signály a systémy",
-                Shortcut = "ISS",               
+                Shortcut = "ISS",
             }
         };
         dbContext.Categories.Add(newCategory);

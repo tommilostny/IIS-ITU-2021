@@ -6,7 +6,7 @@ public class CategoryRepositoryTests
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
     private readonly CategoryRepository categoryRepository;
-   
+
     public CategoryRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(CategoryRepositoryTests));
@@ -46,12 +46,12 @@ public class CategoryRepositoryTests
         database.Categories.Remove(categoryFromDB);
         database.SaveChanges();
     }
-    
+
     [Fact]
     public void GetAllCategories()
     {
         dbContext.Categories.RemoveRange(dbContext.Categories);
-        List<CategoryEntity> Categories = new(){};
+        List<CategoryEntity> Categories = new() { };
         Categories.Add(SeedData());
         Categories.Add(SeedData());
         dbContext.Categories.AddRange(Categories);
@@ -72,13 +72,13 @@ public class CategoryRepositoryTests
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
         var categoryFromDB = database.Categories
-            .Include(categories =>categories.Course)
+            .Include(categories => categories.Course)
             .First(answerToFind => answerToFind.Id == category.Id);
         Assert.StrictEqual(category, categoryFromDB);
         categoryFromDB.Course.Semester = Shared.Enums.Semester.Summer;
         category = (CategoryEntity)categoryRepository.Update(category);
         var updatedUserFromDb = database.Categories
-            .Include(categories =>categories.Course)
+            .Include(categories => categories.Course)
             .First(answerToFind => answerToFind.Id == category.Id);
         Assert.StrictEqual(categoryFromDB, updatedUserFromDb);
     }
@@ -105,8 +105,8 @@ public class CategoryRepositoryTests
         {
             Name = "Pùlsemestrálka",
             Description = "Zde mùžete pokládat otázky k pùlsemestrálce",
-            
-        };   
+
+        };
         CourseEntity course = new()
         {
             Name = "Signály a systémy",

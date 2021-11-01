@@ -1,7 +1,4 @@
-﻿using Fituska.DAL.Entities.Interfaces;
-using Microsoft.AspNetCore.Identity;
-
-namespace Fituska.DAL.Entities;
+﻿namespace Fituska.DAL.Entities;
 public class UserSawQuestion : EntityBase
 {
     public Guid UserId { get; set; }

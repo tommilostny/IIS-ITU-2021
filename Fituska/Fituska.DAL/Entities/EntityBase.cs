@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Fituska.DAL.Entities.Interfaces;
+﻿using Fituska.DAL.Entities.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Fituska.DAL.Entities;
 

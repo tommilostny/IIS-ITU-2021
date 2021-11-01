@@ -2,7 +2,6 @@
 using Fituska.Shared.Models.Category;
 using Fituska.Shared.Models.User;
 using Fituska.Shared.Models.Vote;
-using Nemesis.Essentials.Design;
 
 namespace Fituska.Shared.Models.Question;
 public record QuestionDetailModel : ModelBase

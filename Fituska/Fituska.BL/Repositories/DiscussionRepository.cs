@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Fituska.BL.Repositories;
 
@@ -44,7 +42,7 @@ public class DiscussionRepository : IRepository<DiscussionEntity>
 
     public IEnumerable<IEntity> GetAll()
     {
-        IEnumerable<IEntity> discussions= database.Discussions
+        IEnumerable<IEntity> discussions = database.Discussions
             .Include(discussion => discussion.Files)
             .ToList();
         return discussions;
@@ -54,7 +52,7 @@ public class DiscussionRepository : IRepository<DiscussionEntity>
         DiscussionEntity? discussion = database.Discussions.First(discussion => discussion.Id == entityID);
         DiscussionEntity? lastDiscussion = discussion;
         DiscussionEntity? currentDiscussion = database.Discussions.FirstOrDefault(discussion => discussion.Id == discussion.OriginId);
-        while(currentDiscussion != null)
+        while (currentDiscussion != null)
         {
             lastDiscussion.OriginDiscussion = currentDiscussion;
             lastDiscussion = currentDiscussion;

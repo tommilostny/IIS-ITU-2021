@@ -4,7 +4,7 @@ public class QuestionRepositoryTests
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
     private readonly QuestionRepository fileRepository;
-   
+
     public QuestionRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(FileRepositoryTests));
@@ -43,12 +43,12 @@ public class QuestionRepositoryTests
         database.Questions.Remove(questionFromDb);
         database.SaveChanges();
     }
-    
+
     [Fact]
     public void GetAllFiles()
     {
         dbContext.Questions.RemoveRange(dbContext.Questions);
-        List<QuestionEntity> Questions = new(){};
+        List<QuestionEntity> Questions = new() { };
         Questions.Add(SeedData());
         Questions.Add(SeedData());
         dbContext.Questions.AddRange(Questions);
@@ -108,7 +108,7 @@ public class QuestionRepositoryTests
             Category = new CategoryEntity()
             {
                 Name = "Pùlsemestrálka",
-                Description = "Description",              
+                Description = "Description",
             },
             UserSawQuestions = new ValueCollection<UserSawQuestion>()
             {
@@ -120,8 +120,8 @@ public class QuestionRepositoryTests
                     }
                 }
             },
-            CreationTime = new(2021,10,8),         
-        };   
+            CreationTime = new(2021, 10, 8),
+        };
         return question;
     }
 }

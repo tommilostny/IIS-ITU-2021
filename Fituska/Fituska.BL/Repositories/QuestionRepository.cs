@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Fituska.BL.Repositories;
 
@@ -42,7 +40,7 @@ public class QuestionRepository : IRepository<QuestionEntity>
 
     public IEnumerable<IEntity> GetAll()
     {
-        IEnumerable<IEntity> discussions= database.Questions
+        IEnumerable<IEntity> discussions = database.Questions
             .ToList();
         return discussions;
     }

@@ -6,7 +6,7 @@ public class AnswerRepositoryTests
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
     private readonly AnswerRepository answerRepository;
-   
+
     public AnswerRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(AnswerRepositoryTests));
@@ -52,7 +52,7 @@ public class AnswerRepositoryTests
     public void GetAllAnswers()
     {
         dbContext.Answers.RemoveRange(dbContext.Answers);
-        List<AnswerEntity> Answers = new(){};
+        List<AnswerEntity> Answers = new() { };
         Answers.Add(SeedData());
         Answers.Add(SeedData());
         dbContext.Answers.AddRange(Answers);

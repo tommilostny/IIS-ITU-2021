@@ -1,6 +1,4 @@
-﻿using Fituska.DAL.Factories;
-
-namespace Fituska.DAL.Tests;
+﻿namespace Fituska.DAL.Tests;
 public class CourseTests : IAsyncLifetime
 {
     private readonly IDbContextFactory dbContextFactory;

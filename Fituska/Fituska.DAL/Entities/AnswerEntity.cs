@@ -12,7 +12,7 @@ public class AnswerEntity : EntityBase
     public override bool Equals(object? answerObject)
     {
         var answer = (AnswerEntity?)answerObject;
-        if(GetHashCode() != answer?.GetHashCode()) return false;
+        if (GetHashCode() != answer?.GetHashCode()) return false;
         if (!UsersSawAnswer.SequenceEqual(answer.UsersSawAnswer)) return false;
         return true;
     }

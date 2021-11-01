@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Fituska.Shared.Static;
+﻿namespace Fituska.Shared.Static;
 
 public static class RoleNames
 {

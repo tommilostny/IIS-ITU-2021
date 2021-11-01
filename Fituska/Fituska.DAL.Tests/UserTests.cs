@@ -1,6 +1,4 @@
-﻿using Fituska.DAL.Factories;
-using Microsoft.EntityFrameworkCore;
-using Nemesis.Essentials.Design;
+﻿using Nemesis.Essentials.Design;
 
 namespace Fituska.DAL.Tests;
 public class UserTests : IAsyncLifetime
@@ -70,7 +68,7 @@ public class UserTests : IAsyncLifetime
                         Url = "www.sss.com",
                         Shortcut = "ISS"
                     },
-                    
+
                 },
             }
         };

@@ -1,7 +1,4 @@
-using Blazored.LocalStorage;
 using Fituska.Client;
-using Fituska.Client.Providers;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 

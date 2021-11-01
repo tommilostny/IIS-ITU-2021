@@ -1,12 +1,10 @@
 namespace Fituska.BL.Tests;
-using Microsoft.EntityFrameworkCore;
-
 public class DiscussionRepositoryTests
 {
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
     private readonly DiscussionRepository discussionRepository;
-   
+
     public DiscussionRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(DiscussionRepositoryTests));
@@ -61,7 +59,7 @@ public class DiscussionRepositoryTests
     public void GetAllDiscussions()
     {
         dbContext.Discussions.RemoveRange(dbContext.Discussions);
-        List<DiscussionEntity> Discussions = new(){};
+        List<DiscussionEntity> Discussions = new() { };
         Discussions.Add(SeedData());
         Discussions.Add(SeedData());
         dbContext.Discussions.AddRange(Discussions);
@@ -81,12 +79,12 @@ public class DiscussionRepositoryTests
         dbContext.Discussions.Add(discussion);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var discussionFromDb = database.Discussions          
+        var discussionFromDb = database.Discussions
             .First(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
         discussionFromDb.Text = "Updated text";
         discussion = (DiscussionEntity)discussionRepository.Update(discussion);
-        var updatedUserFromDb = database.Discussions          
+        var updatedUserFromDb = database.Discussions
             .First(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussionFromDb, updatedUserFromDb);
     }
@@ -122,7 +120,7 @@ public class DiscussionRepositoryTests
                     Content = new byte[10000]
                 }
             }
-        };   
+        };
         UserEntity author = new()
         {
             FirstName = $"User {levelOfNesting} first name",

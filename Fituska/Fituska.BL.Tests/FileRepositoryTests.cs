@@ -1,12 +1,10 @@
 namespace Fituska.BL.Tests;
-using Microsoft.EntityFrameworkCore;
-
 public class FileRepositoryTests
 {
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
     private readonly FileRepository fileRepository;
-   
+
     public FileRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(FileRepositoryTests));
@@ -45,12 +43,12 @@ public class FileRepositoryTests
         database.Files.Remove(fileFromDb);
         database.SaveChanges();
     }
-    
+
     [Fact]
     public void GetAllFiles()
     {
         dbContext.Files.RemoveRange(dbContext.Files);
-        List<FileEntity> Files = new(){};
+        List<FileEntity> Files = new() { };
         Files.Add(SeedData());
         Files.Add(SeedData());
         dbContext.Files.AddRange(Files);
@@ -100,7 +98,7 @@ public class FileRepositoryTests
         {
             Name = "Pùlsemestrálka",
             Content = new byte[100]
-        };   
+        };
         return file;
     }
 }

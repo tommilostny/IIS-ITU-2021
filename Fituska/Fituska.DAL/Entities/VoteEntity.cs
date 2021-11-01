@@ -1,6 +1,4 @@
-﻿
-
-namespace Fituska.DAL.Entities;
+﻿namespace Fituska.DAL.Entities;
 
 public class VoteEntity : EntityBase
 {

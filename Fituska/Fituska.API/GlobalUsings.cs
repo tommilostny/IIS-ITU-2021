@@ -1,14 +1,13 @@
 ﻿global using AutoMapper;
 global using Fituska.BL.MapperProfiles;
-global using Fituska.BL.Repositories;
 global using Fituska.DAL;
 global using Fituska.DAL.Entities;
 global using Fituska.Shared.Models;
 global using Fituska.Shared.Static;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
-global using System.Collections.Generic;
-global using System;
-global using System.Linq;

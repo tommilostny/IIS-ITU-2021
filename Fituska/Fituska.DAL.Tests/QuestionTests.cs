@@ -1,7 +1,5 @@
-﻿using Fituska.DAL.Factories;
-
-namespace Fituska.DAL.Tests;
-public class QuestionTests :IAsyncLifetime
+﻿namespace Fituska.DAL.Tests;
+public class QuestionTests : IAsyncLifetime
 {
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
@@ -25,12 +23,12 @@ public class QuestionTests :IAsyncLifetime
             Title = "Sčítání"
         };
 
-        dbContext.Question.Add(newQuestion);
+        dbContext.Questions.Add(newQuestion);
         dbContext.SaveChanges();
 
         //Assert
         using var testDbContext = dbContextFactory.Create();
-        var retrievedQuestion = testDbContext.Question.SingleOrDefault(question => question.Id == newQuestion.Id);
+        var retrievedQuestion = testDbContext.Questions.SingleOrDefault(question => question.Id == newQuestion.Id);
         Assert.StrictEqual(newQuestion, retrievedQuestion);
     }
 

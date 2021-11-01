@@ -15,7 +15,7 @@ public class DiscussionEntity : EntityBase
     {
         DiscussionEntity? discussion = obj as DiscussionEntity;
         if (GetHashCode() != obj?.GetHashCode()) return false;
-        if(OriginDiscussion is not null && discussion?.OriginDiscussion is not null)
+        if (OriginDiscussion is not null && discussion?.OriginDiscussion is not null)
         {
             if (OriginDiscussion.Equals(discussion?.OriginDiscussion)) return false;
         }
