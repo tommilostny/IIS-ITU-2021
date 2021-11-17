@@ -1,9 +1,9 @@
 ﻿<div class="row fituska-nav fituska-blue">
     <div class="col">
-        <a class="navbar-brand" href="/">Fituška</a>
+        <a class="fituska-nav-heading" href="/">Fituška</a>
 
         <button class="btn d-block d-sm-none" type="button" @onclick="ToggleNavMenu">
-            =
+            <span class="oi oi-magnifying-glass" aria-hidden="true"></span>
         </button>
     </div>
 
@@ -12,26 +12,11 @@
     </div>
 
     <div class="col">
-        <AuthorizeView>
-            <Authorized>
-                @context.User.Identity.Name
-                <SignOutButton />
-            </Authorized>
-            <NotAuthorized>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="signin">
-                        <span class="oi oi-account-login" aria-hidden="true"></span> Přihlášení
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="register">
-                        <span class="oi oi-person" aria-hidden="true"></span> Registrace
-                    </NavLink>
-                </li>
-            </NotAuthorized>
-        </AuthorizeView>
+        <NavMenuAuthorization />
     </div>
 </div>
+
+<div class="menu-divider"></div>
 
 <div class="container search-box-container @NavMenuCssClass">
     <SearchBox />

@@ -1,0 +1,45 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <div class="btns-group">
+            <button @onclick="ToggleUserBox" class="show-box-button">
+                <img class="person-icon" src="@ProfilePicture" />
+                <span class="oi oi-caret-bottom" aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="navmenu-user-box @BoxCssClass">
+            <p>@context.User.Identity.Name</p>
+            <div class="row">
+                <div class="col">
+                    <a href="/user/@context.User.Identity.Name" class="btn btn-primary" @onclick="ResetCollapse">Profil</a>
+                </div>
+                <div class="col">
+                    <SignOutButton OnClick="ResetCollapse" />
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="btns-group">
+            <a class="btn btn-outline-secondary" href="/signin">
+                <span class="oi oi-account-login" aria-hidden="true"></span> Přihlášení
+            </a>
+            <a class="btn btn-outline-secondary" href="/register">
+                <span class="oi oi-person" aria-hidden="true"></span> Registrace
+            </a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    bool collapseBox = true;
+
+    string? BoxCssClass => collapseBox ? "collapse" : null;
+
+    //TODO: some logic to get the user profile picture.
+    string ProfilePicture => "/person-icon.png";
+
+    void ToggleUserBox() => collapseBox = !collapseBox;
+
+    void ResetCollapse() => collapseBox = true;
+}
