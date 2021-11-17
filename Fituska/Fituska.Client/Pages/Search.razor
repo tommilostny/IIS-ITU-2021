@@ -1,0 +1,9 @@
+﻿@page "/search/{SearchTerm}"
+
+<h3>Výsledky hledání pro: <em>@SearchTerm</em></h3>
+
+@code
+{
+    [Parameter]
+    public string SearchTerm { get; set; }
+}

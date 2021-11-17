@@ -6,6 +6,8 @@ public record UserDetailModel : ModelBase
 
     public string? LastName { get; set; }
 
+    public string Email { get; set; }
+
     public string? DiscordUsername { get; set; }
 
     public DateTime RegistrationDate { get; set; }

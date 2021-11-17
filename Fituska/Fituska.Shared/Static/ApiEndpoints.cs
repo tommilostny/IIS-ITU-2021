@@ -11,4 +11,6 @@ public static class ApiEndpoints
     public const string RegisterUrl = $"{ServerBaseUrl}api/user/register";
     public const string SignInUrl = $"{ServerBaseUrl}api/user/signin";
     public const string WeatherForecastUrl = $"{ServerBaseUrl}weatherforecast";
+
+    public static string UserGetUrl(string userId) => $"{ServerBaseUrl}api/user/{userId}";
 }

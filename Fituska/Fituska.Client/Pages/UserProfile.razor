@@ -1,0 +1,26 @@
+﻿@page "/user/{Username}"
+@using Fituska.Shared.Models.User
+@inject HttpClient Http
+
+@if (userModel is null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <h1>@userModel.Email</h1>
+}
+
+@code
+{
+    [Parameter]
+    public string Username { get; set; }
+
+    UserDetailModel? userModel = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userModel = await Http.GetFromJsonAsync<UserDetailModel>(ApiEndpoints.UserGetUrl(Username));
+        await base.OnInitializedAsync();
+    }
+}

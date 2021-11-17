@@ -110,6 +110,18 @@ public class UserController : ControllerBase
         return Ok(mapper.Map<List<UserListModel>>(result));
     }
 
+    [Route("{username}")]
+    [HttpGet]
+    public async Task<IActionResult> Get(string username)
+    {
+        var user = mapper.Map<UserDetailModel>(await userManager.FindByNameAsync(username));
+        if (user is null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
+    }
+
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
