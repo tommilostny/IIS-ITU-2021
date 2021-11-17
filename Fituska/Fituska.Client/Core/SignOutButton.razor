@@ -1,0 +1,21 @@
+﻿@inject ILocalStorageService LocalStorageService
+@inject FituskaAuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<button class="btn btn-primary" @onclick="SignOutAsync">
+    <span class="oi oi-account-logout" aria-hidden="true"></span> Odhlásit
+</button>
+
+@code
+{
+    async Task SignOutAsync()
+    {
+        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
+        {
+            await LocalStorageService.RemoveItemAsync(JwtNames.BearerToken);
+            AuthenticationStateProvider.SignOut();
+        }
+        StateHasChanged();
+        NavigationManager.NavigateTo("/");
+    }
+}

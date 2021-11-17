@@ -1,0 +1,21 @@
+﻿@inject NavigationManager NavigationManager
+
+<form class="d-flex" @onsubmit="Search">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Vyhledat..." @bind-value=@searchText>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Q</button>
+        </div>
+    </div>
+</form>
+
+@code
+{
+    string? searchText;
+
+    void Search()
+    {
+        if (!string.IsNullOrEmpty(searchText))
+            NavigationManager.NavigateTo($"/search/{searchText}");
+    }
+}

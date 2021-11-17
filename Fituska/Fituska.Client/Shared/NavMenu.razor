@@ -1,58 +1,49 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light fituska-blue">
-    <div class="container-fluid">
+﻿<div class="row fituska-nav fituska-blue">
+    <div class="col">
         <a class="navbar-brand" href="/">Fituška</a>
-        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
+
+        <button class="btn d-block d-sm-none" type="button" @onclick="ToggleNavMenu">
+            =
         </button>
-        <div class="@NavMenuCssClass navbar-collapse" @onclick="ToggleNavMenu">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                        <span class="oi oi-home" aria-hidden="true"></span> Home
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="counter">
-                        <span class="oi oi-plus" aria-hidden="true"></span> Counter
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="fetchdata">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-                    </NavLink>
-                </li>
-                <AuthorizeView>
-                    <Authorized>
-                        <SignOutButton />
-                    </Authorized>
-                    <NotAuthorized>
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="signin">
-                                <span class="oi oi-account-login" aria-hidden="true"></span> Přihlášení
-                            </NavLink>
-                        </li>
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="register">
-                                <span class="oi oi-person" aria-hidden="true"></span> Registrace
-                            </NavLink>
-                        </li>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
-        </div>
     </div>
-</nav>
 
-@code {
-    private bool collapseNavMenu = true;
+    <div class="col d-none d-sm-block">
+        <SearchBox />
+    </div>
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    <div class="col">
+        <AuthorizeView>
+            <Authorized>
+                @context.User.Identity.Name
+                <SignOutButton />
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="signin">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Přihlášení
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="register">
+                        <span class="oi oi-person" aria-hidden="true"></span> Registrace
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</div>
 
-    private void ToggleNavMenu()
+<div class="container search-box-container @NavMenuCssClass">
+    <SearchBox />
+</div>
+
+@code
+{
+    bool collapseNavMenu = true;
+
+    string? NavMenuCssClass => collapseNavMenu ? "collapse" : "d-block d-sm-none";
+
+    void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
