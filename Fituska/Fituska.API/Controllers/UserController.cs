@@ -35,12 +35,7 @@ public class UserController : ControllerBase
 
         if (userIdentityResult.Succeeded)
         {
-            var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, user.RoleName);
-            if (roleIdentityResult.Succeeded)
-            {
-                var success = userIdentityResult.Succeeded && roleIdentityResult.Succeeded;
-                return Ok(new { success });
-            }
+            return Ok(new { userIdentityResult.Succeeded });
             //TODO: PhotoRepository?
             //if (user.Photo is not null)
             //{
@@ -61,10 +56,10 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SignIn([FromBody] UserSignInModel user)
     {
-        var signInResult = await signInManager.PasswordSignInAsync(user.Email, user.Password, isPersistent: false, lockoutOnFailure: false);
+        var signInResult = await signInManager.PasswordSignInAsync(user.UserName, user.Password, isPersistent: false, lockoutOnFailure: false);
         if (signInResult.Succeeded)
         {
-            var identityUser = await userManager.FindByNameAsync(user.Email);
+            var identityUser = await userManager.FindByNameAsync(user.UserName);
             var jsonWebToken = await CreateJsonWebToken(identityUser);
             return Ok(jsonWebToken);
         }
@@ -80,9 +75,9 @@ public class UserController : ControllerBase
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, identityUser.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, identityUser.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString()),
         };
         var roleNames = await userManager.GetRolesAsync(identityUser);
         claims.AddRange(roleNames.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
@@ -100,15 +95,7 @@ public class UserController : ControllerBase
 
     [Route(nameof(GetAll))]
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var result = new List<UserEntity>();
-        foreach (var role in RoleNames.GetAll())
-        {
-            result.AddRange(await userManager.GetUsersInRoleAsync(role));
-        }
-        return Ok(mapper.Map<List<UserListModel>>(result));
-    }
+    public IActionResult GetAll() => Ok(mapper.Map<List<UserListModel>>(userManager.Users.ToList()));
 
     [Route("{username}")]
     [HttpGet]

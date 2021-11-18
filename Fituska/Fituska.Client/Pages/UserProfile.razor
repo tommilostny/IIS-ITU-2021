@@ -8,7 +8,11 @@
 }
 else
 {
-    <h1>@userModel.Email</h1>
+    <h1>@userModel.FirstName @userModel.LastName <small>(@userModel.UserName)</small></h1>
+    <p>Naposledy přihlášen: @userModel.LastLoginDate</p>
+    <p>Datum registrace: @userModel.RegistrationDate</p>
+    <p>E-mail: @userModel.Email</p>
+    <p>Discord: @userModel.DiscordUsername</p>
 }
 
 @code
