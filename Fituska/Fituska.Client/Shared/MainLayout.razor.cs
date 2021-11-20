@@ -1,6 +1,6 @@
-﻿namespace Fituska.Client.Pages;
+﻿namespace Fituska.Client.Shared;
 
-public partial class Index : ComponentBase
+public partial class MainLayout : LayoutComponentBase
 {
     [Inject]
     private HttpClient Http { get; set; }

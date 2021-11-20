@@ -104,10 +104,10 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> Delete(string username)
     {
-        var userToDelete = await userManager.FindByIdAsync(id.ToString());
+        var userToDelete = await userManager.FindByNameAsync(username);
         if (userToDelete is not null)
         {
             await userManager.DeleteAsync(userToDelete);
@@ -117,7 +117,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UserDetailModel user)
+    public async Task<IActionResult> Update([FromBody] UserEditModel user)
     {
         var entity = await userManager.FindByIdAsync(user.Id.ToString());
 

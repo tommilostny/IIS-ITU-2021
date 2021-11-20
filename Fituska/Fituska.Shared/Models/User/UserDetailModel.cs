@@ -9,7 +9,6 @@ public record UserDetailModel : ModelBase
     public string? DiscordUsername { get; set; }
     public DateTime RegistrationDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
-    public Guid? PhotoID { get; set; }
     public string? PhotoUrl { get; set; }
-    public List<CourseAttendencyDetailModel> AttendingCourses { get; set; } = new();
+    public List<CourseAttendencyDetailModel> AttendingCourses { get; set; }
 }

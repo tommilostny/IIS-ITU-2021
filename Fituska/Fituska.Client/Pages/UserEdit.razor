@@ -1,0 +1,49 @@
+﻿@page "/user-edit"
+
+@if (_userToEdit is not null)
+{
+    <EditForm Model="_userToEdit" OnValidSubmit="UpdateAsync">
+
+        <DataAnnotationsValidator />
+
+        <div class="form-group my-3">
+            <label for="username">Uživatelské jméno:</label>
+            <InputText id="username" class="form-control" @bind-Value="_userToEdit.UserName" disabled="true" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="e-mail">E-mail:</label>
+            <InputText id="e-mail" class="form-control" @bind-Value="_userToEdit.Email" />
+            <ValidationMessage For="@(() => _userToEdit.Email)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="firstname">Jméno:</label>
+            <InputText id="firstname" class="form-control" @bind-Value="_userToEdit.FirstName" />
+            <ValidationMessage For="@(() => _userToEdit.FirstName)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="lastname">Příjmení:</label>
+            <InputText id="lastname" class="form-control" @bind-Value="_userToEdit.LastName" />
+            <ValidationMessage For="@(() => _userToEdit.LastName)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="discord">Discord uživatelské jméno:</label>
+            <InputText id="discord" class="form-control" @bind-Value="_userToEdit.DiscordUsername" />
+            <ValidationMessage For="@(() => _userToEdit.DiscordUsername)" />
+        </div>
+        <!--
+        <FileUploader OnChange="ImageUpload" />
+        -->
+        <ValidationSummary />
+
+        <button type="submit" class="btn btn-primary btn-lg">Uložit</button>
+
+        @if (_editFailure)
+        {
+            <p class="my-3 text-danger">@_editErrorMessage</p>
+        }
+    </EditForm>  
+}
