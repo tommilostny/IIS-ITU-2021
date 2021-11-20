@@ -13,4 +13,6 @@ public static class ApiEndpoints
     public const string WeatherForecastUrl = $"{ServerBaseUrl}weatherforecast";
 
     public static string UserGetUrl(string userId) => $"{ServerBaseUrl}api/user/{userId}";
+
+    public const string ImageUploadUrl = $"{ServerBaseUrl}api/imageupload";
 }

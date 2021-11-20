@@ -36,11 +36,6 @@ public class UserController : ControllerBase
         if (userIdentityResult.Succeeded)
         {
             return Ok(new { userIdentityResult.Succeeded });
-            //TODO: PhotoRepository?
-            //if (user.Photo is not null)
-            //{
-            //
-            //}
         }
         string errors = "Registrace selhala s následujícími chybami:";
         foreach (var error in userIdentityResult.Errors)
@@ -109,11 +104,30 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var userToDelete = await userManager.FindByIdAsync(id.ToString());
-        await userManager.DeleteAsync(userToDelete);
+        if (userToDelete is not null)
+        {
+            await userManager.DeleteAsync(userToDelete);
+            return Ok();
+        }
+        return NotFound();
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UserDetailModel user)
+    {
+        var entity = await userManager.FindByIdAsync(user.Id.ToString());
+
+        entity.DiscordUsername = user.DiscordUsername;
+        entity.Email = user.Email;
+        entity.FirstName = user.FirstName;
+        entity.LastName = user.LastName;
+        entity.PhotoUrl = user.PhotoUrl;
+
+        await userManager.UpdateAsync(entity);
         return Ok();
     }
 }

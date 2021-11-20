@@ -16,7 +16,7 @@ public record UserRegistrationModel : UserSignInModel
     [Display(Name = "Discord")]
     public string? DiscordUsername { get; set; }
 
-    [DataType(DataType.Upload)]
+    [DataType(DataType.ImageUrl)]
     [Display(Name = "Profilový obrázek")]
-    public byte[]? Photo { get; set; }
+    public string? PhotoUrl { get; set; }
 }

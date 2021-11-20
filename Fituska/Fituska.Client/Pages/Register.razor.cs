@@ -1,4 +1,5 @@
 ﻿using Fituska.Shared.Models.User;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Fituska.Client.Pages;
 
@@ -25,5 +26,10 @@ public partial class Register : ComponentBase
             _registerErrorMessage = $"{serverErrorMessages} Zkontrolujte zadané údaje.";
             _registerFailure = true;
         }
+    }
+
+    private void ImageUpload(string imageUrl)
+    {
+        _userToRegister.PhotoUrl = imageUrl;
     }
 }

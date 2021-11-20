@@ -3,6 +3,7 @@ using System;
 using Fituska.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fituska.DAL.Migrations
 {
     [DbContext(typeof(FituskaDbContext))]
-    partial class FituskaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211120182110_PhotoBytesToUrl")]
+    partial class PhotoBytesToUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0-rc.2.21480.5");
