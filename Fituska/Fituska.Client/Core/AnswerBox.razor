@@ -1,0 +1,45 @@
+﻿@using Fituska.Shared.Models.Answer
+@using Fituska.Shared.Models.Comment
+@using Fituska.Shared.Models.User
+
+<div class="card answer-box mb-3">
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <a href="user/@Answer.User.UserName">@Answer.User.UserName</a> (@Answer.CreationTime)
+                </h6>
+                <p class="card-text">
+                    @Answer.Text
+                </p>
+                <ReplyBox OnSubmit="AddComment" />
+            </div>
+            <div class="col-3 col-sm-2 col-md-1">
+                <Voting Votes="Answer.Votes" />
+            </div>
+        </div>
+    </div>
+    @if (Answer.Comments.Count > 0)
+    {
+        @foreach (var comment in Answer.Comments)
+        {
+            <Comments Comment="@comment" />
+        }
+    }
+</div>
+
+@code
+{
+    [Parameter]
+    public AnswerModel Answer { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    async Task AddComment(string text)
+    {
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
+        var comment = new CommentModel { User = user, Text = text, CreationTime = DateTime.Now };
+        Answer.Comments.Add(comment);
+    }
+}

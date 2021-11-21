@@ -1,4 +1,5 @@
 ﻿namespace Fituska.DAL.Entities;
+
 public class CourseEntity : EntityBase
 {
     public short AcademicYear { get; set; }

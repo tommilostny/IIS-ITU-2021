@@ -1,0 +1,28 @@
+﻿<button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">Odpovědět</button>
+
+@if (showTextBox)
+{
+    <textarea @bind="text" class="form-control mb-2 mt-2"></textarea>
+    <button class="btn btn-primary" @onclick="SendReply">Odeslat</button>
+}
+
+@code
+{
+    [Parameter]
+    public EventCallback<string> OnSubmit { get; set; }
+
+    bool showTextBox = false;
+    string text = string.Empty;
+
+    void ToggleShowTextBox() => showTextBox = !showTextBox;
+
+    async Task SendReply()
+    {
+        if (text.Length > 0)
+        {
+            showTextBox = false;
+            await OnSubmit.InvokeAsync(text);
+            text = string.Empty;
+        }
+    }
+}

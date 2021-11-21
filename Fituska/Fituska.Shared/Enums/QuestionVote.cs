@@ -2,5 +2,5 @@
 
 public enum QuestionVote
 {
-    Dislike, Like
+    Downvote = -1, Upvote = 1
 }

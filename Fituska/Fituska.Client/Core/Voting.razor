@@ -1,0 +1,75 @@
+﻿@using Fituska.Shared.Enums
+@using Fituska.Shared.Models.User
+@using Fituska.Shared.Models.Vote
+
+<div class="voting-container">
+    <button @onclick="UpvoteClick" class="btn btn-upvote @UpvoteButtonStyle">
+        <span class="oi oi-chevron-top" aria-hidden="true"></span>
+    </button>
+    <p class="rating-text">
+        @Rating
+    </p>
+    <button @onclick="DownvoteClick" class="btn btn-downvote @DownvoteButtonStyle">
+        <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+    </button>
+</div>
+
+@code
+{
+    [Parameter]
+    public List<VoteModel> Votes { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    int Rating => Votes.Sum(v => (int)v.Vote);
+
+    UserListModel user;
+    bool upvoteClicked = false;
+    bool downvoteClicked = false;
+
+    (bool, VoteModel) VoteFromUserInVotes(int vote)
+    {
+        foreach (var v in Votes)
+        {
+            if (v.User.UserName == user.UserName && (vote == 0 || (int)v.Vote == vote))
+                return (true, v);
+        }
+        return (false, null);
+    }
+
+    void VoteButtonClick(QuestionVote voteType, ref bool clickFlag, ref bool opositeClickFlag)
+    {
+        (bool voteInDb, var voteModel) = VoteFromUserInVotes(0);
+        if (voteInDb)
+        {
+            Votes.Remove(voteModel);
+            opositeClickFlag = false;
+            if (voteModel.Vote == voteType)
+            {
+                clickFlag = false;
+                return;
+            }
+        }
+        Votes.Add(new VoteModel { User = user, Vote = voteType });
+        clickFlag = true;
+    }
+
+    string? UpvoteButtonStyle => upvoteClicked ? "btn-success" : "btn-outline-success";
+
+    string? DownvoteButtonStyle => downvoteClicked ? "btn-danger" : "btn-outline-danger";
+
+    void UpvoteClick() => VoteButtonClick(QuestionVote.Upvote, ref upvoteClicked, ref downvoteClicked);
+
+    void DownvoteClick() => VoteButtonClick(QuestionVote.Downvote, ref downvoteClicked, ref upvoteClicked);
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
+
+        (upvoteClicked, _) = VoteFromUserInVotes((int)QuestionVote.Upvote);
+        (downvoteClicked, _) = VoteFromUserInVotes((int)QuestionVote.Downvote);
+        
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,7 +1,8 @@
 ﻿using Fituska.Shared.Models.Answer;
-using Fituska.Shared.Models.Discussion;
+using Fituska.Shared.Models.Comment;
 
 namespace Fituska.Shared.Models.File;
+
 public record FileDetailModel : ModelBase
 {
     public string Name { get; set; }
@@ -9,7 +10,7 @@ public record FileDetailModel : ModelBase
     public Guid? QuestionId { get; set; }
     public QuestionDetailModel Question { get; set; }
     public Guid? AnswerId { get; set; }
-    public AnswerDetailModel? Answer { get; set; }
+    public AnswerModel? Answer { get; set; }
     public Guid? DiscussionId { get; set; }
-    public DiscussionDetailModel? Discussion { get; set; }
+    public CommentModel? Discussion { get; set; }
 }

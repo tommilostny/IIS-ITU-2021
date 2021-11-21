@@ -1,0 +1,47 @@
+﻿@page "/question/{Id:guid}"
+@using Fituska.Shared.Models.Answer
+@using Fituska.Shared.Models.Question
+@using Fituska.Shared.Models.User
+
+@if (question is null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <div class="mb-4">
+        <h1>@question.Title</h1>
+        <h4>@question.Text</h4>
+    </div>
+    <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.</p>
+    <ReplyBox OnSubmit="AddAnswer" />
+    <hr />
+    @foreach (var answer in question.Answers)
+    {
+        <AnswerBox Answer="answer" />
+    }
+}
+
+@code
+{
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    QuestionDetailModel question;
+
+    protected override async Task OnInitializedAsync()
+    {
+        question = DesignTimeSeed.QuestionDetailModels.FirstOrDefault(q => q.Id == Id);
+        await base.OnInitializedAsync();
+    }
+
+    async Task AddAnswer(string text)
+    {
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
+        var answer = new AnswerModel { Text = text, User = user, CreationTime = DateTime.Now };
+        question.Answers.Add(answer);
+    }
+}

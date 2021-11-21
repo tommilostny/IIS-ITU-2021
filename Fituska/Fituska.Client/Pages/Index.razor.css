@@ -1,0 +1,12 @@
+﻿.courses-list {
+    margin-bottom: 12px
+}
+
+.courses-list:hover {
+    color: darkblue;
+    background-color: #eeeeee
+}
+
+a {
+    text-decoration: none
+}

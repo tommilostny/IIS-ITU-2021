@@ -1,7 +1,9 @@
 ﻿using Fituska.Shared.Enums;
+using Fituska.Shared.Models.Category;
 
 namespace Fituska.Shared.Models.Course;
-public class CourseDetailModel
+
+public record CourseDetailModel : ModelBase
 {
     public short AcademicYear { get; set; }
     public string Name { get; set; }
@@ -11,5 +13,5 @@ public class CourseDetailModel
     public byte Credits { get; set; }
     public YearOfStudy YearOfStudy { get; set; }
     public Semester Semester { get; set; }
-    public List<CourseAttendencyDetailModel> Users { get; set; } = new List<CourseAttendencyDetailModel>();
+    public List<CategoryModel> Categories { get; set; }
 }

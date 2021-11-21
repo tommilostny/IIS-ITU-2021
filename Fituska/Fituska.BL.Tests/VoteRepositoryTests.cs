@@ -77,7 +77,7 @@ public class VoteRepositoryTests
                 .Include(vote => vote.User)
                 .FirstOrDefault(fileToFind => fileToFind.Id == vote.Id);
             Assert.StrictEqual(vote, voteFromDb);
-            vote.Vote = Shared.Enums.QuestionVote.Dislike;
+            vote.Vote = Shared.Enums.QuestionVote.Downvote;
             vote = (VoteEntity)voteRepository.Update(vote);
         }
         using (var database = dbContextFactory.Create())
@@ -121,7 +121,7 @@ public class VoteRepositoryTests
             {
                 FirstName = "Liker",
             },
-            Vote = Shared.Enums.QuestionVote.Like,
+            Vote = Shared.Enums.QuestionVote.Upvote,
         };
         return vote;
     }
