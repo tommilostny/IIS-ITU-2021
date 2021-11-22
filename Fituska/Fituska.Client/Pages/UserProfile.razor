@@ -1,5 +1,6 @@
 ﻿@page "/user/{Username}"
 @using Fituska.Shared.Models.User
+@inherits LastPageSavableComponentBase
 @inject HttpClient Http
 
 @if (userModel is null)

@@ -20,8 +20,9 @@ public class FituskaAuthenticationStateProvider : AuthenticationStateProvider
             var savedToken = await _localStorageService.GetItemAsStringAsync(JwtNames.BearerToken);
             // No token stored in local storage => no user is signed in, return empty authentication state.
             if (string.IsNullOrWhiteSpace(savedToken))
+            {
                 return EmptyAuthenticationState();
-
+            }
             var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(savedToken);
             // Check validity of the loaded Token (expired => remove from local storage).
             if (jwtSecurityToken.ValidTo < DateTime.UtcNow)
@@ -29,7 +30,6 @@ public class FituskaAuthenticationStateProvider : AuthenticationStateProvider
                 await _localStorageService.RemoveItemAsync(JwtNames.BearerToken);
                 return EmptyAuthenticationState();
             }
-
             // Get claims from the JWT and create authenticated user object.
             var claims = ParseClaims(jwtSecurityToken);
             var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));

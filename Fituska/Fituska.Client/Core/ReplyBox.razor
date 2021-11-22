@@ -1,10 +1,13 @@
-﻿<button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">Odpovědět</button>
-
-@if (showTextBox)
-{
-    <textarea @bind="text" class="form-control mb-2 mt-2"></textarea>
-    <button class="btn btn-primary" @onclick="SendReply">Odeslat</button>
-}
+﻿<AuthorizeView>
+    <Authorized>
+        <button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">Odpovědět</button>
+        @if (showTextBox)
+        {
+            <textarea @bind="text" class="form-control mb-2 mt-2"></textarea>
+            <button class="btn btn-primary" @onclick="SendReply">Odeslat</button>
+        }
+    </Authorized>
+</AuthorizeView>
 
 @code
 {

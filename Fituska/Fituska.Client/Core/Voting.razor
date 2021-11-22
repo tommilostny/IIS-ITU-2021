@@ -2,17 +2,34 @@
 @using Fituska.Shared.Models.User
 @using Fituska.Shared.Models.Vote
 
-<div class="voting-container">
-    <button @onclick="UpvoteClick" class="btn btn-upvote @UpvoteButtonStyle">
-        <span class="oi oi-chevron-top" aria-hidden="true"></span>
-    </button>
-    <p class="rating-text">
-        @Rating
-    </p>
-    <button @onclick="DownvoteClick" class="btn btn-downvote @DownvoteButtonStyle">
-        <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
-    </button>
-</div>
+<AuthorizeView>
+    <Authorized>
+        <div class="voting-container">
+            <button @onclick="UpvoteClick" class="btn btn-upvote @UpvoteButtonStyle">
+                <span class="oi oi-chevron-top" aria-hidden="true"></span>
+            </button>
+            <p class="rating-text">
+                @Rating
+            </p>
+            <button @onclick="DownvoteClick" class="btn btn-downvote @DownvoteButtonStyle">
+                <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+            </button>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="voting-container">
+            <button class="btn btn-upvote btn-outline-secondary" disabled>
+                <span class="oi oi-chevron-top" aria-hidden="true"></span>
+            </button>
+            <p class="rating-text">
+                @Rating
+            </p>
+            <button class="btn btn-downvote btn-outline-secondary" disabled>
+                <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+            </button>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code
 {

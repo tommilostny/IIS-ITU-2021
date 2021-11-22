@@ -10,11 +10,15 @@
                     @Category.Name
                 </h5>
             </div>
-            <div class="col-sm-2">
-                <button class="btn btn-outline-success" @onclick="ToggleShowAddForm">
-                    <span class="oi oi-plus me-1" aria-hidden="true"></span> Zeptat se
-                </button>
-            </div>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="col-sm-2">
+                        <button class="btn btn-outline-success" @onclick="ToggleShowAddForm">
+                            <span class="oi oi-plus me-1" aria-hidden="true"></span> Zeptat se
+                        </button>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
         </div>
     </div>
     @if (showAddForm)

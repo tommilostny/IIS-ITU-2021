@@ -1,33 +1,38 @@
 ﻿@page "/signin"
+@using Fituska.Shared.Models.User
+@inject FituskaAuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient Http
+@inject ILocalStorageService LocalStorageService
+@inject LastPageStorageProvider LastPageStorageProvider
 
-<h3>Přihlášení</h3>
+<h2>Přihlášení</h2>
 
 <h4>Účet pro testování:</h4>
-<p><b>Uživatelské jméno:</b> admin@fituska.net</p>
+<p><b>Uživatelské jméno:</b> administrator</p>
 <p><b>Heslo:</b> Password1!</p>
 
-@if (!_signInSuccess)
+@if (!signInSuccess)
 {
-    <EditForm Model="_userToSignIn" OnValidSubmit="SignInAsync">
+    <EditForm Model="userToSignIn" OnValidSubmit="SignInAsync">
         <DataAnnotationsValidator />
 
         <div class="form-group my-3">
             <label for="username">Uživatelské jméno:</label>
-            <InputText id="username" class="form-control" @bind-Value="_userToSignIn.UserName" />
-            <ValidationMessage For="@(() => _userToSignIn.UserName)" />
+            <InputText id="username" class="form-control" @bind-Value="userToSignIn.UserName" />
+            <ValidationMessage For="@(() => userToSignIn.UserName)" />
         </div>
 
         <div class="form-group my-3">
             <label for="password">Heslo:</label>
-            <InputText id="password" type="password" class="form-control" @bind-Value="_userToSignIn.Password" />
-            <ValidationMessage For="@(() => _userToSignIn.Password)" />
+            <InputText id="password" type="password" class="form-control" @bind-Value="userToSignIn.Password" />
+            <ValidationMessage For="@(() => userToSignIn.Password)" />
         </div>
 
         <ValidationSummary />
 
         <button type="submit" class="btn btn-primary btn-lg">Přihlásit se</button>
 
-        @if (_signInFailure)
+        @if (signInFailure)
         {
             <p class="my-3 text-danger">Přihlášení se nezdařilo. Zkontroloujte zadané jméno a heslo.</p>
         }
@@ -35,6 +40,30 @@
 }
 else
 {
-    <h4>Přihlášení proběhlo úspěšně!</h4>
-    <a href="/fetchdata" class="btn btn-success btn-lg">Přejít na zabezpečenou stránku</a>
+    LastPageStorageProvider.NavigateToLastPage();
+}
+
+@code
+{
+    private readonly UserSignInModel userToSignIn = new();
+    private bool signInSuccess = false;
+    private bool signInFailure = false;
+
+    private async Task SignInAsync()
+    {
+        signInFailure = false;
+        var httpResponseMessage = await Http.PostAsJsonAsync(ApiEndpoints.SignInUrl, userToSignIn);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            var jsonWebToken = await httpResponseMessage.Content.ReadAsStringAsync();
+            await LocalStorageService.SetItemAsync(JwtNames.BearerToken, jsonWebToken);
+            await AuthenticationStateProvider.SignIn();
+
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames.Bearer, jsonWebToken);
+            signInSuccess = true;
+            return;
+        }
+        signInFailure = true;
+    }
 }

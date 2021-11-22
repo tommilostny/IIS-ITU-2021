@@ -7,6 +7,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton<HttpClient>();
+builder.Services.AddSingleton<LastPageStorageProvider>();
 
 builder.Services.AddBlazoredLocalStorage();
 

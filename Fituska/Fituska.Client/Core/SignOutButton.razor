@@ -1,6 +1,6 @@
 ﻿@inject ILocalStorageService LocalStorageService
 @inject FituskaAuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
+@inject LastPageStorageProvider LastPageStorageProvider
 
 <button class="btn btn-primary" @onclick="SignOutAsync">
     Odhlásit
@@ -19,6 +19,5 @@
         }
         StateHasChanged();
         await OnClick.InvokeAsync();
-        NavigationManager.NavigateTo("/");
     }
 }
