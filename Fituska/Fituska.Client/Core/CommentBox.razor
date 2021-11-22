@@ -7,9 +7,9 @@
         <p class="card-text">@Comment.Text</p>
         <ReplyBox OnSubmit="AddComment" />
     </div>
-    @foreach (var comment in Comment.Comments)
+    @foreach (var comment in Comment.Comments.OrderBy(c => c.CreationTime).Reverse())
     {
-        <Comments Comment="@comment" />
+        <CommentBox Comment="@comment" />
     }
 </div>
 

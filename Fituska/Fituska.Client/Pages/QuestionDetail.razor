@@ -17,7 +17,7 @@ else
     <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.</p>
     <ReplyBox OnSubmit="AddAnswer" />
     <hr />
-    @foreach (var answer in question.Answers)
+    @foreach (var answer in question.Answers.OrderBy(a => a.CreationTime).Reverse())
     {
         <AnswerBox Answer="answer" />
     }

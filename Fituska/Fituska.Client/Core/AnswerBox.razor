@@ -21,9 +21,9 @@
     </div>
     @if (Answer.Comments.Count > 0)
     {
-        @foreach (var comment in Answer.Comments)
+        @foreach (var comment in Answer.Comments.OrderBy(c => c.CreationTime).Reverse())
         {
-            <Comments Comment="@comment" />
+            <CommentBox Comment="@comment" />
         }
     }
 </div>
