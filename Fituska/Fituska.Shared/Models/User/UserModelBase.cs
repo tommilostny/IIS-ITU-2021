@@ -2,8 +2,7 @@
 
 public record UserModelBase : ModelBase
 {
-    [Required]
-    [MinLength(3)]
-    [Display(Name = "Uživatelské jméno")]
+    [Required(ErrorMessage = "Uživatelské jméno musí být zadáno.")]
+    [StringLength(maximumLength: 64, ErrorMessage = "Délka uživatelského jména musí být mezi {2} a {1} znaky.", MinimumLength = 2)]
     public string UserName { get; set; }
 }

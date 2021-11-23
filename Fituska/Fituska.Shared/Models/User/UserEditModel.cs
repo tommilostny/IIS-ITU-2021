@@ -2,22 +2,31 @@
 
 public record UserEditModel : UserModelBase
 {
-    [Required]
-    [EmailAddress]
-    [Display(Name = "E-mailová adresa")]
+    [Required(ErrorMessage = "E-mailová adresa musí být zadána.")]
+    [EmailAddress(ErrorMessage = "Zadaná e-mailová adresa není ve správném formátu.")]
+    [VutbrEmailValidator]
     public string Email { get; set; }
 
-    [Required, Display(Name = "Jméno")]
+    [Required(ErrorMessage = "Jméno musí být zadáno.")]
     public string FirstName { get; set; }
 
-    [Required, Display(Name = "Příjmení")]
+    [Required(ErrorMessage = "Příjmení musí být zadáno")]
     public string LastName { get; set; }
 
-    [StringLength(maximumLength: 64)]
-    [Display(Name = "Discord")]
+    [MaxLength(37, ErrorMessage = "Discord uživatelské jméno nesmí být delší než 37 znaků.")]
     public string? DiscordUsername { get; set; }
 
-    [DataType(DataType.ImageUrl)]
-    [Display(Name = "Profilový obrázek")]
     public string? PhotoUrl { get; set; }
+
+    private class VutbrEmailValidator : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object? value, ValidationContext context)
+        {
+            string[] validDomains = { "vutbr.cz", "vut.cz", "fituska.net" };
+
+            return validDomains.Any(d => (value as string).EndsWith(d))
+                ? ValidationResult.Success
+                : new ValidationResult($"E-mailová adresa musí končit: {string.Join(',', validDomains)}" );
+        }
+    }
 }
