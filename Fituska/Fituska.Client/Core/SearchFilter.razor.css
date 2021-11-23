@@ -1,0 +1,31 @@
+﻿.filter-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-body {
+    position: absolute;
+    min-width: 210px;
+    top: 100%;
+    left: 50%;
+    margin-left: -180px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 6px;
+    z-index: 50;
+    box-shadow: 0 0 15px darkgrey;
+}
+
+.filter-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+}
+
+label {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

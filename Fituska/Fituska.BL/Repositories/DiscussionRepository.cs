@@ -26,31 +26,29 @@ public class DiscussionRepository : IRepository<DiscussionEntity>
         }
     }
 
-    public IEntity Insert(IEntity model)
+    public DiscussionEntity Insert(DiscussionEntity entity)
     {
-        var discussion = (DiscussionEntity)model;
-        database.Discussions.Add(discussion);
+        database.Discussions.Add(entity);
         database.SaveChanges();
-        return discussion;
+        return entity;
     }
 
-    public IEntity Update(IEntity model)
+    public DiscussionEntity Update(DiscussionEntity entity)
     {
-        var discussion = (DiscussionEntity)model;
-        var answerToUpdate = database.Discussions.Attach(discussion);
-        answerToUpdate.State = EntityState.Modified;
+        var discussionToUpdate = database.Discussions.Attach(entity);
+        discussionToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return discussion;
+        return entity;
     }
 
-    public IEnumerable<IEntity> GetAll()
+    public IEnumerable<DiscussionEntity> GetAll()
     {
-        IEnumerable<IEntity> discussions = database.Discussions
+        IEnumerable<DiscussionEntity> discussions = database.Discussions
             .Include(discussion => discussion.Files)
             .ToList();
         return discussions;
     }
-    public IEntity GetByID(Guid entityID)
+    public DiscussionEntity GetByID(Guid entityID)
     {
         DiscussionEntity? discussion = database.Discussions.FirstOrDefault(discussion => discussion.Id == entityID);
         DiscussionEntity? lastDiscussion = discussion;

@@ -16,7 +16,11 @@ public class UserController : ControllerBase
     private readonly IMapper mapper;
 
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, IMapper mapper)
+    public UserController(
+        SignInManager<UserEntity> signInManager,
+        UserManager<UserEntity> userManager,
+        IConfiguration configuration,
+        IMapper mapper)
     {
         this.signInManager = signInManager;
         this.userManager = userManager;

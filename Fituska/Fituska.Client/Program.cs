@@ -1,4 +1,5 @@
 using Fituska.Client;
+using Fituska.Shared.Models.Search;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -8,6 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddSingleton<LastPageStorageProvider>();
+builder.Services.AddSingleton<SearchRequestModel>();
 
 builder.Services.AddBlazoredLocalStorage();
 

@@ -21,41 +21,38 @@ public class VoteRepository : IRepository<VoteEntity>
         }
     }
 
-    public IEntity Insert(IEntity model)
+    public VoteEntity Insert(VoteEntity entity)
     {
-        VoteEntity? newVote = model as VoteEntity;
-        if (newVote is null)
-            throw new InvalidDataException("Missing data for converting to vote entity");
         VoteEntity? voteFromDb = database.Votes
-            .Where(vote => vote.UserId == newVote.UserId)
-            .FirstOrDefault(vote => vote.AnswerId == newVote.AnswerId);
+            .Where(vote => vote.UserId == entity.UserId)
+            .FirstOrDefault(vote => vote.AnswerId == entity.AnswerId);
+
         if (voteFromDb is null)
         {
-            database.Votes.Add(newVote);
+            database.Votes.Add(entity);
             database.SaveChanges();
-            return newVote;
+            return entity;
         }
         return voteFromDb;
     }
 
-    public IEntity Update(IEntity model)
+    public VoteEntity Update(VoteEntity entity)
     {
-        var vote = (VoteEntity)model;
-        var questionToUpdate = database.Votes.Attach(vote);
-        questionToUpdate.State = EntityState.Modified;
+        var voteToUpdate = database.Votes.Attach(entity);
+        voteToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return vote;
+        return entity;
     }
 
-    public IEnumerable<IEntity> GetAll()
+    public IEnumerable<VoteEntity> GetAll()
     {
-        IEnumerable<IEntity> discussions = database.Votes
+        IEnumerable<VoteEntity> votes = database.Votes
             .Include(vote => vote.Answer)
             .Include(vote => vote.User)
             .ToList();
-        return discussions;
+        return votes;
     }
-    public IEntity GetByID(Guid entityID)
+    public VoteEntity GetByID(Guid entityID)
     {
         VoteEntity? vote = database.Votes
             .Include(vote => vote.Answer)

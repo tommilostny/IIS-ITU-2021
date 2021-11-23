@@ -1,0 +1,40 @@
+﻿@using Fituska.Shared.Models.Search
+@inject SearchRequestModel SearchRequest
+
+<div class="filter-wrapper">
+    <div class="filter-body @ShowFilterBodyCssClass">
+        <h6>Filtr vyhledávání:</h6>
+        <input class="form-check-input" type="checkbox" @bind=@SearchRequest.IncludeAnswers id="ans-checkbox@(uid)" />
+        <label class="form-check-label" for="ans-checkbox@(uid)">Odpovědi</label>
+        <br />
+
+        <input class="form-check-input" type="checkbox" @bind=@SearchRequest.IncludeCourses id="cou-checkbox@(uid)" />
+        <label class="form-check-label" for="cou-checkbox@(uid)">Kurzy</label>
+        <br />
+
+        <input class="form-check-input" type="checkbox" @bind=@SearchRequest.IncludeQuestions id="que-checkbox@(uid)" />
+        <label class="form-check-label" for="que-checkbox@(uid)">Otázky</label>
+        <br />
+
+        <input class="form-check-input" type="checkbox" @bind=@SearchRequest.IncludeUsers id="usr-checkbox@(uid)" />
+        <label class="form-check-label" for="usr-checkbox@(uid)">Uživatelé</label>
+    </div>
+    <button class="btn btn-outline-secondary filter-btn" @onclick="ToggleSearchFilter" type="button">
+        <span class="oi oi-expand-down" aria-hidden="true"></span>
+    </button>
+</div>
+
+@code
+{
+    public bool ShowSearchFilter { get; private set; } = false;
+
+    string? ShowFilterBodyCssClass => ShowSearchFilter ? null : "collapse";
+
+    int uid = new Random().Next();
+
+    public void ToggleSearchFilter()
+    {
+        ShowSearchFilter = !ShowSearchFilter;
+        StateHasChanged();
+    }
+}

@@ -2,7 +2,7 @@
 
 namespace Fituska.BL.Repositories;
 
-public class AnswerRepository : IRepository<AnswerEntity>
+public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository<AnswerEntity>
 {
     private readonly FituskaDbContext database;
 
@@ -14,31 +14,29 @@ public class AnswerRepository : IRepository<AnswerEntity>
     public void Delete(Guid entityID)
     {
         AnswerEntity? answer = database.Answers.Find(entityID);
-        if (answer != null)
+        if (answer is not null)
         {
             database.Answers.Remove(answer);
             database.SaveChanges();
         }
     }
 
-    public IEntity Insert(IEntity model)
+    public AnswerEntity Insert(AnswerEntity entity)
     {
-        var answer = (AnswerEntity)model;
-        database.Answers.Add(answer);
+        database.Answers.Add(entity);
         database.SaveChanges();
-        return answer;
+        return entity;
     }
 
-    public IEntity Update(IEntity model)
+    public AnswerEntity Update(AnswerEntity entity)
     {
-        var answer = (AnswerEntity)model;
-        var answerToUpdate = database.Answers.Attach(answer);
+        var answerToUpdate = database.Answers.Attach(entity);
         answerToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return answer;
+        return entity;
     }
 
-    public IEnumerable<IEntity> GetAll()
+    public IEnumerable<AnswerEntity> GetAll()
     {
         return database.Answers
             .Include(answer => answer.UsersSawAnswer)
@@ -46,7 +44,8 @@ public class AnswerRepository : IRepository<AnswerEntity>
             .Include(answer => answer.UsersVoteAnswers)
             .ToList();
     }
-    public IEntity GetByID(Guid entityID)
+
+    public AnswerEntity GetByID(Guid entityID)
     {
         var answer = database.Answers
             .Include(answer => answer.UsersSawAnswer)
@@ -54,5 +53,10 @@ public class AnswerRepository : IRepository<AnswerEntity>
             .Include(answer => answer.UsersVoteAnswers)
             .FirstOrDefault(answer => answer.Id == entityID);
         return answer;
+    }
+
+    public List<AnswerEntity> Search(string searchTerm)
+    {
+        return database.Answers.Where(a => a.Text.Contains(searchTerm)).ToList();
     }
 }
