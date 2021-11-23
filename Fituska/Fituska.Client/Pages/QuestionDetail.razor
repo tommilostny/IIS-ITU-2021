@@ -11,13 +11,14 @@
 else
 {
     <div class="mb-4">
-        <h1>@question.Title</h1>
+        <h2>@question.Title</h2>
         <h4>@question.Text</h4>
     </div>
     <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.</p>
     <ReplyBox OnSubmit="AddAnswer" />
     <hr />
-    @foreach (var answer in question.Answers.OrderBy(a => a.CreationTime).Reverse())
+    <h5 class="mb-3">@AnswersCount</h5>
+    @foreach (var answer in question.Answers.OrderBy(a => a.Votes.Sum(v => (int)v.Vote)).ThenBy(a => a.CreationTime).Reverse())
     {
         <AnswerBox Answer="answer" />
     }
@@ -45,4 +46,11 @@ else
         var answer = new AnswerModel { Text = text, User = user, CreationTime = DateTime.Now };
         question.Answers.Add(answer);
     }
+
+    string AnswersCount => question.Answers.Count.ToString() + question.Answers.Count switch
+    {
+        1 => " odpověď",
+        >= 2 and <= 4  => " odpovědi",
+        _ => " odpovědí"
+    };
 }

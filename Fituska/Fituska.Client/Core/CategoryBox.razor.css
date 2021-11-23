@@ -17,3 +17,11 @@ a {
 a:hover {
     text-decoration: underline
 }
+
+.add-container {
+    margin-top: -20px;
+}
+
+.question-username {
+    float: right;
+}

@@ -16,6 +16,7 @@
 
 .search-box-container {
     padding: 30px;
+    padding-bottom: 0;
 }
 
 .menu-divider {
@@ -23,14 +24,18 @@
 }
 
 .fituska-nav-heading {
+    float: left;
+}
+
+.fituska-nav-heading a {
     font-weight: bold;
     color: rgba(0, 0, 0, 0.8);
     font-size: 24px;
     text-decoration: none;
+    float: left;
 }
 
 .mobile-search-button {
-    height: 55px;
-    margin-top: -10px;
     margin-left: 5px;
+    float: left;
 }

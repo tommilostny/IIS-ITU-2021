@@ -1,12 +1,11 @@
 ﻿<div class="row fituska-nav fituska-blue">
-    <div class="col-2 col-sm">
-        <a class="fituska-nav-heading" href="/">Fituška</a>
-    </div>
-
-    <div class="col d-block d-sm-none">
-        <button class="btn mobile-search-button" type="button" @onclick="ToggleNavMenu">
-            <span class="oi oi-magnifying-glass" aria-hidden="true"></span>
-        </button>
+    <div class="col-7 col-sm">
+        <p class="fituska-nav-heading">
+            <a href="/">Fituška</a>
+            <button class="btn d-block d-sm-none mobile-search-button" type="button" @onclick="ToggleMobileSearchBox">
+                <span class="oi oi-magnifying-glass" aria-hidden="true"></span>
+            </button>
+        </p>
     </div>
 
     <div class="col d-none d-sm-block">
@@ -20,18 +19,18 @@
 
 <div class="menu-divider"></div>
 
-<div class="container search-box-container @NavMenuCssClass">
+<div class="container search-box-container @MobileSearchBoxCssClass">
     <SearchBox />
 </div>
 
 @code
 {
-    bool collapseNavMenu = true;
+    bool collapseMobileSearchBox = true;
 
-    string? NavMenuCssClass => collapseNavMenu ? "collapse" : "d-block d-sm-none";
+    string MobileSearchBoxCssClass => collapseMobileSearchBox ? "collapse" : "d-block d-sm-none";
 
-    void ToggleNavMenu()
+    void ToggleMobileSearchBox()
     {
-        collapseNavMenu = !collapseNavMenu;
+        collapseMobileSearchBox = !collapseMobileSearchBox;
     }
 }

@@ -7,10 +7,6 @@
 
 <h2>Přihlášení</h2>
 
-<h4>Účet pro testování:</h4>
-<p><b>Uživatelské jméno:</b> administrator</p>
-<p><b>Heslo:</b> Password1!</p>
-
 @if (!signInSuccess)
 {
     <EditForm Model="userToSignIn" OnValidSubmit="SignInAsync">
@@ -30,7 +26,7 @@
 
         <ValidationSummary />
 
-        <button type="submit" class="btn btn-primary btn-lg">Přihlásit se</button>
+        <button type="submit" class="btn btn-success mb-3">Přihlásit se</button>
 
         @if (signInFailure)
         {

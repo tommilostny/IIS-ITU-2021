@@ -1,8 +1,12 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">Odpovědět</button>
-        @if (showTextBox)
+        @if (!showTextBox)
         {
+            <button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">Odpovědět</button>
+        }
+        else
+        {
+            <button @onclick="ToggleShowTextBox" class="btn btn-outline-secondary btn-sm">Zrušit</button>
             <textarea @bind="text" class="form-control mb-2 mt-2"></textarea>
             <button class="btn btn-primary" @onclick="SendReply">Odeslat</button>
         }

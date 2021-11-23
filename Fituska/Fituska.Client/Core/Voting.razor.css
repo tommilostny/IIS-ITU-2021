@@ -5,13 +5,13 @@
 
 .btn-downvote {
     width: 100%;
-    margin-top: -11px;
+    margin-top: -20px;
 }
 
 .rating-text {
     width: 100%;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: 600;
 }
 

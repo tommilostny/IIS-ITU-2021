@@ -19,13 +19,35 @@
         </div>
     </Authorized>
     <NotAuthorized>
-        <div class="btns-group">
+        <div class="btns-group d-none d-sm-none d-md-block">
             <a class="btn btn-outline-secondary" href="/signin">
                 <span class="oi oi-account-login" aria-hidden="true"></span> Přihlášení
             </a>
             <a class="btn btn-outline-secondary" href="/register">
-                <span class="oi oi-person" aria-hidden="true"></span> Registrace
+                Registrace
             </a>
+        </div>
+
+        <div class="btns-group d-sm-block d-md-none">
+            <button @onclick="ToggleUserBox" class="show-box-button">
+                <img class="person-icon" src="@ProfilePicture" />
+                <span class="oi oi-caret-bottom" aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="navmenu-user-box d-md-none @BoxCssClass">
+            <p>@context.User.Identity.Name</p>
+            <div class="row">
+                <div class="col mobile-auth-buttons">
+                    <a class="btn btn-outline-secondary" href="/signin" @onclick="ResetCollapse">
+                        Přihlášení
+                    </a>
+                </div>
+                <div class="col mobile-auth-buttons">
+                    <a class="btn btn-outline-secondary" href="/register" @onclick="ResetCollapse">
+                        Registrace
+                    </a>
+                </div>
+            </div>
         </div>
     </NotAuthorized>
 </AuthorizeView>
