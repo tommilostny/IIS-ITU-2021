@@ -45,10 +45,10 @@ public class DiscussionRepositoryTests
         var originDiscussion = SeedData();
         discussionRepository.Insert(originDiscussion);
         var nestedDiscussion = SeedData(1);
-        nestedDiscussion.OriginDiscussion = originDiscussion;
+        nestedDiscussion.ParentComment = originDiscussion;
         discussionRepository.Insert(nestedDiscussion);
         var nestedDiscussion2 = SeedData(1);
-        nestedDiscussion2.OriginDiscussion = nestedDiscussion;
+        nestedDiscussion2.ParentComment = nestedDiscussion;
         discussionRepository.Insert(nestedDiscussion2);
         using var database = dbContextFactory.Create();
         CommentEntity nestedDiscussion2FromDb = (CommentEntity)discussionRepository.GetByID(nestedDiscussion2.Id);

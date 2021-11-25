@@ -54,19 +54,51 @@ namespace Fituska.DAL.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Fituska.DAL.Entities.CommentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("AnswerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ParentCommentId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnswerId");
+
+                    b.HasIndex("ParentCommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Fituska.DAL.Entities.CourseAttendanceEntity", b =>
@@ -99,13 +131,13 @@ namespace Fituska.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<short>("AcademicYear")
-                        .HasColumnType("INTEGER");
-
                     b.Property<byte>("Credits")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("LecturerId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -120,6 +152,7 @@ namespace Fituska.DAL.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("YearOfStudy")
@@ -127,43 +160,9 @@ namespace Fituska.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LecturerId");
+
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("Fituska.DAL.Entities.DiscussionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("AnswerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("OriginDiscussionId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("OriginId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("OriginDiscussionId");
-
-                    b.ToTable("Discussions");
                 });
 
             modelBuilder.Entity("Fituska.DAL.Entities.FileEntity", b =>
@@ -175,11 +174,12 @@ namespace Fituska.DAL.Migrations
                     b.Property<Guid?>("AnswerId")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("Content")
-                        .HasColumnType("BLOB");
-
-                    b.Property<Guid?>("DiscussionId")
+                    b.Property<Guid?>("CommentId")
                         .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -192,7 +192,7 @@ namespace Fituska.DAL.Migrations
 
                     b.HasIndex("AnswerId");
 
-                    b.HasIndex("DiscussionId");
+                    b.HasIndex("CommentId");
 
                     b.HasIndex("QuestionId");
 
@@ -286,8 +286,8 @@ namespace Fituska.DAL.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PhotoUrl")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("BLOB");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("TEXT");
@@ -314,7 +314,7 @@ namespace Fituska.DAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.UserSawAnswer", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.UserSawAnswerEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -335,7 +335,7 @@ namespace Fituska.DAL.Migrations
                     b.ToTable("UsersSawAnswers");
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.UserSawQuestion", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.UserSawQuestionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -528,7 +528,7 @@ namespace Fituska.DAL.Migrations
             modelBuilder.Entity("Fituska.DAL.Entities.CategoryEntity", b =>
                 {
                     b.HasOne("Fituska.DAL.Entities.CourseEntity", "Course")
-                        .WithMany()
+                        .WithMany("Categories")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -536,10 +536,33 @@ namespace Fituska.DAL.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("Fituska.DAL.Entities.CommentEntity", b =>
+                {
+                    b.HasOne("Fituska.DAL.Entities.AnswerEntity", "Answer")
+                        .WithMany("Comments")
+                        .HasForeignKey("AnswerId");
+
+                    b.HasOne("Fituska.DAL.Entities.CommentEntity", "ParentComment")
+                        .WithMany("SubComments")
+                        .HasForeignKey("ParentCommentId");
+
+                    b.HasOne("Fituska.DAL.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Answer");
+
+                    b.Navigation("ParentComment");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Fituska.DAL.Entities.CourseAttendanceEntity", b =>
                 {
                     b.HasOne("Fituska.DAL.Entities.CourseEntity", "Course")
-                        .WithMany("Users")
+                        .WithMany("Attendees")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -555,50 +578,34 @@ namespace Fituska.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.DiscussionEntity", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.CourseEntity", b =>
                 {
-                    b.HasOne("Fituska.DAL.Entities.AnswerEntity", "Answer")
+                    b.HasOne("Fituska.DAL.Entities.UserEntity", "Lecturer")
                         .WithMany()
-                        .HasForeignKey("AnswerId")
+                        .HasForeignKey("LecturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Fituska.DAL.Entities.UserEntity", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Fituska.DAL.Entities.DiscussionEntity", "OriginDiscussion")
-                        .WithMany()
-                        .HasForeignKey("OriginDiscussionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-
-                    b.Navigation("Author");
-
-                    b.Navigation("OriginDiscussion");
+                    b.Navigation("Lecturer");
                 });
 
             modelBuilder.Entity("Fituska.DAL.Entities.FileEntity", b =>
                 {
                     b.HasOne("Fituska.DAL.Entities.AnswerEntity", "Answer")
-                        .WithMany()
+                        .WithMany("Files")
                         .HasForeignKey("AnswerId");
 
-                    b.HasOne("Fituska.DAL.Entities.DiscussionEntity", "Discussion")
+                    b.HasOne("Fituska.DAL.Entities.CommentEntity", "Comment")
                         .WithMany("Files")
-                        .HasForeignKey("DiscussionId");
+                        .HasForeignKey("CommentId");
 
                     b.HasOne("Fituska.DAL.Entities.QuestionEntity", "Question")
-                        .WithMany()
+                        .WithMany("Files")
                         .HasForeignKey("QuestionId");
 
                     b.Navigation("Answer");
 
-                    b.Navigation("Discussion");
+                    b.Navigation("Comment");
 
                     b.Navigation("Question");
                 });
@@ -606,7 +613,7 @@ namespace Fituska.DAL.Migrations
             modelBuilder.Entity("Fituska.DAL.Entities.QuestionEntity", b =>
                 {
                     b.HasOne("Fituska.DAL.Entities.CategoryEntity", "Category")
-                        .WithMany()
+                        .WithMany("Questions")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -622,7 +629,7 @@ namespace Fituska.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.UserSawAnswer", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.UserSawAnswerEntity", b =>
                 {
                     b.HasOne("Fituska.DAL.Entities.AnswerEntity", "Answer")
                         .WithMany("UsersSawAnswer")
@@ -641,7 +648,7 @@ namespace Fituska.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.UserSawQuestion", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.UserSawQuestionEntity", b =>
                 {
                     b.HasOne("Fituska.DAL.Entities.QuestionEntity", "Question")
                         .WithMany("UserSawQuestions")
@@ -732,24 +739,39 @@ namespace Fituska.DAL.Migrations
 
             modelBuilder.Entity("Fituska.DAL.Entities.AnswerEntity", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Files");
+
                     b.Navigation("UsersSawAnswer");
 
                     b.Navigation("UsersVoteAnswers");
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.CourseEntity", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.CategoryEntity", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("Fituska.DAL.Entities.DiscussionEntity", b =>
+            modelBuilder.Entity("Fituska.DAL.Entities.CommentEntity", b =>
                 {
                     b.Navigation("Files");
+
+                    b.Navigation("SubComments");
+                });
+
+            modelBuilder.Entity("Fituska.DAL.Entities.CourseEntity", b =>
+                {
+                    b.Navigation("Attendees");
+
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Fituska.DAL.Entities.QuestionEntity", b =>
                 {
                     b.Navigation("Answers");
+
+                    b.Navigation("Files");
 
                     b.Navigation("UserSawQuestions");
                 });

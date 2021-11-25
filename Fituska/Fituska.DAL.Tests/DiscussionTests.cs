@@ -99,19 +99,19 @@ public class DiscussionTests : IAsyncLifetime
             Text = "Nested discussion 2",
         };
         dbContext.Comments.Add(newDiscussion);
-        nestedDiscussion1.OriginDiscussion = newDiscussion;
-        nestedDiscussion1.OriginId = newDiscussion.Id;
+        nestedDiscussion1.ParentComment = newDiscussion;
+        nestedDiscussion1.ParentCommentId = newDiscussion.Id;
         dbContext.Comments.Add(nestedDiscussion1);
-        nestedDiscussion2.OriginDiscussion = nestedDiscussion1;
-        nestedDiscussion2.OriginId = nestedDiscussion1.Id;
+        nestedDiscussion2.ParentComment = nestedDiscussion1;
+        nestedDiscussion2.ParentCommentId = nestedDiscussion1.Id;
         dbContext.Comments.Add(nestedDiscussion2);
         dbContext.SaveChanges();
 
         //Assert
         using var testDbContext = dbContextFactory.Create();
         CommentEntity? retrievedDiscussion = testDbContext.Comments
-            .Include(discussion => discussion.OriginDiscussion)
-            .ThenInclude(discussion => discussion.OriginDiscussion)
+            .Include(discussion => discussion.ParentComment)
+            .ThenInclude(discussion => discussion!.ParentComment)
             .FirstOrDefault(discussion => discussion.Id == nestedDiscussion2.Id);
         Assert.StrictEqual(nestedDiscussion2, retrievedDiscussion);
     }

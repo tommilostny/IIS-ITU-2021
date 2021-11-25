@@ -15,7 +15,6 @@ internal static class DesignTimeSeed
     {
         new CourseListModel
         {
-            AcademicYear = 2021,
             Shortcut = "IIS",
             Url = "iis-2021",
             Semester = Semester.Winter,
@@ -23,7 +22,6 @@ internal static class DesignTimeSeed
         },
         new CourseListModel
         {
-            AcademicYear = 2021,
             Shortcut = "ITU",
             Url = "itu-2021",
             Semester = Semester.Winter,
@@ -35,7 +33,6 @@ internal static class DesignTimeSeed
     {
         new CourseDetailModel
         {
-            AcademicYear = 2021,
             Description = "IIS je předmět...",
             Name = "Informační systémy",
             Shortcut = "IIS",
@@ -46,6 +43,7 @@ internal static class DesignTimeSeed
             {
                 new CategoryDetailModel
                 {
+                    Year = 2021,
                     Name = "Obecné",
                     Questions = new List<QuestionListModel>
                     {
@@ -71,6 +69,7 @@ internal static class DesignTimeSeed
                 },
                 new CategoryDetailModel
                 {
+                    Year = 2021,
                     Name = "Půlsemestrální zkouška",
                     Questions = new List<QuestionListModel>
                     {
@@ -89,7 +88,6 @@ internal static class DesignTimeSeed
         },
         new CourseDetailModel
         {
-            AcademicYear = 2021,
             Description = "ITU je předmět...",
             Name = "Tvorba uživatelských rozhraní",
             Shortcut = "ITU",
@@ -100,6 +98,7 @@ internal static class DesignTimeSeed
             {
                 new CategoryDetailModel
                 {
+                    Year = 2021,
                     Name = "Obecné",
                     Questions = new List<QuestionListModel>
                     {

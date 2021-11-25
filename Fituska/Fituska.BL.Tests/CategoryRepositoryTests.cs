@@ -104,7 +104,6 @@ public class CategoryRepositoryTests
         CategoryEntity category = new()
         {
             Name = "Pùlsemestrálka",
-            Description = "Zde mùžete pokládat otázky k pùlsemestrálce",
 
         };
         CourseEntity course = new()
@@ -112,7 +111,6 @@ public class CategoryRepositoryTests
             Name = "Signály a systémy",
             Description = "Fourierovo peklo",
             Shortcut = "ISS",
-            AcademicYear = 2021,
             YearOfStudy = Shared.Enums.YearOfStudy.BIT2,
             Semester = Shared.Enums.Semester.Winter,
             Credits = 6,

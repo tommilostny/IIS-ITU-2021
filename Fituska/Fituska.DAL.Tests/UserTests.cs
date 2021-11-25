@@ -60,7 +60,6 @@ public class UserTests : IAsyncLifetime
                 new CourseAttendanceEntity(){
                     Course = new CourseEntity
                     {
-                        AcademicYear = 2021,
                         Credits = 5,
                         Description = "Description",
                         Name = "Signály a systémy",

@@ -21,7 +21,6 @@ public class CategoryTests : IAsyncLifetime
         var newCategory = new CategoryEntity
         {
             Name = "Půlsemestrálka",
-            Description = "Ptejte se k půlsemestrálce",
             Course = new CourseEntity()
             {
                 Name = "Signály a systémy",

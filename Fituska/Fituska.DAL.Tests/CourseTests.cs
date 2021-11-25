@@ -22,7 +22,6 @@ public class CourseTests : IAsyncLifetime
         {
             Name = "Signály a systémy",
             Description = "Fourierovo peklo",
-            AcademicYear = 2020,
             Credits = 6,
             Semester = Fituska.Shared.Enums.Semester.Summer,
             Shortcut = "ISS",

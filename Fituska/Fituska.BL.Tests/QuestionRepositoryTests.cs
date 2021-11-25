@@ -108,7 +108,6 @@ public class QuestionRepositoryTests
             Category = new CategoryEntity()
             {
                 Name = "Pùlsemestrálka",
-                Description = "Description",
             },
             UserSawQuestions = new ValueCollection<UserSawQuestionEntity>()
             {
