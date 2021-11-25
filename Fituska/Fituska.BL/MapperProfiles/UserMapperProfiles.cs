@@ -13,6 +13,7 @@ public class UserMapperProfiles : Profile
         CreateMap<UserEntity, UserListModel>();
 
         CreateMap<UserRegistrationModel, UserEntity>()
+            .ForMember(dst => dst.AttendingCourses, config => config.Ignore())
             .ForMember(dst => dst.RegistrationDate, config => config.MapFrom<RegistrationDateResolver>());
     }
 

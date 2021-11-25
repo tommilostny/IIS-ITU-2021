@@ -27,7 +27,7 @@ public class UserTests : IAsyncLifetime
             PasswordHash = "123456789",
             PhoneNumber = "737657683",
             EmailConfirmed = true,
-            PhotoUrl = null,
+            Photo = null,
             AccessFailedCount = 2,
             RegistrationDate = new DateTime(2021, 10, 6, 22, 56, 59, 450),
             LastLoginDate = new DateTime(2021, 10, 6, 22, 57, 59, 450),

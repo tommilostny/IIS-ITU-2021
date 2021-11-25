@@ -2,22 +2,22 @@
 
 public class LastPageStorageProvider
 {
-    private string _lastPage;
-    private readonly NavigationManager _navigationManager;
+    private string lastPage;
+    private readonly NavigationManager navigationManager;
 
     public LastPageStorageProvider(NavigationManager navigationManager)
     {
-        _lastPage = "/";
-        _navigationManager = navigationManager;
+        lastPage = "/";
+        this.navigationManager = navigationManager;
     }
 
     public void SaveCurrentPage()
     {
-        _lastPage = _navigationManager.Uri;
+        lastPage = navigationManager.Uri;
     }
 
     public void NavigateToLastPage()
     {
-        _navigationManager.NavigateTo(_lastPage);
+        navigationManager.NavigateTo(lastPage);
     }
 }

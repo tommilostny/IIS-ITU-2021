@@ -110,9 +110,9 @@ public class QuestionRepositoryTests
                 Name = "Pùlsemestrálka",
                 Description = "Description",
             },
-            UserSawQuestions = new ValueCollection<UserSawQuestion>()
+            UserSawQuestions = new ValueCollection<UserSawQuestionEntity>()
             {
-                new UserSawQuestion()
+                new UserSawQuestionEntity()
                 {
                     User = new UserEntity()
                     {

@@ -1,23 +1,27 @@
 ﻿namespace Fituska.DAL.Entities;
-public class DiscussionEntity : EntityBase
+
+public class CommentEntity : EntityBase
 {
     public string Text { get; set; }
-    public Guid AuthorId { get; set; }
-    public UserEntity Author { get; set; }
-    public Guid OriginId { get; set; }
-    public DiscussionEntity OriginDiscussion { get; set; }
-    public ValueCollection<FileEntity>? Files { get; set; }
     public DateTime CreationTime { get; set; }
-    public Guid AnswerId { get; set; }
-    public AnswerEntity Answer { get; set; }
+    public Guid UserId { get; set; }
+    public UserEntity User { get; set; }
+
+    public Guid? AnswerId { get; set; }
+    public AnswerEntity? Answer { get; set; }
+    public Guid? ParentCommentId { get; set; }
+    public CommentEntity? ParentComment { get; set; }
+
+    public ValueCollection<CommentEntity> SubComments { get; set; }
+    public ValueCollection<FileEntity> Files { get; set; } = new();
 
     public override bool Equals(object? obj)
     {
-        DiscussionEntity? discussion = obj as DiscussionEntity;
+        CommentEntity? discussion = obj as CommentEntity;
         if (GetHashCode() != obj?.GetHashCode()) return false;
-        if (OriginDiscussion is not null && discussion?.OriginDiscussion is not null)
+        if (ParentComment is not null && discussion?.ParentComment is not null)
         {
-            if (OriginDiscussion.Equals(discussion?.OriginDiscussion)) return false;
+            if (ParentComment.Equals(discussion?.ParentComment)) return false;
         }
         if (Files is not null && discussion.Files is not null)
         {
@@ -36,6 +40,6 @@ public class DiscussionEntity : EntityBase
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Id, AuthorId, Text, OriginId, CreationTime);
+        return HashCode.Combine(Id, UserId, Text, ParentCommentId, CreationTime);
     }
 }

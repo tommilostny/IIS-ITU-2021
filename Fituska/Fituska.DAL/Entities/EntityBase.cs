@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Fituska.DAL.Entities;
 
-public class EntityBase : IEntity
+public abstract class EntityBase : IEntity
 {
     [Key]
     public Guid Id { get; set; }

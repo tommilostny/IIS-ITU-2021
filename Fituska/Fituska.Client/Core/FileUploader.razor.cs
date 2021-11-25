@@ -27,6 +27,10 @@ public partial class FileUploader : ComponentBase
         var imageFile = await e.File.RequestImageFileAsync(e.File.ContentType, 512, 512);
         var fileContent = new StreamContent(imageFile.OpenReadStream(imageFile.Size));
 
+        //var stream = imageFile.OpenReadStream(imageFile.Size);
+        //byte[] buffer;
+        //await stream.ReadAsync(buffer);
+
         fileContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
         content.Add(fileContent, "image", imageFile.Name);
 

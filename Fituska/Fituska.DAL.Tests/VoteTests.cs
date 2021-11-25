@@ -19,7 +19,7 @@ public class VoteTests : IAsyncLifetime
     {
         var newVote = new VoteEntity
         {
-            Vote = Shared.Enums.QuestionVote.Upvote,
+            Vote = Shared.Enums.VoteValue.Upvote,
         };
 
         dbContext.Votes.Add(newVote);

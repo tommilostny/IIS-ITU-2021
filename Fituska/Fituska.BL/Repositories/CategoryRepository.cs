@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Fituska.BL.Repositories;
+﻿namespace Fituska.BL.Repositories;
 
 public class CategoryRepository : IRepository<CategoryEntity>
 {
@@ -40,13 +38,15 @@ public class CategoryRepository : IRepository<CategoryEntity>
     {
         return database.Categories
             .Include(category => category.Course)
+            .Include(category => category.Questions)
             .ToList();
     }
+
     public CategoryEntity GetByID(Guid entityID)
     {
-        var category = database.Categories
+        return database.Categories
             .Include(category => category.Course)
+            .Include(category => category.Questions)
             .FirstOrDefault(category => category.Id == entityID);
-        return category;
     }
 }

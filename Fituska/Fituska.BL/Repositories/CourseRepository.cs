@@ -11,27 +11,45 @@ public class CourseRepository : IRepository<CourseEntity>, ISearchableRepository
 
     public void Delete(Guid entityID)
     {
-        throw new NotImplementedException();
+        var entity = database.Courses.Find(entityID);
+        if (entity is not null)
+        {
+            database.Courses.Remove(entity);
+            database.SaveChanges();
+        }
     }
 
     public IEnumerable<CourseEntity> GetAll()
     {
-        throw new NotImplementedException();
+        return database.Courses
+            .Include(c => c.Lecturer)
+            .Include(c => c.Attendees)
+            .Include(c => c.Categories)
+            .ToList();
     }
 
     public CourseEntity GetByID(Guid entityID)
     {
-        throw new NotImplementedException();
+        return database.Courses
+            .Include(c => c.Lecturer)
+            .Include(c => c.Attendees)
+            .Include(c => c.Categories)
+            .FirstOrDefault(usa => usa.Id == entityID);
     }
 
     public CourseEntity Insert(CourseEntity entity)
     {
-        throw new NotImplementedException();
+        database.Courses.Add(entity);
+        database.SaveChanges();
+        return entity;
     }
 
     public CourseEntity Update(CourseEntity entity)
     {
-        throw new NotImplementedException();
+        var questionToUpdate = database.Courses.Attach(entity);
+        questionToUpdate.State = EntityState.Modified;
+        database.SaveChanges();
+        return entity;
     }
 
     public List<CourseEntity> Search(string searchTerm)

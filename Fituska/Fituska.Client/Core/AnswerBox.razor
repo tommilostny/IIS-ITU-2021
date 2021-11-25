@@ -31,15 +31,15 @@
 @code
 {
     [Parameter]
-    public AnswerModel Answer { get; set; }
+    public AnswerDetailModel Answer { get; set; }
 
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
     async Task AddComment(string text)
     {
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
-        var comment = new CommentModel { User = user, Text = text, CreationTime = DateTime.Now };
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
+        var comment = new CommentDetailModel { User = user, Text = text, CreationTime = DateTime.Now };
         Answer.Comments.Add(comment);
     }
 }

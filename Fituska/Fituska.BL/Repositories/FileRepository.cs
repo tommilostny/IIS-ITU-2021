@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Fituska.BL.Repositories;
+﻿namespace Fituska.BL.Repositories;
 
 public class FileRepository : IRepository<FileEntity>
 {
@@ -38,13 +36,10 @@ public class FileRepository : IRepository<FileEntity>
 
     public IEnumerable<FileEntity> GetAll()
     {
-        IEnumerable<FileEntity> discussions = database.Files
-            .ToList();
-        return discussions;
+        return database.Files.ToList();
     }
     public FileEntity GetByID(Guid entityID)
     {
-        FileEntity? file = database.Files.FirstOrDefault(file => file.Id == entityID);
-        return file;
+        return database.Files.FirstOrDefault(file => file.Id == entityID);
     }
 }

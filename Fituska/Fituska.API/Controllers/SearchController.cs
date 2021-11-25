@@ -8,11 +8,11 @@ namespace Fituska.API.Controllers;
 [ApiController]
 public class SearchController : ControllerBase
 {
-    private readonly AnswerRepository _answerRepository;
-    private readonly CourseRepository _courseRepository;
-    private readonly QuestionRepository _questionRepository;
-    private readonly UserManager<UserEntity> _userManager;
-    private readonly IMapper _mapper;
+    private readonly AnswerRepository answerRepository;
+    private readonly CourseRepository courseRepository;
+    private readonly QuestionRepository questionRepository;
+    private readonly UserManager<UserEntity> userManager;
+    private readonly IMapper mapper;
 
     public SearchController(
         AnswerRepository answerRepository,
@@ -21,11 +21,11 @@ public class SearchController : ControllerBase
         UserManager<UserEntity> userManager,
         IMapper mapper)
     {
-        _answerRepository = answerRepository;
-        _courseRepository = courseRepository;
-        _questionRepository = questionRepository;
-        _userManager = userManager;
-        _mapper = mapper;
+        this.answerRepository = answerRepository;
+        this.courseRepository = courseRepository;
+        this.questionRepository = questionRepository;
+        this.userManager = userManager;
+        this.mapper = mapper;
     }
 
     [HttpPost]
@@ -38,16 +38,16 @@ public class SearchController : ControllerBase
         var response = new SearchResponseModel();
 
         if (searchRequest.IncludeAnswers)
-            response.Answers = _mapper.Map<List<SearchAnswerModel>>(_answerRepository.Search(term));
+            response.Answers = mapper.Map<List<SearchAnswerModel>>(answerRepository.Search(term));
 
         if (searchRequest.IncludeQuestions)
-            response.Questions = _mapper.Map<List<SearchQuestionModel>>(_questionRepository.Search(term));
+            response.Questions = mapper.Map<List<SearchQuestionModel>>(questionRepository.Search(term));
 
         if (searchRequest.IncludeCourses)
-            response.Courses = _mapper.Map<List<SearchCourseModel>>(_courseRepository.Search(term));
+            response.Courses = mapper.Map<List<SearchCourseModel>>(courseRepository.Search(term));
 
         if (searchRequest.IncludeUsers)
-            response.Users = _mapper.Map<List<SearchUserModel>>(_userManager.Users
+            response.Users = mapper.Map<List<SearchUserModel>>(userManager.Users
                 .Where(u => u.UserName.Contains(term)
                     || (u.FirstName != null && u.FirstName.Contains(term))
                     || (u.LastName != null && u.LastName.Contains(term)))

@@ -42,9 +42,9 @@ internal static class DesignTimeSeed
             Url = "iis-2021",
             Semester = Semester.Winter,
             YearOfStudy = YearOfStudy.BIT3,
-            Categories = new List<CategoryModel>
+            Categories = new List<CategoryDetailModel>
             {
-                new CategoryModel
+                new CategoryDetailModel
                 {
                     Name = "Obecné",
                     Questions = new List<QuestionListModel>
@@ -69,7 +69,7 @@ internal static class DesignTimeSeed
                         }
                     }
                 },
-                new CategoryModel
+                new CategoryDetailModel
                 {
                     Name = "Půlsemestrální zkouška",
                     Questions = new List<QuestionListModel>
@@ -96,9 +96,9 @@ internal static class DesignTimeSeed
             Url = "itu-2021",
             Semester = Semester.Winter,
             YearOfStudy = YearOfStudy.BIT3,
-            Categories = new List<CategoryModel>
+            Categories = new List<CategoryDetailModel>
             {
-                new CategoryModel
+                new CategoryDetailModel
                 {
                     Name = "Obecné",
                     Questions = new List<QuestionListModel>
@@ -130,9 +130,9 @@ internal static class DesignTimeSeed
             },
             Text = "PHP vypadá jako zvláštní jazyk. Proč by to vůbec někdo používal?",
             CreationTime = new DateTime(2021, 11, 21, 9, 45, 30),
-            Answers = new List<AnswerModel>
+            Answers = new List<AnswerDetailModel>
             {
-                new AnswerModel
+                new AnswerDetailModel
                 {
                     Text = "No, není to zas tak hrozný, když se nad tím zamyslíš. Bývalo to celkem dobré řešení.",
                     User = new UserListModel
@@ -142,7 +142,7 @@ internal static class DesignTimeSeed
                     CreationTime = new DateTime(2021, 11, 21, 10, 20, 50),
                     Votes = new List<VoteModel>
                     {
-                        new VoteModel { Vote = QuestionVote.Downvote, User = new UserListModel { UserName = "xmilos02", PhotoUrl = null } }
+                        new VoteModel { Vote = VoteValue.Downvote, User = new UserListModel { UserName = "xmilos02", Photo = null } }
                     }
                 }
             }
@@ -157,7 +157,7 @@ internal static class DesignTimeSeed
             },
             Text = "Nemohu uvěřit, že něco takového zaznělo na přednášce.. Bude to na zkoušce?",
             CreationTime = new DateTime(2021, 10, 19, 15, 36, 0),
-            Answers = new List<AnswerModel>()
+            Answers = new List<AnswerDetailModel>()
         },
         new QuestionDetailModel
         {
@@ -169,9 +169,9 @@ internal static class DesignTimeSeed
             },
             Text = "Když můžeme dělat projekt v jakémkoliv jazyce, proč je PHP vyžadováno? Jak wtf.. :D",
             CreationTime = new DateTime(2021, 9, 29, 16, 25, 1),
-            Answers = new List<AnswerModel>
+            Answers = new List<AnswerDetailModel>
             {
-                new AnswerModel
+                new AnswerDetailModel
                 {
                     Text = "Je asi dobrý mít nějaký společný jazyk pro ukázku příkladů.",
                     CreationTime = new DateTime(2021, 9, 29, 16, 27, 23),
@@ -179,9 +179,9 @@ internal static class DesignTimeSeed
                     {
                         UserName = "administrator",
                     },
-                    Comments = new List<CommentModel>
+                    Comments = new List<CommentDetailModel>
                     {
-                        new CommentModel
+                        new CommentDetailModel
                         {
                             Text = "Ok, to dává smysl. Ale proč zrovan PHP?",
                             User = new UserListModel
@@ -189,15 +189,16 @@ internal static class DesignTimeSeed
                                 UserName = "xmilos02",
                             },
                             CreationTime = new DateTime(2021, 9, 29, 17, 0, 0),
-                            Comments = new List<CommentModel>
+                            SubComments = new List<CommentDetailModel>
                             {
-                                new CommentModel
+                                new CommentDetailModel
                                 {
                                     Text = "Idk, ale stále hodně se používá.",
                                     User = new UserListModel
                                     {
                                         UserName = "administrator",
                                     },
+                                    CreationTime = new DateTime(2021, 9, 30, 14, 14, 14)
                                 }
                             }
                         }
@@ -215,9 +216,9 @@ internal static class DesignTimeSeed
             },
             Text = "Jako v tomto předmětu to vypadá, že je to jedno, ale zajímá mě váš názor.",
             CreationTime = new DateTime(2021, 9, 27, 17, 1, 58),
-            Answers = new List<AnswerModel>
+            Answers = new List<AnswerDetailModel>
             {
-                new AnswerModel
+                new AnswerDetailModel
                 {
                     Text = "Jo, můžeme si dělat, co chceme.",
                     CreationTime = new DateTime(2021, 9, 27, 23, 30, 30),
@@ -229,7 +230,7 @@ internal static class DesignTimeSeed
                     {
                         new VoteModel
                         {
-                            Vote = QuestionVote.Upvote,
+                            Vote = VoteValue.Upvote,
                             User = new UserListModel
                             {
                                 UserName = "administrator",
@@ -237,16 +238,16 @@ internal static class DesignTimeSeed
                         },
                         new VoteModel
                         {
-                            Vote = QuestionVote.Upvote,
+                            Vote = VoteValue.Upvote,
                             User = new UserListModel
                             {
                                 UserName = "xmilos02"
                             }
                         }
                     },
-                    Comments = new List<CommentModel>
+                    Comments = new List<CommentDetailModel>
                     {
-                        new CommentModel
+                        new CommentDetailModel
                         {
                             Text = "Ok, díky.",
                             User = new UserListModel

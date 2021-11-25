@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Fituska.BL.Repositories;
+﻿namespace Fituska.BL.Repositories;
 
 public class QuestionRepository : IRepository<QuestionEntity>, ISearchableRepository<QuestionEntity>
 {
@@ -41,6 +39,9 @@ public class QuestionRepository : IRepository<QuestionEntity>, ISearchableReposi
         IEnumerable<QuestionEntity> discussions = database.Questions
             .Include(question => question.UserSawQuestions)
             .Include(question => question.Answers)
+            .Include(question => question.User)
+            .Include(question => question.Category)
+            .Include(answer => answer.Files)
             .ToList();
         return discussions;
     }
@@ -50,6 +51,9 @@ public class QuestionRepository : IRepository<QuestionEntity>, ISearchableReposi
         QuestionEntity? question = database.Questions
             .Include(question => question.UserSawQuestions)
             .Include(question => question.Answers)
+            .Include(question => question.User)
+            .Include(question => question.Category)
+            .Include(answer => answer.Files)
             .FirstOrDefault(question => question.Id == entityID);
         return question;
     }

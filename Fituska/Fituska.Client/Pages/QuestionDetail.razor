@@ -42,8 +42,8 @@ else
 
     async Task AddAnswer(string text)
     {
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
-        var answer = new AnswerModel { Text = text, User = user, CreationTime = DateTime.Now };
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
+        var answer = new AnswerDetailModel { Text = text, User = user, CreationTime = DateTime.Now };
         question.Answers.Add(answer);
     }
 

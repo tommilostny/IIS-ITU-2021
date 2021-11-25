@@ -55,7 +55,7 @@
         return (false, null);
     }
 
-    void VoteButtonClick(QuestionVote voteType, ref bool clickFlag, ref bool opositeClickFlag)
+    void VoteButtonClick(VoteValue voteType, ref bool clickFlag, ref bool opositeClickFlag)
     {
         (bool voteInDb, var voteModel) = VoteFromUserInVotes(0);
         if (voteInDb)
@@ -76,19 +76,19 @@
 
     string? DownvoteButtonStyle => downvoteClicked ? "btn-danger" : "btn-outline-danger";
 
-    void UpvoteClick() => VoteButtonClick(QuestionVote.Upvote, ref upvoteClicked, ref downvoteClicked);
+    void UpvoteClick() => VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
 
-    void DownvoteClick() => VoteButtonClick(QuestionVote.Downvote, ref downvoteClicked, ref upvoteClicked);
+    void DownvoteClick() => VoteButtonClick(VoteValue.Downvote, ref downvoteClicked, ref upvoteClicked);
 
     protected override async Task OnInitializedAsync()
     {
         var identityUser = (await AuthenticationState).User.Identity;
         if (identityUser.IsAuthenticated)
         {
-            user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
+            user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
 
-            (upvoteClicked, _) = VoteFromUserInVotes((int)QuestionVote.Upvote);
-            (downvoteClicked, _) = VoteFromUserInVotes((int)QuestionVote.Downvote);
+            (upvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Upvote);
+            (downvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Downvote);
         }
         await base.OnInitializedAsync();
     }

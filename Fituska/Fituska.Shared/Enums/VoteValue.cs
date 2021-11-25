@@ -1,6 +1,6 @@
 ﻿namespace Fituska.Shared.Enums;
 
-public enum QuestionVote
+public enum VoteValue
 {
     Downvote = -1, Upvote = 1
 }

@@ -62,7 +62,7 @@
 @code
 {
     [Parameter]
-    public CategoryModel Category { get; set; }
+    public CategoryDetailModel Category { get; set; }
 
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
@@ -100,7 +100,7 @@
         {
             return;
         }
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, PhotoUrl = null };
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
         var listModel = new QuestionListModel { Title = newQuestionTitle, User = user, CreationTime = DateTime.Now, Id = Guid.NewGuid() };
         Category.Questions.Add(listModel);
 

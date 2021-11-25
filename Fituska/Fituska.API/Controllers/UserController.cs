@@ -129,9 +129,11 @@ public class UserController : ControllerBase
         entity.Email = user.Email;
         entity.FirstName = user.FirstName;
         entity.LastName = user.LastName;
-        entity.PhotoUrl = user.PhotoUrl;
+        entity.Photo = user.Photo;
 
         await userManager.UpdateAsync(entity);
         return Ok();
     }
+
+    //TODO: Last login / activity?
 }

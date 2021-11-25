@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Fituska.BL.Repositories;
+﻿namespace Fituska.BL.Repositories;
 
 public class VoteRepository : IRepository<VoteEntity>
 {
@@ -52,6 +50,7 @@ public class VoteRepository : IRepository<VoteEntity>
             .ToList();
         return votes;
     }
+
     public VoteEntity GetByID(Guid entityID)
     {
         VoteEntity? vote = database.Votes

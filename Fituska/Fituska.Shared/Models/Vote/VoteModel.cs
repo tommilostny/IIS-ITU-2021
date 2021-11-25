@@ -5,6 +5,7 @@ namespace Fituska.Shared.Models.Vote;
 
 public record VoteModel : ModelBase
 {
+    public VoteValue Vote { get; set; }
     public UserListModel User { get; set; }
-    public QuestionVote Vote { get; set; }
+    public Guid AnswerId { get; set; }
 }
