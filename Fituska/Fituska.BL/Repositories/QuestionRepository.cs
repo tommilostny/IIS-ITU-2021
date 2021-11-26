@@ -36,14 +36,14 @@ public class QuestionRepository : IRepository<QuestionEntity>, ISearchableReposi
 
     public IEnumerable<QuestionEntity> GetAll()
     {
-        IEnumerable<QuestionEntity> discussions = database.Questions
+        var questions = database.Questions
             .Include(question => question.UserSawQuestions)
             .Include(question => question.Answers)
             .Include(question => question.User)
             .Include(question => question.Category)
             .Include(answer => answer.Files)
             .ToList();
-        return discussions;
+        return questions;
     }
 
     public QuestionEntity GetByID(Guid entityID)

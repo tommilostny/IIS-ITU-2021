@@ -15,7 +15,6 @@ public class FileTests : IAsyncLifetime
     public async Task InitializeAsync() => await dbContext.Database.EnsureCreatedAsync();
 
     [Theory]
-    [InlineData(null)]
     [InlineData(new byte[] { 1, 2, 3, 4, 5 })]
     [InlineData(new byte[] { })]
     public void AddNewFile(byte[] content)

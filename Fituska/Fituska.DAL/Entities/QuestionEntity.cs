@@ -17,7 +17,7 @@ public class QuestionEntity : EntityBase
 
     public override bool Equals(object? obj)
     {
-        if (obj == null) return false;
+        if (obj is null) return false;
         if (obj is not QuestionEntity question) return false;
         if (GetHashCode() != obj?.GetHashCode()) return false;
         if (CreationTime != question.CreationTime) return false;

@@ -1,15 +1,15 @@
-namespace Fituska.BL.Tests;
+Ôªønamespace Fituska.BL.Tests;
 public class QuestionRepositoryTests
 {
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
-    private readonly QuestionRepository fileRepository;
+    private readonly QuestionRepository questionRepository;
 
     public QuestionRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(FileRepositoryTests));
         dbContext = dbContextFactory.Create();
-        fileRepository = new QuestionRepository(dbContext);
+        questionRepository = new QuestionRepository(dbContext);
     }
 
     public async Task InitializeAsync() => await dbContext.Database.EnsureCreatedAsync();
@@ -25,7 +25,7 @@ public class QuestionRepositoryTests
         dbContext.Questions.Add(question);
         dbContext.SaveChanges();
 
-        var questionFromDb = fileRepository.GetByID(question.Id);
+        var questionFromDb = questionRepository.GetByID(question.Id);
         Assert.StrictEqual(question, questionFromDb);
     }
 
@@ -35,7 +35,7 @@ public class QuestionRepositoryTests
     {
         QuestionEntity question = SeedData();
 
-        fileRepository.Insert(question);
+        questionRepository.Insert(question);
         using var database = dbContextFactory.Create();
         var questionFromDb = database.Questions
             .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
@@ -48,16 +48,15 @@ public class QuestionRepositoryTests
     public void GetAllQuestions()
     {
         dbContext.Questions.RemoveRange(dbContext.Questions);
-        List<QuestionEntity> Questions = new() { };
-        Questions.Add(SeedData());
-        Questions.Add(SeedData());
-        dbContext.Questions.AddRange(Questions);
+        ValueCollection<QuestionEntity> questions = new() { };
+        questions.Add(SeedData());
+        questions.Add(SeedData());
+        dbContext.Questions.AddRange(questions);
         dbContext.SaveChanges();
-        using var database = dbContextFactory.Create();
-        List<QuestionEntity> FilesFromDb = (List<QuestionEntity>)fileRepository.GetAll();
-        Assert.True(FilesFromDb.SequenceEqual(Questions));
-        Assert.NotStrictEqual(Questions[0], FilesFromDb[1]);
-        Assert.NotStrictEqual(Questions[1], FilesFromDb[0]);
+
+        var fromDb = new ValueCollection<QuestionEntity>(questionRepository.GetAll().ToList());
+        Assert.NotStrictEqual(questions[0], fromDb[1]);
+        Assert.NotStrictEqual(questions[1], fromDb[0]);
     }
 
     [Fact]
@@ -71,7 +70,7 @@ public class QuestionRepositoryTests
             .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(question, questionFromDb);
         question.Title = "Updated Title";
-        question = (QuestionEntity)fileRepository.Update(question);
+        question = (QuestionEntity)questionRepository.Update(question);
         var updatedUserFromDb = database.Questions
             .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(questionFromDb, updatedUserFromDb);
@@ -87,7 +86,7 @@ public class QuestionRepositoryTests
         var questionFromDb = database.Questions
             .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
         Assert.StrictEqual(question, questionFromDb);
-        fileRepository.Delete(question.Id);
+        questionRepository.Delete(question.Id);
         var deletedCategory = database.Questions.FirstOrDefault(deletingUser => deletingUser.Id == question.Id);
         Assert.Null(deletedCategory);
     }
@@ -96,7 +95,7 @@ public class QuestionRepositoryTests
     {
         QuestionEntity question = new()
         {
-            Title = "SËÌt·nÌ",
+            Title = "Sƒç√≠t√°n√≠",
             Text = "Kolik je 2+2",
             Answers = new ValueCollection<AnswerEntity>()
             {
@@ -107,7 +106,7 @@ public class QuestionRepositoryTests
             },
             Category = new CategoryEntity()
             {
-                Name = "P˘lsemestr·lka",
+                Name = "P√πlsemestr√°lka",
             },
             UserSawQuestions = new ValueCollection<UserSawQuestionEntity>()
             {
@@ -115,11 +114,12 @@ public class QuestionRepositoryTests
                 {
                     User = new UserEntity()
                     {
-
+                        UserName = "administrator"
                     }
                 }
             },
             CreationTime = new(2021, 10, 8),
+            User = new UserEntity() { UserName = "xlogin01" }
         };
         return question;
     }

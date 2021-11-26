@@ -25,6 +25,7 @@ public class CategoryTests : IAsyncLifetime
             {
                 Name = "Signály a systémy",
                 Shortcut = "ISS",
+                Url = "bit3-2021-iss"
             }
         };
         dbContext.Categories.Add(newCategory);

@@ -112,14 +112,14 @@ public class DiscussionRepositoryTests
         CommentEntity discussion = new()
         {
             Text = $"Diskuze {levelOfNesting}",
-            Files = new ValueCollection<FileEntity>()
-            {
-                new FileEntity()
-                {
-                    Name = $"File {levelOfNesting}",
-                    Content = new byte[10000]
-                }
-            }
+            //Files = new ValueCollection<FileEntity>()
+            //{
+            //    new FileEntity()
+            //    {
+            //        Name = $"File {levelOfNesting}",
+            //        Content = new byte[10000]
+            //    }
+            //}
         };
         UserEntity author = new()
         {

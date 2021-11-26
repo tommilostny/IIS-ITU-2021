@@ -111,6 +111,7 @@ public class CategoryRepositoryTests
             Name = "Signály a systémy",
             Description = "Fourierovo peklo",
             Shortcut = "ISS",
+            Url = "bit3-2021-iss",
             YearOfStudy = Shared.Enums.YearOfStudy.BIT2,
             Semester = Shared.Enums.Semester.Winter,
             Credits = 6,
