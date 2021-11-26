@@ -1,0 +1,48 @@
+﻿@using Fituska.Shared.Models.File
+@typeparam TFileModel where TFileModel : FileModelBase, new()
+
+<InputFile OnChange="OnInputFileChange" multiple="@(!fileModel.ImageOnly())" />
+
+@code
+{
+    [Parameter]
+    public Guid ParentId { get; set; } = Guid.Empty;
+
+    [Parameter]
+    public EventCallback<TFileModel> OnChange { get; set; }
+
+    TFileModel fileModel = new();
+
+    async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        switch (fileModel) //Set File parent Id based on meant parent type.
+        {
+            case FileAnswerModel fileAnswerModel:
+                fileAnswerModel.AnswerId = ParentId;
+                break;
+            case FileCommentModel fileCommentModel:
+                fileCommentModel.CommentId = ParentId;
+                break;
+            case FileQuestionModel fileQuestionModel:
+                fileQuestionModel.QuestionId = ParentId;
+                break;
+        }
+        //Read file and send byte[] content via OnChange, sending to endpoint by component parent.
+        if (fileModel.ImageOnly())
+        {
+            if (!e.File.ContentType.StartsWith("image/"))
+                return;
+
+            var imageFile = await e.File.RequestImageFileAsync(e.File.ContentType, 512, 512);
+            using var fileContent = new StreamContent(imageFile.OpenReadStream(imageFile.Size));
+
+            fileModel.Name = imageFile.Name;
+            fileModel.Content = await fileContent.ReadAsByteArrayAsync();
+            await OnChange.InvokeAsync(fileModel);
+            return;
+        }
+        
+        //Read multiple files into model.Content
+        //TODO: foreach file in e.Files...
+    }
+}

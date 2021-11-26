@@ -13,16 +13,22 @@ public class FileMapperProfiles : Profile
         CreateMap<FileAnswerModel, FileEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore())
             .ForMember(dst => dst.Comment, config => config.Ignore())
-            .ForMember(dst => dst.Question, config => config.Ignore());
+            .ForMember(dst => dst.Question, config => config.Ignore())
+            .ForMember(dst => dst.CommentId, config => config.Ignore())
+            .ForMember(dst => dst.QuestionId, config => config.Ignore());
 
         CreateMap<FileCommentModel, FileEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore())
             .ForMember(dst => dst.Comment, config => config.Ignore())
-            .ForMember(dst => dst.Question, config => config.Ignore());
+            .ForMember(dst => dst.Question, config => config.Ignore())
+            .ForMember(dst => dst.AnswerId, config => config.Ignore())
+            .ForMember(dst => dst.QuestionId, config => config.Ignore());
 
         CreateMap<FileQuestionModel, FileEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore())
             .ForMember(dst => dst.Comment, config => config.Ignore())
-            .ForMember(dst => dst.Question, config => config.Ignore());
+            .ForMember(dst => dst.Question, config => config.Ignore())
+            .ForMember(dst => dst.AnswerId, config => config.Ignore())
+            .ForMember(dst => dst.CommentId, config => config.Ignore());
     }
 }

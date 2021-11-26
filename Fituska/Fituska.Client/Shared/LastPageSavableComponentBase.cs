@@ -3,11 +3,11 @@
 public class LastPageSavableComponentBase : ComponentBase
 {
     [Inject]
-    private LastPageStorageProvider LastPageStorageProvider { get; set; }
+    private LastPageStorageService LastPageStorageService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        LastPageStorageProvider.SaveCurrentPage();
+        LastPageStorageService.SaveCurrentPage();
         await base.OnInitializedAsync();
     }
 }

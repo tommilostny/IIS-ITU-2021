@@ -3,7 +3,7 @@
 @inject FituskaAuthenticationStateProvider AuthenticationStateProvider
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
-@inject LastPageStorageProvider LastPageStorageProvider
+@inject LastPageStorageService LastPageStorageService
 
 <h2>Přihlášení</h2>
 
@@ -36,7 +36,7 @@
 }
 else
 {
-    LastPageStorageProvider.NavigateToLastPage();
+    LastPageStorageService.NavigateToLastPage();
 }
 
 @code

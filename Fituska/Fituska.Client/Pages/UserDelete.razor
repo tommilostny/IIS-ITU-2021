@@ -1,5 +1,5 @@
 ﻿@page "/user-delete"
-@inject LastPageStorageProvider LastPageStorageProvider
+@inject LastPageStorageService LastPageStorageService
 @inject HttpClient Http
 @inject FituskaAuthenticationStateProvider AuthenticationStateProvider
 @inject ILocalStorageService LocalStorageService
@@ -11,7 +11,7 @@
         <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Ne</button>
     </Authorized>
     <NotAuthorized>
-        @{ LastPageStorageProvider.NavigateToLastPage(); }
+        @{ LastPageStorageService.NavigateToLastPage(); }
     </NotAuthorized>
 </AuthorizeView>
 
@@ -27,6 +27,6 @@
             AuthenticationStateProvider.SignOut();
         }
         StateHasChanged();
-        LastPageStorageProvider.NavigateToLastPage();
+        LastPageStorageService.NavigateToLastPage();
     }
 }

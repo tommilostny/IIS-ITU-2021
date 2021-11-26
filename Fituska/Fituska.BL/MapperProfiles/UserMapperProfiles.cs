@@ -21,11 +21,7 @@ public class UserMapperProfiles : Profile
     {
         public DateTime? Resolve(UserEntity source, UserDetailModel destination, DateTime? destMember, ResolutionContext context)
         {
-            if (source.LastLoginDate.HasValue)
-            {
-                return source.LastLoginDate.Value.ToLocalTime();
-            }
-            return DateTime.Now;
+            return source.LastLoginDate is not null ? source.LastLoginDate.Value.ToLocalTime() : DateTime.Now;
         }
     }
 }

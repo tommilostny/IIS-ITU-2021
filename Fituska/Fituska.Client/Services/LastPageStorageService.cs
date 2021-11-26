@@ -1,11 +1,11 @@
-﻿namespace Fituska.Client.Providers;
+﻿namespace Fituska.Client.Services;
 
-public class LastPageStorageProvider
+public class LastPageStorageService
 {
     private string lastPage;
     private readonly NavigationManager navigationManager;
 
-    public LastPageStorageProvider(NavigationManager navigationManager)
+    public LastPageStorageService(NavigationManager navigationManager)
     {
         lastPage = "/";
         this.navigationManager = navigationManager;
