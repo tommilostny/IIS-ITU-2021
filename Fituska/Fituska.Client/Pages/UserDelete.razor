@@ -1,0 +1,32 @@
+﻿@page "/user-delete"
+@inject LastPageStorageService LastPageStorageService
+@inject HttpClient Http
+@inject FituskaAuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService LocalStorageService
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Smazat účet uživatele <em>@context.User.Identity.Name</em>?</h3>
+        <button class="btn btn-danger" @onclick="() => Delete(context.User.Identity.Name)">Ano</button>
+        <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Ne</button>
+    </Authorized>
+    <NotAuthorized>
+        @{ LastPageStorageService.NavigateToLastPage(); }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    async Task Delete(string username)
+    {
+        await Http.DeleteAsync(ApiEndpoints.UserUrl(username));
+
+        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
+        {
+            await LocalStorageService.RemoveItemAsync(JwtNames.BearerToken);
+            AuthenticationStateProvider.SignOut();
+        }
+        StateHasChanged();
+        LastPageStorageService.NavigateToLastPage();
+    }
+}

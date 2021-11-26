@@ -31,7 +31,7 @@ public static class SeedRolesAndUsers
         {
             var adminUser = new UserEntity
             {
-                UserName = "admin@fituska.net",
+                UserName = "administrator",
                 Email = "admin@fituska.net",
                 RegistrationDate = DateTime.UtcNow,
             };

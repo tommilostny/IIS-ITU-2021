@@ -1,0 +1,36 @@
+﻿@page "/search/{SearchTerm}"
+@using Fituska.Shared.Models.Search
+@inject HttpClient Http
+@inject SearchRequestModel SearchRequest
+@inherits LastPageSavableComponentBase
+
+<h3>Výsledky hledání pro: <em>@SearchTerm</em></h3>
+@if (SearchRequest.IncludeAnswers)
+{
+    <h4>Odpovědi</h4>
+}
+@if (SearchRequest.IncludeCourses)
+{
+    <h4>Kurzy</h4>
+}
+@if (SearchRequest.IncludeQuestions)
+{
+    <h4>Otázky</h4>
+}
+@if (SearchRequest.IncludeUsers)
+{
+    <h4>Uživatelé</h4>
+}
+
+@code
+{
+    [Parameter]
+    public string SearchTerm { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SearchRequest.SearchTerm = SearchTerm;
+        //var response = await Http.PostAsJsonAsync(ApiEndpoints.SearchUrl, SearchRequest);
+        await base.OnInitializedAsync();
+    }
+}

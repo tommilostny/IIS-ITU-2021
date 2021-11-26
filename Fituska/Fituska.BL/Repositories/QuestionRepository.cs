@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace Fituska.BL.Repositories;
 
-namespace Fituska.BL.Repositories;
-
-public class QuestionRepository : IRepository<QuestionEntity>
+public class QuestionRepository : IRepository<QuestionEntity>, ISearchableRepository<QuestionEntity>
 {
     private readonly FituskaDbContext database;
 
@@ -21,37 +19,47 @@ public class QuestionRepository : IRepository<QuestionEntity>
         }
     }
 
-    public IEntity Insert(IEntity model)
+    public QuestionEntity Insert(QuestionEntity entity)
     {
-        var question = (QuestionEntity)model;
-        database.Questions.Add(question);
+        database.Questions.Add(entity);
         database.SaveChanges();
-        return question;
+        return entity;
     }
 
-    public IEntity Update(IEntity model)
+    public QuestionEntity Update(QuestionEntity entity)
     {
-        var question = (QuestionEntity)model;
-        var questionToUpdate = database.Questions.Attach(question);
+        var questionToUpdate = database.Questions.Attach(entity);
         questionToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return question;
+        return entity;
     }
 
-    public IEnumerable<IEntity> GetAll()
+    public IEnumerable<QuestionEntity> GetAll()
     {
-        IEnumerable<IEntity> discussions = database.Questions
+        var questions = database.Questions
             .Include(question => question.UserSawQuestions)
             .Include(question => question.Answers)
+            .Include(question => question.User)
+            .Include(question => question.Category)
+            .Include(answer => answer.Files)
             .ToList();
-        return discussions;
+        return questions;
     }
-    public IEntity GetByID(Guid entityID)
+
+    public QuestionEntity GetByID(Guid entityID)
     {
         QuestionEntity? question = database.Questions
             .Include(question => question.UserSawQuestions)
             .Include(question => question.Answers)
+            .Include(question => question.User)
+            .Include(question => question.Category)
+            .Include(answer => answer.Files)
             .FirstOrDefault(question => question.Id == entityID);
         return question;
+    }
+
+    public List<QuestionEntity> Search(string searchTerm)
+    {
+        return database.Questions.Where(q => q.Title.Contains(searchTerm) || q.Text.Contains(searchTerm)).ToList();
     }
 }

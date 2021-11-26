@@ -8,7 +8,11 @@ public static class ApiEndpoints
     public const string ServerBaseUrl = "https://fituska.net/";
 #endif
 
-    public const string RegisterUrl = $"{ServerBaseUrl}api/user/register";
-    public const string SignInUrl = $"{ServerBaseUrl}api/user/signin";
-    public const string WeatherForecastUrl = $"{ServerBaseUrl}weatherforecast";
+    public const string UserBaseUrl = $"{ServerBaseUrl}api/user";
+    public const string RegisterUrl = $"{UserBaseUrl}/register";
+    public const string SignInUrl = $"{UserBaseUrl}/signin";
+
+    public static string UserUrl(string userName) => $"{UserBaseUrl}/{userName}";
+
+    public const string SearchUrl = $"{ServerBaseUrl}api/search";
 }

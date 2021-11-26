@@ -15,7 +15,6 @@ public class FileTests : IAsyncLifetime
     public async Task InitializeAsync() => await dbContext.Database.EnsureCreatedAsync();
 
     [Theory]
-    [InlineData(null)]
     [InlineData(new byte[] { 1, 2, 3, 4, 5 })]
     [InlineData(new byte[] { })]
     public void AddNewFile(byte[] content)
@@ -65,7 +64,7 @@ public class FileTests : IAsyncLifetime
         {
             Name = "luxusnívideosešumem.wav",
             Content = new byte[] { 1, 5, 6, 255 },
-            Discussion = new DiscussionEntity()
+            Comment = new CommentEntity()
             {
                 CreationTime = new DateTime(2021, 12, 9),
                 Text = "Tady je odpověď s obrázkem",
@@ -76,7 +75,7 @@ public class FileTests : IAsyncLifetime
         //Assert
         using var testDbContext = dbContextFactory.Create();
         var retrievedFile = testDbContext.Files
-            .Include(file => file.Discussion)
+            .Include(file => file.Comment)
             .FirstOrDefault(file => file.Id == newFile.Id);
         Assert.StrictEqual(newFile, retrievedFile);
     }

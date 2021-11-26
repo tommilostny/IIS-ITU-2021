@@ -16,7 +16,11 @@ public class UserController : ControllerBase
     private readonly IMapper mapper;
 
     /// <summary> fituska.net/api/user </summary>
-    public UserController(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, IConfiguration configuration, IMapper mapper)
+    public UserController(
+        SignInManager<UserEntity> signInManager,
+        UserManager<UserEntity> userManager,
+        IConfiguration configuration,
+        IMapper mapper)
     {
         this.signInManager = signInManager;
         this.userManager = userManager;
@@ -35,17 +39,7 @@ public class UserController : ControllerBase
 
         if (userIdentityResult.Succeeded)
         {
-            var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, user.RoleName);
-            if (roleIdentityResult.Succeeded)
-            {
-                var success = userIdentityResult.Succeeded && roleIdentityResult.Succeeded;
-                return Ok(new { success });
-            }
-            //TODO: PhotoRepository?
-            //if (user.Photo is not null)
-            //{
-            //
-            //}
+            return Ok(new { userIdentityResult.Succeeded });
         }
         string errors = "Registrace selhala s následujícími chybami:";
         foreach (var error in userIdentityResult.Errors)
@@ -61,10 +55,10 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SignIn([FromBody] UserSignInModel user)
     {
-        var signInResult = await signInManager.PasswordSignInAsync(user.Email, user.Password, isPersistent: false, lockoutOnFailure: false);
+        var signInResult = await signInManager.PasswordSignInAsync(user.UserName, user.Password, isPersistent: false, lockoutOnFailure: false);
         if (signInResult.Succeeded)
         {
-            var identityUser = await userManager.FindByNameAsync(user.Email);
+            var identityUser = await userManager.FindByNameAsync(user.UserName);
             var jsonWebToken = await CreateJsonWebToken(identityUser);
             return Ok(jsonWebToken);
         }
@@ -80,9 +74,9 @@ public class UserController : ControllerBase
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, identityUser.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, identityUser.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString()),
         };
         var roleNames = await userManager.GetRolesAsync(identityUser);
         claims.AddRange(roleNames.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
@@ -100,21 +94,46 @@ public class UserController : ControllerBase
 
     [Route(nameof(GetAll))]
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public IActionResult GetAll() => Ok(mapper.Map<List<UserListModel>>(userManager.Users.ToList()));
+
+    [Route("{username}")]
+    [HttpGet]
+    public async Task<IActionResult> Get(string username)
     {
-        var result = new List<UserEntity>();
-        foreach (var role in RoleNames.GetAll())
+        var user = mapper.Map<UserDetailModel>(await userManager.FindByNameAsync(username));
+        if (user is null)
         {
-            result.AddRange(await userManager.GetUsersInRoleAsync(role));
+            return NotFound();
         }
-        return Ok(mapper.Map<List<UserListModel>>(result));
+        return Ok(user);
     }
 
-    [HttpDelete("delete/{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> Delete(string username)
     {
-        var userToDelete = await userManager.FindByIdAsync(id.ToString());
-        await userManager.DeleteAsync(userToDelete);
+        var userToDelete = await userManager.FindByNameAsync(username);
+        if (userToDelete is not null)
+        {
+            await userManager.DeleteAsync(userToDelete);
+            return Ok();
+        }
+        return NotFound();
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UserEditModel user)
+    {
+        var entity = await userManager.FindByIdAsync(user.Id.ToString());
+
+        entity.DiscordUsername = user.DiscordUsername;
+        entity.Email = user.Email;
+        entity.FirstName = user.FirstName;
+        entity.LastName = user.LastName;
+        entity.Photo = user.Photo;
+
+        await userManager.UpdateAsync(entity);
         return Ok();
     }
+
+    //TODO: Last login / activity?
 }

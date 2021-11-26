@@ -1,0 +1,35 @@
+﻿@page "/course/{CourseUrl}"
+@using Fituska.Shared.Models.Course
+@inherits LastPageSavableComponentBase
+
+@if (course is null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <h1>@course.Name <small>(@course.Shortcut)</small></h1>
+    <p>Ročník: @course.YearOfStudy</p>
+    <p>Semestr: @course.Semester</p>
+    <hr />
+    <p>@course.Description</p>
+    <hr />
+    @foreach (var category in course.Categories)
+    {
+        <CategoryBox Category="@category" />
+    }
+}
+
+@code
+{
+    [Parameter]
+    public string CourseUrl { get; set; }
+
+    CourseDetailModel course;
+
+    protected override async Task OnInitializedAsync()
+    {
+        course = DesignTimeSeed.CourseDetailModels.FirstOrDefault(c => c.Url == CourseUrl);
+        await base.OnInitializedAsync();
+    }
+}

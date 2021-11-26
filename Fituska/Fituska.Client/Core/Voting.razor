@@ -1,0 +1,95 @@
+﻿@using Fituska.Shared.Enums
+@using Fituska.Shared.Models.User
+@using Fituska.Shared.Models.Vote
+
+<AuthorizeView>
+    <Authorized>
+        <div class="voting-container">
+            <button @onclick="UpvoteClick" class="btn btn-sm btn-upvote @UpvoteButtonStyle">
+                <span class="oi oi-chevron-top" aria-hidden="true"></span>
+            </button>
+            <p class="rating-text">
+                @Rating
+            </p>
+            <button @onclick="DownvoteClick" class="btn btn-sm btn-downvote @DownvoteButtonStyle">
+                <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+            </button>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="voting-container">
+            <button class="btn btn-sm btn-upvote btn-outline-secondary" disabled>
+                <span class="oi oi-chevron-top" aria-hidden="true"></span>
+            </button>
+            <p class="rating-text">
+                @Rating
+            </p>
+            <button class="btn btn-sm btn-downvote btn-outline-secondary" disabled>
+                <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+            </button>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    [Parameter]
+    public List<VoteModel> Votes { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    int Rating => Votes.Sum(v => (int)v.Vote);
+
+    UserListModel user;
+    bool upvoteClicked = false;
+    bool downvoteClicked = false;
+
+    (bool, VoteModel) VoteFromUserInVotes(int vote)
+    {
+        foreach (var v in Votes)
+        {
+            if (v.User.UserName == user.UserName && (vote == 0 || (int)v.Vote == vote))
+                return (true, v);
+        }
+        return (false, null);
+    }
+
+    void VoteButtonClick(VoteValue voteType, ref bool clickFlag, ref bool opositeClickFlag)
+    {
+        (bool voteInDb, var voteModel) = VoteFromUserInVotes(0);
+        if (voteInDb)
+        {
+            Votes.Remove(voteModel);
+            opositeClickFlag = false;
+            if (voteModel.Vote == voteType)
+            {
+                clickFlag = false;
+                return;
+            }
+        }
+        Votes.Add(new VoteModel { User = user, Vote = voteType });
+        clickFlag = true;
+    }
+
+    string? UpvoteButtonStyle => upvoteClicked ? "btn-success" : "btn-outline-success";
+
+    string? DownvoteButtonStyle => downvoteClicked ? "btn-danger" : "btn-outline-danger";
+
+    void UpvoteClick() => VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
+
+    void DownvoteClick() => VoteButtonClick(VoteValue.Downvote, ref downvoteClicked, ref upvoteClicked);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var identityUser = (await AuthenticationState).User.Identity;
+        if (identityUser.IsAuthenticated)
+        {
+            user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
+
+            (upvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Upvote);
+            (downvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Downvote);
+        }
+        await base.OnInitializedAsync();
+    }
+}

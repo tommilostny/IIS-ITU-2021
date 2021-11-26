@@ -1,4 +1,4 @@
-﻿global using Fituska.Shared.Models.CourseAttendcy;
+﻿global using Fituska.Shared.Models.CourseAttendance;
 global using Fituska.Shared.Models.Question;
 global using Fituska.Shared.Static;
 global using System.Collections.Generic;

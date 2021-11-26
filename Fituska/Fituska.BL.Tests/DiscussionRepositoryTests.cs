@@ -3,13 +3,13 @@ public class DiscussionRepositoryTests
 {
     private readonly IDbContextFactory dbContextFactory;
     private readonly FituskaDbContext dbContext;
-    private readonly DiscussionRepository discussionRepository;
+    private readonly CommentRepository discussionRepository;
 
     public DiscussionRepositoryTests()
     {
         dbContextFactory = new InMemoryDbContextFactory(nameof(DiscussionRepositoryTests));
         dbContext = dbContextFactory.Create();
-        discussionRepository = new DiscussionRepository(dbContext);
+        discussionRepository = new CommentRepository(dbContext);
     }
 
     public async Task InitializeAsync() => await dbContext.Database.EnsureCreatedAsync();
@@ -18,10 +18,10 @@ public class DiscussionRepositoryTests
     [Fact]
     public void GetDiscussionById()
     {
-        DiscussionEntity discussion = SeedData();
-        dbContext.Discussions.Add(discussion);
+        CommentEntity discussion = SeedData();
+        dbContext.Comments.Add(discussion);
         dbContext.SaveChanges();
-        DiscussionEntity? discussionFromDb = (DiscussionEntity?)discussionRepository.GetByID(discussion.Id);
+        CommentEntity? discussionFromDb = (CommentEntity?)discussionRepository.GetByID(discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
     }
 
@@ -29,13 +29,13 @@ public class DiscussionRepositoryTests
     [Fact]
     public void InsertDiscussion()
     {
-        DiscussionEntity discussion = SeedData();
+        CommentEntity discussion = SeedData();
         discussionRepository.Insert(discussion);
         using var database = dbContextFactory.Create();
-        var discussionFromDb = database.Discussions
+        var discussionFromDb = database.Comments
             .FirstOrDefault(discussionToFind => discussionToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
-        database.Discussions.Remove(discussionFromDb);
+        database.Comments.Remove(discussionFromDb);
         database.SaveChanges();
     }
 
@@ -45,27 +45,27 @@ public class DiscussionRepositoryTests
         var originDiscussion = SeedData();
         discussionRepository.Insert(originDiscussion);
         var nestedDiscussion = SeedData(1);
-        nestedDiscussion.OriginDiscussion = originDiscussion;
+        nestedDiscussion.ParentComment = originDiscussion;
         discussionRepository.Insert(nestedDiscussion);
         var nestedDiscussion2 = SeedData(1);
-        nestedDiscussion2.OriginDiscussion = nestedDiscussion;
+        nestedDiscussion2.ParentComment = nestedDiscussion;
         discussionRepository.Insert(nestedDiscussion2);
         using var database = dbContextFactory.Create();
-        DiscussionEntity nestedDiscussion2FromDb = (DiscussionEntity)discussionRepository.GetByID(nestedDiscussion2.Id);
+        CommentEntity nestedDiscussion2FromDb = (CommentEntity)discussionRepository.GetByID(nestedDiscussion2.Id);
         Assert.StrictEqual(nestedDiscussion2, nestedDiscussion2FromDb);
     }
 
     [Fact]
     public void GetAllDiscussions()
     {
-        dbContext.Discussions.RemoveRange(dbContext.Discussions);
-        List<DiscussionEntity> Discussions = new() { };
+        dbContext.Comments.RemoveRange(dbContext.Comments);
+        List<CommentEntity> Discussions = new() { };
         Discussions.Add(SeedData());
         Discussions.Add(SeedData());
-        dbContext.Discussions.AddRange(Discussions);
+        dbContext.Comments.AddRange(Discussions);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        List<DiscussionEntity> DiscussionFromDb = (List<DiscussionEntity>)discussionRepository.GetAll();
+        List<CommentEntity> DiscussionFromDb = (List<CommentEntity>)discussionRepository.GetAll();
 
         Assert.True(DiscussionFromDb.SequenceEqual(Discussions));
         Assert.NotStrictEqual(Discussions[0], DiscussionFromDb[1]);
@@ -75,16 +75,16 @@ public class DiscussionRepositoryTests
     [Fact]
     public void UpdateDiscussion()
     {
-        DiscussionEntity discussion = SeedData();
-        dbContext.Discussions.Add(discussion);
+        CommentEntity discussion = SeedData();
+        dbContext.Comments.Add(discussion);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var discussionFromDb = database.Discussions
+        var discussionFromDb = database.Comments
             .FirstOrDefault(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
         discussionFromDb.Text = "Updated text";
-        discussion = (DiscussionEntity)discussionRepository.Update(discussion);
-        var updatedUserFromDb = database.Discussions
+        discussion = (CommentEntity)discussionRepository.Update(discussion);
+        var updatedUserFromDb = database.Comments
             .FirstOrDefault(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussionFromDb, updatedUserFromDb);
     }
@@ -92,34 +92,34 @@ public class DiscussionRepositoryTests
     [Fact]
     public void DeleteDiscussion()
     {
-        DiscussionEntity discussion = SeedData();
-        dbContext.Discussions.Add(discussion);
+        CommentEntity discussion = SeedData();
+        dbContext.Comments.Add(discussion);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var discussionFromDb = database.Discussions
+        var discussionFromDb = database.Comments
             .FirstOrDefault(answerToFind => answerToFind.Id == discussion.Id);
         Assert.StrictEqual(discussion, discussionFromDb);
         discussionRepository.Delete(discussionFromDb.Id);
-        var deletedDiscussion = database.Discussions.FirstOrDefault(deletingUser => deletingUser.Id == discussion.Id);
+        var deletedDiscussion = database.Comments.FirstOrDefault(deletingUser => deletingUser.Id == discussion.Id);
         discussionFromDb.Text = "Deleted";
         Assert.Equal("Deleted", deletedDiscussion?.Text);
         Assert.StrictEqual(discussionFromDb, deletedDiscussion);
 
     }
 
-    public DiscussionEntity SeedData(int levelOfNesting = 0)
+    public CommentEntity SeedData(int levelOfNesting = 0)
     {
-        DiscussionEntity discussion = new()
+        CommentEntity discussion = new()
         {
             Text = $"Diskuze {levelOfNesting}",
-            Files = new ValueCollection<FileEntity>()
-            {
-                new FileEntity()
-                {
-                    Name = $"File {levelOfNesting}",
-                    Content = new byte[10000]
-                }
-            }
+            //Files = new ValueCollection<FileEntity>()
+            //{
+            //    new FileEntity()
+            //    {
+            //        Name = $"File {levelOfNesting}",
+            //        Content = new byte[10000]
+            //    }
+            //}
         };
         UserEntity author = new()
         {
@@ -127,7 +127,7 @@ public class DiscussionRepositoryTests
             LastName = $"User {levelOfNesting}last name ",
             Email = $"user {levelOfNesting} email",
         };
-        discussion.Author = author;
+        discussion.User = author;
         return discussion;
     }
 }

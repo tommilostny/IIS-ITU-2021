@@ -3,12 +3,12 @@
 public class CategoryEntity : EntityBase
 {
     public string Name { get; set; }
-
-    public string Description { get; set; }
-
+    public int Year { get; set; }
+    
     public Guid CourseId { get; set; }
-
     public CourseEntity Course { get; set; }
+    
+    public ValueCollection<QuestionEntity> Questions { get; set; } = new();
 
     public override bool Equals(object? obj)
     {
@@ -20,6 +20,6 @@ public class CategoryEntity : EntityBase
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Id, Name, Description, CourseId);
+        return HashCode.Combine(Id, Name, Year, CourseId);
     }
 }

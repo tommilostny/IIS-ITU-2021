@@ -1,59 +1,98 @@
 ﻿@page "/register"
+@using Fituska.Shared.Models.User
+@inject HttpClient Http
 
 <h3>Registrace</h3>
 
-@if (!_registerSuccess)
+@if (!registerSuccess)
 {
-    <EditForm Model="_userToRegister" OnValidSubmit="RegisterAsync">
+    <EditForm Model="userToRegister" OnValidSubmit="RegisterAsync">
         <DataAnnotationsValidator />
 
         <div class="form-group my-3">
+            <label for="username">Uživatelské jméno:</label>
+            <InputText id="username" class="form-control" @bind-Value="userToRegister.UserName" />
+            <ValidationMessage For="@(() => userToRegister.UserName)" />
+        </div>
+
+        <div class="form-group my-3">
             <label for="e-mail">E-mail:</label>
-            <InputText id="e-mail" class="form-control" @bind-Value="_userToRegister.Email" />
-            <ValidationMessage For="@(() => _userToRegister.Email)" />
+            <InputText id="e-mail" class="form-control" @bind-Value="userToRegister.Email" />
+            <ValidationMessage For="@(() => userToRegister.Email)" />
         </div>
 
         <div class="form-group my-3">
             <label for="password">Heslo:</label>
-            <InputText id="password" type="password" class="form-control" @bind-Value="_userToRegister.Password" />
-            <ValidationMessage For="@(() => _userToRegister.Password)" />
+            <InputText id="password" type="password" class="form-control" @bind-Value="userToRegister.Password" />
+            <ValidationMessage For="@(() => userToRegister.Password)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="passwordconfirm">Potvrzení hesla:</label>
+            <InputText id="passwordconfirm" type="password" class="form-control" @bind-Value="userToRegister.PasswordConfirm" />
+            <ValidationMessage For="@(() => userToRegister.PasswordConfirm)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="firstname">Jméno:</label>
+            <InputText id="firstname" class="form-control" @bind-Value="userToRegister.FirstName" />
+            <ValidationMessage For="@(() => userToRegister.FirstName)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="lastname">Příjmení:</label>
+            <InputText id="lastname" class="form-control" @bind-Value="userToRegister.LastName" />
+            <ValidationMessage For="@(() => userToRegister.LastName)" />
         </div>
 
         <div class="form-group my-3">
             <label for="discord">Discord uživatelské jméno:</label>
-            <InputText id="discord" class="form-control" @bind-Value="_userToRegister.DiscordUsername" />
-            <ValidationMessage For="@(() => _userToRegister.DiscordUsername)" />
+            <InputText id="discord" class="form-control" @bind-Value="userToRegister.DiscordUsername" />
+            <ValidationMessage For="@(() => userToRegister.DiscordUsername)" />
         </div>
-
-        <div class="form-group my-3">
-            <label for="photo">Profilový obrázek:</label>
-            <InputFile id="photo" class="form-control" @bind-Value="_userToRegister.Photo" />
-            <ValidationMessage For="@(() => _userToRegister.Photo)" />
-        </div>
-
-        <div class="form-group my-3">
-            <label for="role">Role:</label>
-            <InputSelect id="role" class="form-control" @bind-Value="_userToRegister.RoleName">
-                @foreach (var role in RoleNames.GetAll())
-                {
-                    <option>@role</option>
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => _userToRegister.RoleName)" />
-        </div>
-
+        <!--
+        <FileUploader OnChange="ImageUpload" />
+        -->
         <ValidationSummary />
 
-        <button type="submit" class="btn btn-primary btn-lg">Registrovat</button>
+        <button type="submit" class="btn btn-primary mb-3">Registrovat</button>
 
-        @if (_registerFailure)
+        @if (registerFailure)
         {
-            <p class="my-3 text-danger">@_registerErrorMessage</p>
+            <p class="my-3 text-danger">@registerErrorMessage</p>
         }
     </EditForm>
 }
 else
 {
     <h4>Registrace proběhla úspěšně!</h4>
-    <a href="/signin" class="btn btn-success btn-lg">Přejít na přihlášení</a>
+    <a href="/signin" class="btn btn-success">Přejít na přihlášení</a>
+}
+
+@code
+{
+    readonly UserRegistrationModel userToRegister = new();
+    bool registerSuccess = false;
+    bool registerFailure = false;
+    string? registerErrorMessage = null;
+
+    private async Task RegisterAsync()
+    {
+        registerFailure = false;
+        var httpResponseMessage = await Http.PostAsJsonAsync(ApiEndpoints.RegisterUrl, userToRegister);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+            registerSuccess = true;
+        else
+        {
+            var serverErrorMessages = await httpResponseMessage.Content.ReadAsStringAsync();
+            registerErrorMessage = $"{serverErrorMessages} Zkontrolujte zadané údaje.";
+            registerFailure = true;
+        }
+    }
+
+    //private void ImageUpload(string imageUrl)
+    //{
+    //    userToRegister.Photo = imageUrl;
+    //}
 }

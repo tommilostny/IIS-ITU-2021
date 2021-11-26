@@ -1,0 +1,52 @@
+﻿.navmenu-user-box {
+    position: fixed;
+    right: 25px;
+    top: 64px;
+    background-color: white;
+    border: solid 1px lightgrey;
+    border-radius: 8px;
+    box-shadow: 0 0 15px darkgrey;
+    padding: 20px;
+    z-index: 100;
+    min-width: 200px;
+}
+
+.navmenu-user-box p {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.show-box-button {
+    background: none;
+    border: none;
+    float: right;
+    padding-top: 10px;
+}
+
+    .show-box-button span {
+        width: 30px;
+        display: inline-block;
+        float: left;
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+.btns-group {
+    position: relative;
+    right: 15px;
+    float: right;
+}
+
+.person-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 500px;
+    display: inline-block;
+    float: left;
+    border: solid darkgrey 1px;
+    background-color: white;
+    margin-top: -10px;
+}
+
+.mobile-auth-buttons {
+    margin-top: -15px;
+}

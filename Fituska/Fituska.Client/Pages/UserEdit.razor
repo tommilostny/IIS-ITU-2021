@@ -1,0 +1,94 @@
+﻿@page "/user-edit"
+@using Fituska.Shared.Models.User
+@inherits LastPageSavableComponentBase
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (userToEdit is not null)
+{
+    <EditForm Model="userToEdit" OnValidSubmit="UpdateAsync">
+
+        <DataAnnotationsValidator />
+
+        <div class="form-group my-3">
+            <label for="username">Uživatelské jméno:</label>
+            <InputText id="username" class="form-control" @bind-Value="userToEdit.UserName" disabled="true" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="e-mail">E-mail:</label>
+            <InputText id="e-mail" class="form-control" @bind-Value="userToEdit.Email" />
+            <ValidationMessage For="@(() => userToEdit.Email)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="firstname">Jméno:</label>
+            <InputText id="firstname" class="form-control" @bind-Value="userToEdit.FirstName" />
+            <ValidationMessage For="@(() => userToEdit.FirstName)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="lastname">Příjmení:</label>
+            <InputText id="lastname" class="form-control" @bind-Value="userToEdit.LastName" />
+            <ValidationMessage For="@(() => userToEdit.LastName)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="discord">Discord uživatelské jméno:</label>
+            <InputText id="discord" class="form-control" @bind-Value="userToEdit.DiscordUsername" />
+            <ValidationMessage For="@(() => userToEdit.DiscordUsername)" />
+        </div>
+        <!--
+        <FileUploader OnChange="ImageUpload" />
+        -->
+        <ValidationSummary />
+
+        <button type="submit" class="btn btn-primary btn-lg">Uložit</button>
+
+        @if (editFailure)
+        {
+            <p class="my-3 text-danger">@editErrorMessage</p>
+        }
+    </EditForm>  
+}
+
+@code
+{
+    [CascadingParameter]
+    protected Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    UserEditModel userToEdit = null;
+    bool editFailure = false;
+    string editErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var identityUser = (await AuthenticationState!).User.Identity;
+        if (identityUser.IsAuthenticated)
+        {
+            userToEdit = await Http.GetFromJsonAsync<UserEditModel>(ApiEndpoints.UserUrl(identityUser.Name));
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+        await base.OnInitializedAsync();
+    }
+
+    private async Task UpdateAsync()
+    {
+        editFailure = false;
+        var httpResponseMessage = await Http.PutAsJsonAsync(ApiEndpoints.UserBaseUrl, userToEdit);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo($"/user/{userToEdit.UserName}");
+        }
+        else
+        {
+            var serverErrorMessages = await httpResponseMessage.Content.ReadAsStringAsync();
+            editErrorMessage = $"{serverErrorMessages} Zkontrolujte zadané údaje.";
+            editFailure = true;
+        }
+    }
+}

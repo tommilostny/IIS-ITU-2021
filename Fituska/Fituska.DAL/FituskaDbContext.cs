@@ -14,11 +14,10 @@ public class FituskaDbContext : IdentityDbContext<UserEntity, IdentityRole<Guid>
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<CourseAttendanceEntity> CourseAttendances { get; set; }
     public DbSet<CourseEntity> Courses { get; set; }
-    public DbSet<DiscussionEntity> Discussions { get; set; }
+    public DbSet<CommentEntity> Comments { get; set; }
     public DbSet<FileEntity> Files { get; set; }
     public DbSet<QuestionEntity> Questions { get; set; }
     public DbSet<VoteEntity> Votes { get; set; }
-    public DbSet<UserSawAnswer> UsersSawAnswers { get; set; }
-    public DbSet<UserSawQuestion> UsersSawQuestions { get; set; }
-
+    public DbSet<UserSawAnswerEntity> UsersSawAnswers { get; set; }
+    public DbSet<UserSawQuestionEntity> UsersSawQuestions { get; set; }
 }

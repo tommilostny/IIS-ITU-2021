@@ -20,18 +20,18 @@ public class DiscussionTests : IAsyncLifetime
     public void AddNewDiscussion()
     {
         //Arrange
-        var newDiscussion = new DiscussionEntity
+        var newDiscussion = new CommentEntity
         {
             CreationTime = new DateTime(2021, 10, 22, 17, 16, 50, 150),
             Text = "Sin + cos = arctg ?",
         };
 
-        dbContext.Discussions.Add(newDiscussion);
+        dbContext.Comments.Add(newDiscussion);
         dbContext.SaveChanges();
 
         //Assert
         using var testDbContext = dbContextFactory.Create();
-        var retrievedDiscussion = testDbContext.Discussions
+        var retrievedDiscussion = testDbContext.Comments
             .FirstOrDefault(discussion => discussion.Id == newDiscussion.Id);
         Assert.StrictEqual(newDiscussion, retrievedDiscussion);
     }
@@ -40,7 +40,7 @@ public class DiscussionTests : IAsyncLifetime
     public void AddNewDiscussionWithEntities()
     {
         //Arrange
-        var newDiscussion = new DiscussionEntity
+        var newDiscussion = new CommentEntity
         {
             CreationTime = new DateTime(2021, 10, 22, 17, 16, 50, 150),
             Text = "Sin + cos = arctg ?",
@@ -48,7 +48,7 @@ public class DiscussionTests : IAsyncLifetime
             {
                 Text = "Ano",
             },
-            Author = new UserEntity()
+            User = new UserEntity()
             {
                 FirstName = "Author",
             },
@@ -62,14 +62,14 @@ public class DiscussionTests : IAsyncLifetime
             },
         };
 
-        dbContext.Discussions.Add(newDiscussion);
+        dbContext.Comments.Add(newDiscussion);
         dbContext.SaveChanges();
 
         //Assert
         using var testDbContext = dbContextFactory.Create();
-        var retrievedDiscussion = testDbContext.Discussions
+        var retrievedDiscussion = testDbContext.Comments
             .Include(file => file.Files)
-            .Include(file => file.Author)
+            .Include(file => file.User)
             .Include(file => file.Answer)
             .FirstOrDefault(discussion => discussion.Id == newDiscussion.Id);
         Assert.StrictEqual(newDiscussion, retrievedDiscussion);
@@ -79,7 +79,7 @@ public class DiscussionTests : IAsyncLifetime
     public void AddNewRecurringDiscussion()
     {
         //Arrange
-        var newDiscussion = new DiscussionEntity
+        var newDiscussion = new CommentEntity
         {
             CreationTime = new DateTime(2021, 10, 22, 17, 16, 50, 150),
             Text = "origin",
@@ -88,30 +88,30 @@ public class DiscussionTests : IAsyncLifetime
                 Text = "Ano",
             },
         };
-        var nestedDiscussion1 = new DiscussionEntity
+        var nestedDiscussion1 = new CommentEntity
         {
             CreationTime = new DateTime(2021, 10, 22, 17, 16, 50, 150),
             Text = "Nested discussion 1",
         };
-        var nestedDiscussion2 = new DiscussionEntity
+        var nestedDiscussion2 = new CommentEntity
         {
             CreationTime = new DateTime(2021, 10, 22, 17, 16, 50, 150),
             Text = "Nested discussion 2",
         };
-        dbContext.Discussions.Add(newDiscussion);
-        nestedDiscussion1.OriginDiscussion = newDiscussion;
-        nestedDiscussion1.OriginId = newDiscussion.Id;
-        dbContext.Discussions.Add(nestedDiscussion1);
-        nestedDiscussion2.OriginDiscussion = nestedDiscussion1;
-        nestedDiscussion2.OriginId = nestedDiscussion1.Id;
-        dbContext.Discussions.Add(nestedDiscussion2);
+        dbContext.Comments.Add(newDiscussion);
+        nestedDiscussion1.ParentComment = newDiscussion;
+        nestedDiscussion1.ParentCommentId = newDiscussion.Id;
+        dbContext.Comments.Add(nestedDiscussion1);
+        nestedDiscussion2.ParentComment = nestedDiscussion1;
+        nestedDiscussion2.ParentCommentId = nestedDiscussion1.Id;
+        dbContext.Comments.Add(nestedDiscussion2);
         dbContext.SaveChanges();
 
         //Assert
         using var testDbContext = dbContextFactory.Create();
-        DiscussionEntity? retrievedDiscussion = testDbContext.Discussions
-            .Include(discussion => discussion.OriginDiscussion)
-            .ThenInclude(discussion => discussion.OriginDiscussion)
+        CommentEntity? retrievedDiscussion = testDbContext.Comments
+            .Include(discussion => discussion.ParentComment)
+            .ThenInclude(discussion => discussion!.ParentComment)
             .FirstOrDefault(discussion => discussion.Id == nestedDiscussion2.Id);
         Assert.StrictEqual(nestedDiscussion2, retrievedDiscussion);
     }

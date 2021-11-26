@@ -1,62 +1,41 @@
-.navbar-toggler {
-    background-color: rgba(255, 255, 255, 0.1);
+﻿.fituska-blue {
+    background-color: #81d4fa;
+    color: #131313;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 
-.top-row {
-    height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+.fituska-nav {
+    padding: 18px;
+    padding-bottom: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
 }
 
-.navbar-brand {
-    font-size: 1.1rem;
+.search-box-container {
+    padding: 30px;
+    padding-bottom: 0;
 }
 
-.oi {
-    width: 2rem;
-    font-size: 1.1rem;
-    vertical-align: text-top;
-    top: -2px;
+.menu-divider {
+    margin-bottom: 80px;
 }
 
-.nav-item {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+.fituska-nav-heading {
+    float: left;
 }
 
-    .nav-item:first-of-type {
-        padding-top: 1rem;
-    }
-
-    .nav-item:last-of-type {
-        padding-bottom: 1rem;
-    }
-
-    .nav-item ::deep a {
-        color: #d7d7d7;
-        border-radius: 4px;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        line-height: 3rem;
-    }
-
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
+.fituska-nav-heading a {
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 24px;
+    text-decoration: none;
+    float: left;
 }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
-
-@media (min-width: 641px) {
-    .navbar-toggler {
-        display: none;
-    }
-
-    .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
-    }
+.mobile-search-button {
+    margin-left: 5px;
+    float: left;
 }

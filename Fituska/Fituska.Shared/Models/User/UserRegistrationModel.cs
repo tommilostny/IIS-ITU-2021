@@ -1,26 +1,22 @@
 ﻿namespace Fituska.Shared.Models.User;
-public record UserRegistrationModel : UserSignInModel
+
+public record UserRegistrationModel : UserEditModel
 {
-    [StringLength(maximumLength: 64)]
-    [Display(Name = "Discord")]
-    public string? DiscordUsername { get; set; }
+    [Required(ErrorMessage = "Heslo musí být zadáno.")]
+    [DataType(DataType.Password)]
+    [StringLength(maximumLength: 64, ErrorMessage = "Délka hesla musí být mezi {2} a {1} znaky.", MinimumLength = 6)]
+    public string Password { get; set; } = string.Empty;
 
-    [DataType(DataType.Upload)]
-    [Display(Name = "Profilový obrázek")]
-    public byte[]? Photo { get; set; }
+    [PasswordConfirmValidator]
+    public string PasswordConfirm { get; set; } = string.Empty;
 
-    [RoleNameValidator]
-    public string? RoleName { get; set; }
-
-    private class RoleNameValidator : ValidationAttribute
+    private class PasswordConfirmValidator : ValidationAttribute
     {
-        protected override ValidationResult IsValid(object? value, ValidationContext _)
+        protected override ValidationResult IsValid(object? value, ValidationContext context)
         {
-            var role = value as string;
-
-            return RoleNames.GetAll().Contains(role)
-                ? ValidationResult.Success!
-                : new ValidationResult($"Role '{role}' neexistuje.");
+            return (context.ObjectInstance as UserRegistrationModel).Password == (string)value
+                ? ValidationResult.Success
+                : new ValidationResult("Zadané heslo se neshoduje.");
         }
     }
 }

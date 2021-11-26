@@ -2,11 +2,12 @@
 
 public class VoteEntity : EntityBase
 {
+    public VoteValue Vote { get; set; }
+
     public Guid UserId { get; set; }
     public UserEntity User { get; set; }
     public Guid AnswerId { get; set; }
     public AnswerEntity Answer { get; set; }
-    public QuestionVote Vote { get; set; }
 
     public override bool Equals(object? obj)
     {

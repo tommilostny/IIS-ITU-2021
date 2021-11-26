@@ -21,11 +21,11 @@ public class CategoryTests : IAsyncLifetime
         var newCategory = new CategoryEntity
         {
             Name = "Půlsemestrálka",
-            Description = "Ptejte se k půlsemestrálce",
             Course = new CourseEntity()
             {
                 Name = "Signály a systémy",
                 Shortcut = "ISS",
+                Url = "bit3-2021-iss"
             }
         };
         dbContext.Categories.Add(newCategory);

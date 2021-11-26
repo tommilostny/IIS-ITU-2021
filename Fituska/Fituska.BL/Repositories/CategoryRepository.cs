@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Fituska.BL.Repositories;
+﻿namespace Fituska.BL.Repositories;
 
 public class CategoryRepository : IRepository<CategoryEntity>
 {
@@ -21,34 +19,34 @@ public class CategoryRepository : IRepository<CategoryEntity>
         }
     }
 
-    public IEntity Insert(IEntity model)
+    public CategoryEntity Insert(CategoryEntity entity)
     {
-        var category = (CategoryEntity)model;
-        database.Categories.Add(category);
+        database.Categories.Add(entity);
         database.SaveChanges();
-        return category;
+        return entity;
     }
 
-    public IEntity Update(IEntity model)
+    public CategoryEntity Update(CategoryEntity entity)
     {
-        var category = (CategoryEntity)model;
-        var answerToUpdate = database.Categories.Attach(category);
-        answerToUpdate.State = EntityState.Modified;
+        var categoryToUpdate = database.Categories.Attach(entity);
+        categoryToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return category;
+        return entity;
     }
 
-    public IEnumerable<IEntity> GetAll()
+    public IEnumerable<CategoryEntity> GetAll()
     {
         return database.Categories
             .Include(category => category.Course)
+            .Include(category => category.Questions)
             .ToList();
     }
-    public IEntity GetByID(Guid entityID)
+
+    public CategoryEntity GetByID(Guid entityID)
     {
-        var category = database.Categories
+        return database.Categories
             .Include(category => category.Course)
+            .Include(category => category.Questions)
             .FirstOrDefault(category => category.Id == entityID);
-        return category;
     }
 }

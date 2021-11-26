@@ -1,0 +1,122 @@
+﻿@using Fituska.Shared.Models.Category
+@using Fituska.Shared.Models.Question
+@using Fituska.Shared.Models.User
+
+<div class="card category-box mb-3">
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <h5 class="card-title">
+                    @Category.Name (@Category.Year)
+                </h5>
+            </div>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="col-3">
+                        @if(!showAddForm)
+                        {
+                            <button class="btn btn-sm btn-outline-success" @onclick="ToggleShowAddForm">
+                                <span class="oi oi-plus me-1" aria-hidden="true"></span> Přidat
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleShowAddForm">
+                                <span class="oi oi-x me-1" aria-hidden="true"></span> Zrušit
+                            </button>
+                        }
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </div>
+    @if (showAddForm)
+    {
+        <div class="card-body add-container">
+            <input type="text" @bind="newQuestionTitle" class="form-control mb-2" placeholder="Titulek"></input>
+            <textarea @bind="newQuestionText" class="form-control mb-2" placeholder="Text"></textarea>
+            <button class="btn btn-primary" @onclick="AddQuestion">
+                Odeslat
+            </button>
+        </div>
+    }
+    <ul class="list-group list-group-flush">
+        @for (int i = 0; i < QuestionLimit(); i++)
+        {
+            <li class="list-group-item">
+                <a href="/question/@Category.Questions[i].Id">@Category.Questions[i].Title</a>
+                <span class="question-username d-none d-sm-block">@Category.Questions[i].CreationTime</span> 
+            </li>
+        }
+        @if (showLoadMoreQuestionsButtion)
+        {
+            <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleExpandQuestions">Zobrazit více</button>
+        }
+        else if (Category.Questions.Count > questionLimit)
+        {
+            <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleExpandQuestions">Zobrazit méně</button>
+        }
+    </ul>
+</div>
+
+@code
+{
+    [Parameter]
+    public CategoryDetailModel Category { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    bool expandQuestions = false;
+    bool showLoadMoreQuestionsButtion = false;
+    const int questionLimit = 10;
+
+    int QuestionLimit()
+    {
+        showLoadMoreQuestionsButtion = false;
+        if (expandQuestions)
+        {
+            return Category.Questions.Count;
+        }
+        if (Category.Questions.Count > questionLimit)
+        {
+            showLoadMoreQuestionsButtion = true;
+            return questionLimit;
+        }
+        return Category.Questions.Count;
+    }
+
+    void ToggleExpandQuestions() => expandQuestions = !expandQuestions;
+
+    bool showAddForm = false;
+    string newQuestionTitle = string.Empty;
+    string newQuestionText = string.Empty;
+
+    void ToggleShowAddForm() => showAddForm = !showAddForm;
+
+    async Task AddQuestion()
+    {
+        if (newQuestionText.Length == 0 || newQuestionTitle.Length == 0)
+        {
+            return;
+        }
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
+        var listModel = new QuestionListModel { Title = newQuestionTitle, User = user, CreationTime = DateTime.Now, Id = Guid.NewGuid() };
+        Category.Questions.Add(listModel);
+
+        //simulate adding detail to database
+        var detailModel = new QuestionDetailModel
+        {
+            Title = newQuestionTitle,
+            Text = newQuestionText,
+            User = user,
+            CreationTime = listModel.CreationTime,
+            Id = listModel.Id
+        };
+        DesignTimeSeed.QuestionDetailModels.Add(detailModel);
+
+        showAddForm = false;
+        newQuestionText = string.Empty;
+        newQuestionTitle = string.Empty;
+    }
+}

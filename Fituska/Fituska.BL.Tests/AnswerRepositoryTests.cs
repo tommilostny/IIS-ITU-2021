@@ -113,9 +113,9 @@ public class AnswerRepositoryTests
                 FirstName = "Rivola"
             },
             CreationTime = new DateTime(2021, 10, 5, 17, 31, 50),
-            UsersSawAnswer = new Nemesis.Essentials.Design.ValueCollection<UserSawAnswer>()
+            UsersSawAnswer = new Nemesis.Essentials.Design.ValueCollection<UserSawAnswerEntity>()
         };
-        UserSawAnswer userSawAnswer = new()
+        UserSawAnswerEntity userSawAnswer = new()
         {
             User = new UserEntity()
             {

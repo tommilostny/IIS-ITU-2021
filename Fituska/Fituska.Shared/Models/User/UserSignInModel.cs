@@ -1,14 +1,9 @@
 ﻿namespace Fituska.Shared.Models.User;
-public record UserSignInModel : ModelBase
-{
-    [Required]
-    [EmailAddress]
-    [Display(Name = "E-mailová adresa")]
-    public string Email { get; set; } = string.Empty;
 
-    [Required]
+public record UserSignInModel : UserModelBase
+{
+    [Required(ErrorMessage = "Heslo musí být zadáno.")]
     [DataType(DataType.Password)]
     [StringLength(maximumLength: 64, ErrorMessage = "Délka hesla musí být mezi {2} a {1} znaky.", MinimumLength = 6)]
-    [Display(Name = "Heslo")]
     public string Password { get; set; } = string.Empty;
 }

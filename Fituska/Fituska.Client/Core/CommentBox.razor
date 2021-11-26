@@ -1,0 +1,30 @@
+﻿@using Fituska.Shared.Models.Comment
+@using Fituska.Shared.Models.User
+
+<div class="card m-4 mt-0">
+    <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted"><a href="user/@Comment.User.UserName">@Comment.User.UserName</a> (@Comment.CreationTime)</h6>
+        <p class="card-text">@Comment.Text</p>
+        <ReplyBox OnSubmit="AddComment" />
+    </div>
+    @foreach (var comment in Comment.SubComments.OrderBy(c => c.CreationTime).Reverse())
+    {
+        <CommentBox Comment="@comment" />
+    }
+</div>
+
+@code
+{
+    [Parameter]
+    public CommentDetailModel Comment { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    async Task AddComment(string text)
+    {
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
+        var comment = new CommentDetailModel { User = user, Text = text, CreationTime = DateTime.Now };
+        Comment.SubComments.Add(comment);
+    }
+}

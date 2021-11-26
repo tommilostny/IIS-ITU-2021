@@ -1,58 +1,36 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Fituska.Client</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+﻿<div class="row fituska-nav fituska-blue">
+    <div class="col-7 col-sm">
+        <p class="fituska-nav-heading">
+            <a href="/">Fituška</a>
+            <button class="btn d-block d-sm-none mobile-search-button" type="button" @onclick="ToggleMobileSearchBox">
+                <span class="oi oi-magnifying-glass" aria-hidden="true"></span>
+            </button>
+        </p>
+    </div>
+
+    <div class="col d-none d-sm-block">
+        <SearchBox />
+    </div>
+
+    <div class="col">
+        <NavMenuAuthorization />
     </div>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-        
-        <AuthorizeView>
-            <Authorized>
-                <SignOutButton />
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="signin">
-                        <span class="oi oi-account-login" aria-hidden="true"></span> Přihlášení
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="register">
-                        <span class="oi oi-person" aria-hidden="true"></span> Registrace
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
+<div class="menu-divider"></div>
 
-    </nav>
+<div class="container search-box-container @MobileSearchBoxCssClass">
+    <SearchBox />
 </div>
 
-@code {
-    private bool collapseNavMenu = true;
+@code
+{
+    bool collapseMobileSearchBox = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    string MobileSearchBoxCssClass => collapseMobileSearchBox ? "collapse" : "d-block d-sm-none";
 
-    private void ToggleNavMenu()
+    void ToggleMobileSearchBox()
     {
-        collapseNavMenu = !collapseNavMenu;
+        collapseMobileSearchBox = !collapseMobileSearchBox;
     }
 }

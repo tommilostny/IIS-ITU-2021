@@ -2,6 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    z-index: 1;
 }
 
 main {
@@ -78,4 +79,10 @@ main {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
     }
+}
+
+.content {
+    padding-top: 23px;
+    padding-left: 16px;
+    padding-right: 16px;
 }

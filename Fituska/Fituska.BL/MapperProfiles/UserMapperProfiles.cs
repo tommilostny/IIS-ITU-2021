@@ -6,28 +6,22 @@ public class UserMapperProfiles : Profile
 {
     public UserMapperProfiles()
     {
-        CreateMap<UserEntity, UserDetailModel>();
+        CreateMap<UserEntity, UserDetailModel>()
+            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom(src => src.RegistrationDate.ToLocalTime()))
+            .ForMember(dst => dst.LastLoginDate, config => config.MapFrom<LastLoginUtcToLocalTimeResolver>());
 
         CreateMap<UserEntity, UserListModel>();
 
         CreateMap<UserRegistrationModel, UserEntity>()
-            .ForMember(dst => dst.UserName, config => config.MapFrom<UsernameResolver>())
-            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom<RegistrationDateResolver>());
+            .ForMember(dst => dst.AttendingCourses, config => config.Ignore())
+            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom(_ => DateTime.UtcNow));
     }
 
-    private class UsernameResolver : IValueResolver<UserRegistrationModel, UserEntity, string>
+    private class LastLoginUtcToLocalTimeResolver : IValueResolver<UserEntity, UserDetailModel, DateTime?>
     {
-        public string Resolve(UserRegistrationModel source, UserEntity destination, string destMember, ResolutionContext context)
+        public DateTime? Resolve(UserEntity source, UserDetailModel destination, DateTime? destMember, ResolutionContext context)
         {
-            return source.Email;
-        }
-    }
-
-    private class RegistrationDateResolver : IValueResolver<UserRegistrationModel, UserEntity, DateTime>
-    {
-        public DateTime Resolve(UserRegistrationModel source, UserEntity destination, DateTime destMember, ResolutionContext context)
-        {
-            return DateTime.UtcNow;
+            return source.LastLoginDate is not null ? source.LastLoginDate.Value.ToLocalTime() : DateTime.Now;
         }
     }
 }

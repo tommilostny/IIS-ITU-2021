@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Fituska.BL.Repositories;
+﻿namespace Fituska.BL.Repositories;
 
 public class FileRepository : IRepository<FileEntity>
 {
@@ -21,32 +19,27 @@ public class FileRepository : IRepository<FileEntity>
         }
     }
 
-    public IEntity Insert(IEntity model)
+    public FileEntity Insert(FileEntity entity)
     {
-        var file = (FileEntity)model;
-        database.Files.Add(file);
+        database.Files.Add(entity);
         database.SaveChanges();
-        return file;
+        return entity;
     }
 
-    public IEntity Update(IEntity model)
+    public FileEntity Update(FileEntity entity)
     {
-        var file = (FileEntity)model;
-        var answerToUpdate = database.Files.Attach(file);
-        answerToUpdate.State = EntityState.Modified;
+        var fileToUpdate = database.Files.Attach(entity);
+        fileToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return file;
+        return entity;
     }
 
-    public IEnumerable<IEntity> GetAll()
+    public IEnumerable<FileEntity> GetAll()
     {
-        IEnumerable<IEntity> discussions = database.Files
-            .ToList();
-        return discussions;
+        return database.Files.ToList();
     }
-    public IEntity GetByID(Guid entityID)
+    public FileEntity GetByID(Guid entityID)
     {
-        FileEntity? file = database.Files.FirstOrDefault(file => file.Id == entityID);
-        return file;
+        return database.Files.FirstOrDefault(file => file.Id == entityID);
     }
 }
