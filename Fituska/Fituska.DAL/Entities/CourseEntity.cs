@@ -7,6 +7,7 @@ public class CourseEntity : EntityBase
     public string? Description { get; set; }
     public string Url { get; set; }
     public byte Credits { get; set; }
+    public bool ModeratorApproved { get; set; }
     public YearOfStudy YearOfStudy { get; set; }
     public Semester Semester { get; set; }
 

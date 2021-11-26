@@ -8,7 +8,8 @@ public class AnswerMapperProfiles : Profile
     {
         CreateMap<UserSawAnswerEntity, UserSawAnswerModel>();
         
-        CreateMap<AnswerEntity, AnswerDetailModel>();
+        CreateMap<AnswerEntity, AnswerDetailModel>()
+            .ForMember(dst => dst.CreationTime, config => config.MapFrom(src => src.CreationTime.ToLocalTime()));
 
         CreateMap<UserSawAnswerModel, UserSawAnswerEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore());
@@ -19,6 +20,7 @@ public class AnswerMapperProfiles : Profile
             .ForMember(dst => dst.UsersSawAnswer, config => config.Ignore())
             .ForMember(dst => dst.UsersVoteAnswers, config => config.Ignore())
             .ForMember(dst => dst.Comments, config => config.Ignore())
-            .ForMember(dst => dst.Files, config => config.Ignore());
+            .ForMember(dst => dst.Files, config => config.Ignore())
+            .ForMember(dst => dst.CreationTime, config => config.MapFrom(_ => DateTime.UtcNow));
     }
 }

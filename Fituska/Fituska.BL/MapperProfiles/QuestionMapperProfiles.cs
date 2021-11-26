@@ -8,9 +8,11 @@ public class QuestionMapperProfiles : Profile
     {
         CreateMap<UserSawQuestionEntity, UserSawQuestionModel>();
 
-        CreateMap<QuestionEntity, QuestionDetailModel>();
+        CreateMap<QuestionEntity, QuestionDetailModel>()
+            .ForMember(dst => dst.CreationTime, config => config.MapFrom(src => src.CreationTime.ToLocalTime()));
 
-        CreateMap<QuestionEntity, QuestionListModel>();
+        CreateMap<QuestionEntity, QuestionListModel>()
+            .ForMember(dst => dst.CreationTime, config => config.MapFrom(src => src.CreationTime.ToLocalTime()));
 
         CreateMap<UserSawQuestionModel, UserSawQuestionEntity>()
             .ForMember(dst => dst.Question, config => config.Ignore())
@@ -21,6 +23,7 @@ public class QuestionMapperProfiles : Profile
             .ForMember(dst => dst.Category, config => config.Ignore())
             .ForMember(dst => dst.Answers, config => config.Ignore())
             .ForMember(dst => dst.UserSawQuestions, config => config.Ignore())
-            .ForMember(dst => dst.Files, config => config.Ignore());
+            .ForMember(dst => dst.Files, config => config.Ignore())
+            .ForMember(dst => dst.CreationTime, config => config.MapFrom(_ => DateTime.UtcNow));
     }
 }

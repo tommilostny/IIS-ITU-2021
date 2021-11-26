@@ -14,7 +14,8 @@ public class CourseMapperProfiles : Profile
             .ForMember(dst => dst.Attendees, config => config.Ignore())
             .ForMember(dst => dst.Categories, config => config.Ignore())
             .ForMember(dst => dst.Lecturer, config => config.Ignore())
-            .ForMember(dst => dst.Url, config => config.MapFrom<CourseUrlResolver>());
+            .ForMember(dst => dst.Url, config => config.MapFrom<CourseUrlResolver>())
+            .ForMember(dst => dst.ModeratorApproved, config => config.MapFrom(_ => false));
     }
 
     private class CourseUrlResolver : IValueResolver<CourseNewModel, CourseEntity, string>

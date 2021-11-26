@@ -7,30 +7,14 @@ public class UserMapperProfiles : Profile
     public UserMapperProfiles()
     {
         CreateMap<UserEntity, UserDetailModel>()
-            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom<RegistrationUtcToLocalTimeResolver>())
+            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom(src => src.RegistrationDate.ToLocalTime()))
             .ForMember(dst => dst.LastLoginDate, config => config.MapFrom<LastLoginUtcToLocalTimeResolver>());
 
         CreateMap<UserEntity, UserListModel>();
 
         CreateMap<UserRegistrationModel, UserEntity>()
             .ForMember(dst => dst.AttendingCourses, config => config.Ignore())
-            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom<RegistrationDateResolver>());
-    }
-
-    private class RegistrationDateResolver : IValueResolver<UserRegistrationModel, UserEntity, DateTime>
-    {
-        public DateTime Resolve(UserRegistrationModel source, UserEntity destination, DateTime destMember, ResolutionContext context)
-        {
-            return DateTime.UtcNow;
-        }
-    }
-
-    private class RegistrationUtcToLocalTimeResolver : IValueResolver<UserEntity, UserDetailModel, DateTime>
-    {
-        public DateTime Resolve(UserEntity source, UserDetailModel destination, DateTime destMember, ResolutionContext context)
-        {
-            return source.RegistrationDate.ToLocalTime();
-        }
+            .ForMember(dst => dst.RegistrationDate, config => config.MapFrom(_ => DateTime.UtcNow));
     }
 
     private class LastLoginUtcToLocalTimeResolver : IValueResolver<UserEntity, UserDetailModel, DateTime?>
