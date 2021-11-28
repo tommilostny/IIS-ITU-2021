@@ -47,16 +47,21 @@ public class QuestionController : ControllerBase
     [OpenApiOperation("Question" + nameof(Update))]
     public ActionResult Update(IEntity entity)
     {
-        repository.Update(entity);
+        repository.Update((QuestionEntity)entity);
         return Ok();
     }
 
     [HttpPost]
     [OpenApiOperation("Question" + nameof(Insert))]
-    public ActionResult<QuestionDetailModel> Insert(IEntity entity)
+    public ActionResult<QuestionDetailModel> Insert(QuestionNewModel questionModel)
     {
-        var IEntity = repository.Insert(entity);
-        var detailModel = mapper.Map<QuestionDetailModel>(IEntity);
+        var entity = mapper.Map<QuestionEntity>(questionModel);
+        entity = repository.Insert(entity);
+        if(entity == null)
+        {
+            return BadRequest(entity);
+        }
+        var detailModel = mapper.Map<QuestionDetailModel>(entity);
         return Ok(detailModel);
     }
 }

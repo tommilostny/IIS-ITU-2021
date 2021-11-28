@@ -9,28 +9,34 @@ namespace Fituska.API.Controllers;
 [ApiController]
 public class AnswerController : ControllerBase
 {
-    private readonly AnswerRepository answerRepository;
+    private readonly AnswerRepository repository;
     private readonly IMapper mapper;
-    public AnswerController(AnswerRepository _answerRepository , IMapper _mapper)
+    public AnswerController(AnswerRepository _repository , IMapper _mapper)
     {
-        answerRepository = _answerRepository;
+        repository = _repository;
         mapper = _mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [OpenApiOperation("Answer" + nameof(GetAll))]
     public ActionResult<List<AnswerListModel>> GetAll()
     {
-        List<AnswerEntity> categories = (List<AnswerEntity>)answerRepository.GetAll();
-        var categoriesListModels = mapper.Map<List<AnswerListModel>>(categories);
-        return Ok(categoriesListModels);
+        List<AnswerEntity> entities = (List<AnswerEntity>)repository.GetAll();
+        var models = mapper.Map<List<AnswerListModel>>(entities);
+        return Ok(models);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("Answer" + nameof(GetById))]
     public ActionResult<AnswerDetailModel> GetById(Guid id)
     {
-        var entity = answerRepository.GetByID(id);
+        var entity = repository.GetByID(id);
+        if(entity == null)
+        {
+            return BadRequest(entity);
+        }
         var detailModel = mapper.Map<AnswerDetailModel>(entity);
         return Ok(detailModel);
     }
@@ -39,24 +45,33 @@ public class AnswerController : ControllerBase
     [OpenApiOperation("Answer" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
-        answerRepository.Delete(id);
+        repository.Delete(id);
         return Ok();
     }
 
     [HttpPut]
     [OpenApiOperation("Answer" + nameof(Update))]
-    public ActionResult Update(IEntity entity)
+    public ActionResult Update(AnswerNewModel model)
     {
-        answerRepository.Update(entity);
+        AnswerEntity entity = mapper.Map<AnswerEntity>(model);
+        entity = repository.Update(entity);
+        if(entity == null)
+        {
+            return BadRequest();
+        }
         return Ok();
     }
 
     [HttpPost]
     [OpenApiOperation("Answer" + nameof(Insert))]
-    public ActionResult<AnswerDetailModel> Insert(IEntity entity)
+    public ActionResult<AnswerDetailModel> Insert(AnswerNewModel model)
     {
-        var IEntity = answerRepository.Insert(entity);
-        var detailModel = mapper.Map<AnswerDetailModel>(IEntity);
+        var entity = mapper.Map<AnswerEntity>(model);
+        entity = repository.Insert(entity);
+        if(entity == null){
+            return BadRequest(entity);
+        }
+        var detailModel = mapper.Map<AnswerDetailModel>(model);
         return Ok(detailModel);
     }
 }

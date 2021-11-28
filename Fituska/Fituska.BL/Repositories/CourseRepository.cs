@@ -22,9 +22,9 @@ public class CourseRepository : IRepository<CourseEntity>, ISearchableRepository
     public IEnumerable<CourseEntity> GetAll()
     {
         return database.Courses
-            .Include(c => c.Lecturer)
-            .Include(c => c.Attendees)
-            .Include(c => c.Categories)
+            .Include(course => course.Lecturer)
+            .Include(course => course.Attendees)
+            .Include(course => course.Categories)
             .ToList();
     }
 

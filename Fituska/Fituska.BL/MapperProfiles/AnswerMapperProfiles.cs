@@ -7,7 +7,7 @@ public class AnswerMapperProfiles : Profile
     public AnswerMapperProfiles()
     {
         CreateMap<UserSawAnswerEntity, UserSawAnswerModel>();
-        
+        CreateMap<AnswerDetailModel, AnswerEntity>();
         CreateMap<AnswerEntity, AnswerDetailModel>()
             .ForMember(dst => dst.CreationTime, config => config.MapFrom(src => src.CreationTime.ToLocalTime()));
 

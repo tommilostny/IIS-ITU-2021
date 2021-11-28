@@ -5,22 +5,23 @@ using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
+[Authorize()]
 [Route("api/[controller]")]
 [ApiController]
 public class CategoryController : ControllerBase
 {
-    private readonly CategoryRepository categoryRepository;
+    private readonly CategoryRepository repository;
     private readonly IMapper mapper;
-    public CategoryController(CategoryRepository _categoryRepository , IMapper _mapper)
+    public CategoryController(CategoryRepository _repository , IMapper _mapper)
     {
-        categoryRepository = _categoryRepository;
+        repository = _repository;
         mapper = _mapper;
     }
 
     [HttpGet]
     public ActionResult<List<CategoryListModel>> GetAll()
     {
-        List<CategoryEntity> categories = (List<CategoryEntity>)categoryRepository.GetAll();
+        List<CategoryEntity> categories = (List<CategoryEntity>)repository.GetAll();
         var categoriesListModels = mapper.Map<List<CategoryListModel>>(categories);
         return Ok(categoriesListModels);
     }
@@ -29,7 +30,7 @@ public class CategoryController : ControllerBase
     [OpenApiOperation("Category" + nameof(GetById))]
     public ActionResult<CategoryListModel> GetById(Guid id)
     {
-        var category = categoryRepository.GetByID(id);
+        var category = repository.GetByID(id);
         var categoryDetailModel = mapper.Map<CategoryDetailModel>(category);
         return Ok(categoryDetailModel);
     }
@@ -38,24 +39,35 @@ public class CategoryController : ControllerBase
     [OpenApiOperation("Category" + nameof(Delete))]
     public ActionResult<CategoryListModel> Delete(Guid id)
     {
-        categoryRepository.Delete(id);
+        repository.Delete(id);
         return Ok();
     }
 
     [HttpPut]
     [OpenApiOperation("Category" + nameof(Update))]
-    public ActionResult<CategoryListModel> Update(IEntity entity)
+    public ActionResult<CategoryDetailModel> Update(CategoryNewModel categoryModel)
     {
-        categoryRepository.Update(entity);
-        return Ok();
+        var entity = mapper.Map<CategoryEntity>(categoryModel);
+        var detailModel = mapper.Map<CategoryDetailModel>(categoryModel);
+        entity = repository.Update(entity);
+        if(entity == null)
+        {
+            return BadRequest(detailModel);
+        }
+        return Ok(detailModel);
     }
 
     [HttpPost] 
     [OpenApiOperation("Category" + nameof(Insert))]
-    public ActionResult<CategoryDetailModel> Insert(IEntity entity)
+    public ActionResult<CategoryDetailModel> Insert(CategoryNewModel categoryModel)
     {
-        var Entity = categoryRepository.Insert(entity);
-        var detailModel = mapper.Map<CategoryDetailModel>(Entity);
-        return Ok();
+        var entity = mapper.Map<CategoryEntity>(categoryModel);
+        var detailModel = mapper.Map<CategoryDetailModel>(categoryModel);
+        entity = repository.Insert(entity);
+        if(entity == null)
+        {
+            return BadRequest(detailModel);
+        }
+        return Ok(detailModel);
     }
 }

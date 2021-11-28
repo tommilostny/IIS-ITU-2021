@@ -9,7 +9,9 @@ public class FileMapperProfiles : Profile
         CreateMap<FileEntity, FileAnswerModel>();
         CreateMap<FileEntity, FileCommentModel>();
         CreateMap<FileEntity, FileQuestionModel>();
-    
+        
+        CreateMap<FileEntity, FileListModel>();
+
         CreateMap<FileAnswerModel, FileEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore())
             .ForMember(dst => dst.Comment, config => config.Ignore())
