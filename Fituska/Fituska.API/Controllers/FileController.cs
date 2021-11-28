@@ -47,6 +47,7 @@ public class FileController : ControllerBase
         return Ok();
     }
 
+    [Route("answer")]
     [HttpPut]
     [OpenApiOperation("File" + nameof(UpdateAnswerFile))]
     public ActionResult UpdateAnswerFile(FileAnswerModel model)
@@ -60,6 +61,7 @@ public class FileController : ControllerBase
         return Ok();
     }
 
+    [Route("answer")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertAnswerFile))]
     public ActionResult<FileAnswerModel> InsertAnswerFile(FileAnswerModel model)
@@ -74,6 +76,7 @@ public class FileController : ControllerBase
         return Ok(detailModel);
     }
 
+    [Route("comment")]
     [HttpPut]
     [OpenApiOperation("File" + nameof(UpdateCommentFile))]
     public ActionResult UpdateCommentFile(FileCommentModel model)
@@ -87,6 +90,7 @@ public class FileController : ControllerBase
         return Ok();
     }
 
+    [Route("comment")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertCommentFile))]
     public ActionResult<FileCommentModel> InsertCommentFile(FileCommentModel model)
@@ -101,6 +105,7 @@ public class FileController : ControllerBase
         return Ok(detailModel);
     }
 
+    [Route("question")]
     [HttpPut]
     [OpenApiOperation("File" + nameof(UpdateQuestionFile))]
     public ActionResult UpdateQuestionFile(FileQuestionModel model)
@@ -114,6 +119,7 @@ public class FileController : ControllerBase
         return Ok();
     }
 
+    [Route("question")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertQuestionFile))]
     public ActionResult<FileQuestionModel> InsertQuestionFile(FileQuestionModel model)
@@ -128,6 +134,7 @@ public class FileController : ControllerBase
         return Ok(detailModel);
     }
 
+    [Route("user")]
     [HttpPut]
     [OpenApiOperation("File" + nameof(UpdateUserFile))]
     public ActionResult UpdateUserFile(FileUserModel model)
@@ -141,6 +148,7 @@ public class FileController : ControllerBase
         return Ok();
     }
 
+    [Route("user")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertUserFile))]
     public ActionResult<FileUserModel> InsertUserFile(FileUserModel model)
