@@ -23,16 +23,16 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build Fituska/Fituska.Client --configuration Release
+        run: dotnet build Fituska/Fituska.API --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish Fituska/Fituska.Client -c Release -o ${{env.DOTNET_ROOT}}/client
+        run: dotnet publish Fituska/Fituska.API -c Release -o ${{env.DOTNET_ROOT}}/fituska_server
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/client
+          path: ${{env.DOTNET_ROOT}}/fituska_server
 
   deploy:
     runs-on: ubuntu-latest
