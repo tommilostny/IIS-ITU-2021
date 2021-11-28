@@ -1,16 +1,39 @@
 ﻿@page "/"
+@using Fituska.Shared.Enums
 @inherits LastPageSavableComponentBase
 
-@foreach (var course in DesignTimeSeed.CourseListModels)
+<!-- Zapsané kurzy? (komponenta s AuthorizeView) -->
+
+<div class="row">
+    <div class="col">
+        <h2>Všechny kurzy</h2>
+    </div>
+    <div class="col-3">
+        <button class="btn btn-outline-success">Přidat kurz</button>
+    </div>
+</div>
+<br />
+@foreach (YearOfStudy yearOfStudy in Enum.GetValues(typeof(YearOfStudy)))
 {
-    <a href="course/@course.Url">
-        <div class="card border-info courses-list">
-            <div class="card-body">
-                <h5 class="card-title">
-                    @course.Shortcut
-                </h5>
-                <p class="card-text">@course.YearOfStudy (@course.Semester)</p>
-            </div>
-        </div>
-    </a>
+    <h4>@ConverterService.YearOfStudyDecode(yearOfStudy)</h4>
+    <div class="row">
+    @foreach (var course in DesignTimeSeed.CourseListModels.Where(c => c.YearOfStudy == yearOfStudy))
+    {
+        @if (course.ModeratorApproved)
+        {
+            <div class="col-md-6">
+                <a href="course/@course.Url">
+                    <div class="card border-info courses-list">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @course.Shortcut (@ConverterService.SemesterDecode(course.Semester) semestr)
+                            </h5>
+                        </div>
+                    </div>
+                </a>
+            </div>       
+        }
+    }
+    </div>
+    <hr />
 }

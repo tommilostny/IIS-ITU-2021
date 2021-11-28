@@ -39,7 +39,7 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
-    int Rating => Votes.Sum(v => (int)v.Vote);
+    public int Rating => Votes.Sum(v => (int)v.Vote);
 
     UserListModel user;
     bool upvoteClicked = false;

@@ -19,6 +19,7 @@ internal static class DesignTimeSeed
             Url = "iis-2021",
             Semester = Semester.Winter,
             YearOfStudy = YearOfStudy.BIT3,
+            ModeratorApproved = true
         },
         new CourseListModel
         {
@@ -26,6 +27,7 @@ internal static class DesignTimeSeed
             Url = "itu-2021",
             Semester = Semester.Winter,
             YearOfStudy = YearOfStudy.BIT3,
+            ModeratorApproved = true
         }
     };
 
@@ -84,7 +86,8 @@ internal static class DesignTimeSeed
                         }
                     }
                 }
-            }
+            },
+            Lecturer = new UserListModel { UserName = "administrator" }
         },
         new CourseDetailModel
         {
@@ -113,7 +116,8 @@ internal static class DesignTimeSeed
                         }
                     }
                 }
-            }
+            },
+            Lecturer = new UserListModel { UserName = "xmilos02" }
         }
     };
 

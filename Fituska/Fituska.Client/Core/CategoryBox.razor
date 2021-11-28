@@ -2,6 +2,18 @@
 @using Fituska.Shared.Models.Question
 @using Fituska.Shared.Models.User
 
+@if (confirmDelete)
+{
+    <div class="card">
+        <div class="card-header">
+            <h4><strong>Opravdu si přejete smazat kategorii <em>@Category.Name</em>?</strong></h4>
+        </div>
+        <div class="card-body">
+            <button class="btn btn-danger" @onclick="RemoveSelf">Ano</button>
+            <button class="btn btn-secondary" @onclick="ToggleDeleteConfirm">Ne</button>
+        </div>
+    </div>
+}
 <div class="card category-box mb-3">
     <div class="card-body">
         <div class="row">
@@ -12,12 +24,21 @@
             </div>
             <AuthorizeView>
                 <Authorized>
-                    <div class="col-3">
+                    <div class="col-6 col-md-4 col-lg-3">
                         @if(!showAddForm)
                         {
-                            <button class="btn btn-sm btn-outline-success" @onclick="ToggleShowAddForm">
-                                <span class="oi oi-plus me-1" aria-hidden="true"></span> Přidat
-                            </button>
+                            @if (!confirmDelete)
+                            {
+                                <button class="btn btn-sm btn-outline-success" @onclick="ToggleShowAddForm">
+                                    <span class="oi oi-plus me-1" aria-hidden="true"></span> Přidat otázku
+                                </button>
+                                @if (context.User.Identity.Name == LecturerUserName)
+                                {
+                                    <button class="btn btn-sm btn-outline-danger me-2" @onclick="ToggleDeleteConfirm">
+                                        <span class="oi oi-x me-1" aria-hidden="true"></span> Smazat kategorii
+                                    </button>
+                                }
+                            }
                         }
                         else
                         {
@@ -64,12 +85,19 @@
     [Parameter]
     public CategoryDetailModel Category { get; set; }
 
+    [Parameter]
+    public string LecturerUserName { get; set; }
+
+    [Parameter]
+    public EventCallback<CategoryDetailModel> OnRemoveClick { get; set; }
+
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
     bool expandQuestions = false;
     bool showLoadMoreQuestionsButtion = false;
     const int questionLimit = 10;
+    bool confirmDelete = false;
 
     int QuestionLimit()
     {
@@ -118,5 +146,19 @@
         showAddForm = false;
         newQuestionText = string.Empty;
         newQuestionTitle = string.Empty;
+
+        SortQuestionsByDate();
     }
+
+    void SortQuestionsByDate() => Category.Questions = Category.Questions.OrderBy(q => q.CreationTime).Reverse().ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        SortQuestionsByDate();
+        await base.OnInitializedAsync();
+    }
+
+    async Task RemoveSelf() => await OnRemoveClick.InvokeAsync(Category);
+
+    void ToggleDeleteConfirm() => confirmDelete = !confirmDelete;
 }

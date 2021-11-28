@@ -1,11 +1,12 @@
 ﻿@page "/user/{Username}"
+@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.User
 @inherits LastPageSavableComponentBase
 @inject HttpClient Http
 
 @if (userModel is null)
 {
-    <h1>Loading...</h1>
+    <h1>Načítání...</h1>
 }
 else
 {
@@ -14,19 +15,26 @@ else
             @if (@context.User.Identity.Name == Username)
             {
                 <a class="btn btn-primary" href="/user-edit">Upravit profil</a>
-                <a class="btn btn-danger" href="/user-delete">Smazat účet</a>
+                <a class="btn btn-danger" href="/user/delete">Smazat účet</a>
                 <hr />
             }
         </Authorized>
     </AuthorizeView>
-    <h1>@userModel.FirstName @userModel.LastName <small>(@userModel.UserName)</small></h1>
-    <p>Naposledy přihlášen: @userModel.LastLoginDate</p>
-    <p>Datum registrace: @userModel.RegistrationDate</p>
-    <p>E-mail: <a href="@EmailLink">@userModel.Email</a></p>
-    @if (!string.IsNullOrEmpty(userModel.DiscordUsername))
-    {
-        <p>Discord: <a href="@DiscordLink" target="_blank">@userModel.DiscordUsername</a></p>
-    }
+    <div class="row">
+        <div class="col">
+            <h1>@userModel.FirstName @userModel.LastName <small>(@userModel.UserName)</small></h1>
+            <p>Naposledy přihlášen: @userModel.LastLoginDate</p>
+            <p>Datum registrace: @userModel.RegistrationDate</p>
+            <p>E-mail: <a href="@EmailLink">@userModel.Email</a></p>
+            @if (!string.IsNullOrEmpty(userModel.DiscordUsername))
+            {
+                <p>Discord: <a href="@DiscordLink" target="_blank">@userModel.DiscordUsername</a></p>
+            }
+        </div>
+        <div class="col-12 col-sm-5 col-md-3">
+            <UserPhotoLoader UserModel="userModel" />
+        </div>
+    </div>
 }
 
 @code

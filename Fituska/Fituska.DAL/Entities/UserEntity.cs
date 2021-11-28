@@ -9,6 +9,7 @@ public class UserEntity : IdentityUser<Guid>, IEntity
     public string? DiscordUsername { get; set; }
     public DateTime RegistrationDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
+    public string? PhotoFileName { get; set; }
     public byte[]? Photo { get; set; }
 
     public ValueCollection<CourseAttendanceEntity> AttendingCourses { get; set; } = new();

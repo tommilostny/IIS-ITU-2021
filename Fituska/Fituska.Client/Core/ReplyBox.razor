@@ -2,7 +2,7 @@
     <Authorized>
         @if (!showTextBox)
         {
-            <button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">Odpovědět</button>
+            <button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">@AddButtonLabel</button>
         }
         else
         {
@@ -17,6 +17,9 @@
 {
     [Parameter]
     public EventCallback<string> OnSubmit { get; set; }
+
+    [Parameter]
+    public string AddButtonLabel { get; set; } = "Odpovědět";
 
     bool showTextBox = false;
     string text = string.Empty;

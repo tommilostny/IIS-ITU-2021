@@ -2,7 +2,7 @@
 @using Fituska.Shared.Models.Comment
 @using Fituska.Shared.Models.User
 
-<div class="card answer-box mb-3">
+<div class="card answer-box mb-3" style="backroungd-color: rgb(@RedTint(), 0, 0)">
     <div class="card-body">
         <div class="row">
             <div class="col">
@@ -15,7 +15,7 @@
                 <ReplyBox OnSubmit="AddComment" />
             </div>
             <div class="col-3 col-sm-2 col-md-1">
-                <Voting Votes="Answer.Votes" />
+                <Voting Votes="Answer.Votes" @ref="voting" />
             </div>
         </div>
     </div>
@@ -36,10 +36,22 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
+    Voting voting;
+
     async Task AddComment(string text)
     {
         var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
         var comment = new CommentDetailModel { User = user, Text = text, CreationTime = DateTime.Now };
         Answer.Comments.Add(comment);
     }
+
+    int RedTint()
+    {
+        if (voting is null)
+            Console.WriteLine("null");
+        return 0;
+        //voting.Rating < 0 ? Math.Clamp(-voting.Rating, 0, 255) : 0;
+    }
+
+    //int GreenTint() => voting.Rating > 0 ? Math.Clamp(voting.Rating, 0, 255) : 0;
 }
