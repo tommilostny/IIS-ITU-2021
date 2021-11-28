@@ -15,7 +15,6 @@ public class UserController : ControllerBase
     private readonly IConfiguration configuration;
     private readonly IMapper mapper;
 
-    /// <summary> fituska.net/api/user </summary>
     public UserController(
         SignInManager<UserEntity> signInManager,
         UserManager<UserEntity> userManager,
@@ -28,7 +27,6 @@ public class UserController : ControllerBase
         this.mapper = mapper;
     }
 
-    /// <summary> fituska.net/api/user/register </summary>
     [Route("register")]
     [AllowAnonymous]
     [HttpPost]
@@ -39,7 +37,7 @@ public class UserController : ControllerBase
 
         if (userIdentityResult.Succeeded)
         {
-            return Ok(new { userIdentityResult.Succeeded });
+            return Ok();
         }
         string errors = "Registrace selhala s následujícími chybami:";
         foreach (var error in userIdentityResult.Errors)
@@ -49,7 +47,6 @@ public class UserController : ControllerBase
         return BadRequest(errors);
     }
 
-    /// <summary> fituska.net/api/user/signin </summary>
     [Route("signin")]
     [AllowAnonymous]
     [HttpPost]
@@ -59,6 +56,10 @@ public class UserController : ControllerBase
         if (signInResult.Succeeded)
         {
             var identityUser = await userManager.FindByNameAsync(user.UserName);
+
+            identityUser.LastLoginDate = DateTime.UtcNow;
+            await userManager.UpdateAsync(identityUser);
+
             var jsonWebToken = await CreateJsonWebToken(identityUser);
             return Ok(jsonWebToken);
         }
@@ -112,12 +113,12 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Delete(string username)
     {
         var userToDelete = await userManager.FindByNameAsync(username);
-        if (userToDelete is not null)
+        if (userToDelete is null)
         {
-            await userManager.DeleteAsync(userToDelete);
-            return Ok();
+            return NotFound();
         }
-        return NotFound();
+        await userManager.DeleteAsync(userToDelete);
+        return Ok();
     }
 
     [HttpPut]
@@ -134,6 +135,4 @@ public class UserController : ControllerBase
         await userManager.UpdateAsync(entity);
         return Ok();
     }
-
-    //TODO: Last login / activity?
 }

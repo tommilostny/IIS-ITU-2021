@@ -14,5 +14,7 @@ public static class ApiEndpoints
 
     public static string UserUrl(string userName) => $"{UserBaseUrl}/{userName}";
 
+    public static string QuestionUrl(Guid id) => $"{ServerBaseUrl}api/question/{id}";
+
     public const string SearchUrl = $"{ServerBaseUrl}api/search";
 }

@@ -6,7 +6,7 @@
 @code
 {
     [Parameter]
-    public Guid ParentId { get; set; } = Guid.Empty;
+    public Guid ParentId { get; set; }
 
     [Parameter]
     public EventCallback<TFileModel> OnChange { get; set; }
