@@ -1,8 +1,9 @@
 ﻿@using Fituska.Shared.Models.Answer
 @using Fituska.Shared.Models.Comment
 @using Fituska.Shared.Models.User
+@using System.Drawing;
 
-<div class="card answer-box mb-3" style="backroungd-color: rgb(@RedTint(), 0, 0)">
+<div class="card answer-box mb-3" style="background-color: rgba(@GetColor().R,@GetColor().G,@GetColor().B,@GetColor().A)">
     <div class="card-body">
         <div class="row">
             <div class="col">
@@ -15,7 +16,7 @@
                 <ReplyBox OnSubmit="AddComment" />
             </div>
             <div class="col-3 col-sm-2 col-md-1">
-                <Voting Votes="Answer.Votes" @ref="voting" />
+                <Voting Votes="Answer.Votes" />
             </div>
         </div>
     </div>
@@ -36,7 +37,7 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
-    Voting voting;
+    //public Voting voting { get; set; }
 
     async Task AddComment(string text)
     {
@@ -45,13 +46,9 @@
         Answer.Comments.Add(comment);
     }
 
-    int RedTint()
+    Color GetColor()
     {
-        if (voting is null)
-            Console.WriteLine("null");
-        return 0;
-        //voting.Rating < 0 ? Math.Clamp(-voting.Rating, 0, 255) : 0;
+        int votes = Answer.Votes.Sum(v => (int)v.Vote);
+        return ColorTints.GetColorFromVotes(votes);
     }
-
-    //int GreenTint() => voting.Rating > 0 ? Math.Clamp(voting.Rating, 0, 255) : 0;
 }
