@@ -9,6 +9,8 @@ public class FileMapperProfiles : Profile
         CreateMap<FileEntity, FileAnswerModel>();
         CreateMap<FileEntity, FileCommentModel>();
         CreateMap<FileEntity, FileQuestionModel>();
+        
+        CreateMap<FileEntity, FileListModel>();
 
         CreateMap<FileAnswerModel, FileEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore())
@@ -16,7 +18,7 @@ public class FileMapperProfiles : Profile
             .ForMember(dst => dst.Question, config => config.Ignore())
             .ForMember(dst => dst.CommentId, config => config.Ignore())
             .ForMember(dst => dst.QuestionId, config => config.Ignore());
-
+    
         CreateMap<FileCommentModel, FileEntity>()
             .ForMember(dst => dst.Answer, config => config.Ignore())
             .ForMember(dst => dst.Comment, config => config.Ignore())

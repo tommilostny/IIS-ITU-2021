@@ -14,3 +14,4 @@ public class VoteMapperProfiles : Profile
             .ForMember(dst => dst.UserId, config => config.MapFrom(src => src.User.Id));
     }
 }
+
