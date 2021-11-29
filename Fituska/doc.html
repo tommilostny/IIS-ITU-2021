@@ -12,53 +12,76 @@
 </head>
 <body>
 
-<!-- Zkontrolujte prosím nastavení kódování v hlavièce dokumentu 
-     podle pou¾itého editoru -->
-
 <h1>Fitu¹ka-v2: sdílení a øe¹ení testových otázek studenty</h1>
 
 <dl>
 	<dt>Autoøi</dt>
 	<dd>
-		První jméno <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
-		<a href="mailto:xrivol01@stud.fit.vutbr.cz">xrivol01@stud.fit.vutbr.cz</a> -
-		popis èinnosti v týmu
+		Tomá¹ Milostný
+		<a href="mailto:xmilos02@stud.fit.vutbr.cz">xmilos02@stud.fit.vutbr.cz</a> -
+		Front-end, správa u¾ivatelù, modely, mapování
 	</dd>
 	<dd>
-		Druhé jméno <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
-		<a href="mailto:xmilos02@stud.fit.vutbr.cz">xmilos02@stud.fit.vutbr.cz</a> -
-		popis èinnosti v týmu
+		Michal Rivola
+		<a href="mailto:xrivol01@stud.fit.vutbr.cz">xrivol01@stud.fit.vutbr.cz</a> -
+		Kontrolery, repozitáøe, testy
 	</dd>
 	<dt>URL aplikace</dt>
 	<dd><a href="http://www.stud.fit.vutbr.cz/~xmilos02/IIS">http://www.stud.fit.vutbr.cz/~xmilos02/IIS</a></dd>
 	<dd><a href="http://www.stud.fit.vutbr.cz/~xrivol/IIS">http://www.stud.fit.vutbr.cz/~xrivol01/IIS</a></dd>
 	<dd>Na tìchto URL bude odkaz na stránky.</dd>
+	<dd><a href="https://icy-flower-0d67f0203.azurestaticapps.net" target="_blank">https://icy-flower-0d67f0203.azurestaticapps.net</a></dd>
 </dl>
 
 <h2>U¾ivatelé systému pro testování</h2>
-<p>Uveïte prosím existující zástupce <strong>v¹ech rolí u¾ivatelù</strong>.</p>
 <table>
 <tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
-<tr><td>admin</td><td>Password!</td><td>Administrátor</td></tr>
-<tr><td>moderator</td><td>moderator</td><td>Moderátor</td></tr>
-<tr><td>franta</td><td>franta</td><td>Student</td></tr>
+<tr><td>administrator</td><td>Password1!</td><td>Administrátor</td></tr>
+<tr><td>moderator</td><td>Password1</td><td>Moderátor</td></tr>
+<tr><td>franta</td><td>franta1</td><td>Student</td></tr>
 </table>
 
 
 <h2>Implementace</h2>
-<p>Projekt je implementován v ASP.NET ve frameworku .NET 6</p>
+<p>Projekt je implementován pomocí technologií Blazor WebAssembly a ASP.NET Web API ve frameworku .NET 6</p>
+<p>Rozdìlení projektù:</p>
+<ul>
+	<li><b>Fituska.API</b>: Webové API, obsahuje kontrolery, zpøístupòuje rozhraní pro klientskou aplikaci.</li>
+	<li><b>Fituska.BL</b>: Bussiness logika aplikace, repozitáøe pro pøístup k databázi, mapování entit databáze na modely</li>
+	<li><b>Fituska.DAL</b>: Data access layer, obsahuje databázový kontext pro definici práce s entitami databáze.</li>
+	<li><b>Fituska.Client</b>: Klientská aplikace Blazor WebAssembly komunikuje s webovým API pomocí HTTP.</li>
+	<li><b>Fituska.Shared</b>: Prostøedky sdílené mezi klientskou a serverovou èástí projektu, datové modely, staticky definované prvky.</li>
+</ul>
+
 
 <h3>Databáze</h3>
+<p>Návrh ER diagramu databáze pøed implementací. Skuteèná databáze je vytvoøena pomocí ORM Entity Framework Core 6 stylem Code First.</p>
+<img src="ERDiagram.png" alt="ER diagram" width="900" />
 
-Zde vlo¾te grafické schéma relaèní databáze (tabulek v databázi).
 
 <h2>Instalace</h2>
-
-Struènì popi¹te: 
 <ul>
-<li>postup instalace na server,</li>
-<li>softwarové po¾adavky (verze PHP apod.),</li>
-<li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>
+<li>postup instalace na server:
+	<ul>
+		<li>Publikováno na Microsoft Azure, nasazení pomocí Continuous Deployment na github.com.</li>
+	</ul>
+</li>
+<li>softwarové po¾adavky:
+	<ul>
+		<li>SDK: .NET 6.0.100</li>
+		<li>Runtime: Microsoft.AspNetCore.App 6.0.0, Microsoft.NETCore.App 6.0.0</li>
+		<li>Visual Studio 2022</li>
+	</ul>
+</li>
+<li>jak rozbalit, konfigurovat, inicializovat databázi:
+	<ol>
+		<li>Extrahovat archiv.</li>
+		<li>Otevøít soubor <em>Fituska/Fituska.sln</em> ve Visual Studio.</li>
+		<li>Pravým tlaèítkem kliknout na <b>Solution</b> v sekci <b>Solution Explorer</b>, vybrat <b>Set Startup Projects...</b></li>
+		<li>Vybrat <b>Multiple Projects</b> a nastavit <b>Start</b> pro projekty <em>Fituska.API</em> a <em>Fituska.Client</em></li>
+		<li>V re¾imu Debug dojde ke spu¹tìní s lokální Sqlite databází, pro Release na Microsoft Azure je pou¾ita <b>Azure SQL Server</b>.</li>
+	</ol>
+</li>
 </ul>
 
 <h2>Známé problémy</h2>
