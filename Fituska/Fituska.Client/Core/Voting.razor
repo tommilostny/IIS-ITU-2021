@@ -88,13 +88,12 @@
     {
         VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
         VoteNewModel vote = new VoteNewModel
-            {
-                Id = new Guid(),
+        {
                 Vote = VoteValue.Upvote,
                 AnswerId = AnswerId,
                 UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
 
-         };
+        };
         await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         await OnVoteChange.InvokeAsync();
     }
@@ -128,6 +127,9 @@
             (upvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Upvote);
             (downvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Downvote);
         }
+        Votes = await Http.GetFromJsonAsync<List<VoteModel>>(ApiEndpoints.VoteAnswerIdUrl(AnswerId));
+        Console.WriteLine("Rating is: " + Rating);
+        StateHasChanged();
         await base.OnInitializedAsync();
     }
 }

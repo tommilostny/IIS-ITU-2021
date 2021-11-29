@@ -28,6 +28,17 @@ public class VoteController : ControllerBase
     }
 
     [AllowAnonymous]
+    [HttpGet]
+    [Route("answer/{id}")]
+    [OpenApiOperation("Vote" + nameof(GetAllForAnswer))]
+    public ActionResult<List<VoteModel>> GetAllForAnswer(Guid id)
+    {
+        List<VoteEntity> entities = repository.GetAll().Where(vote => vote.AnswerId == id).ToList();
+        var models = mapper.Map<List<VoteModel>>(entities);
+        return Ok(models);
+    }
+
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("Vote" + nameof(GetById))]
     public ActionResult<VoteModel> GetById(Guid id)
@@ -60,15 +71,11 @@ public class VoteController : ControllerBase
 
     [HttpPost]
     [OpenApiOperation("Vote" + nameof(Insert))]
-    public ActionResult<VoteNewModel> Insert(VoteNewModel model)
+    public ActionResult<VoteModel> Insert(VoteNewModel model)
     {
         var entity = mapper.Map<VoteEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null)
-        {
-            return BadRequest();
-        }
-        var detailModel = mapper.Map<VoteNewModel>(entity);
+        var detailModel = mapper.Map<VoteModel>(entity);
         return Ok(detailModel);
     }
 }
