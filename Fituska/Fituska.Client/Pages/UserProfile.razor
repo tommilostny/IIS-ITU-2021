@@ -1,4 +1,5 @@
 ﻿@page "/user/{Username}"
+@using Fituska.Shared.Models.Course
 @using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.User
 @inherits LastPageSavableComponentBase
@@ -35,14 +36,47 @@ else
             <UserPhotoLoader UserModel="userModel" />
         </div>
     </div>
+    @if (lecturingCourses.Count > 0)
+    {
+        <h4 class="mt-4">Vyučující kurzů:</h4>
+        <ul class="list-group">
+            @foreach (var course in lecturingCourses)
+            {
+                <li class="list-group-item">
+                    <a href="/course/@course.Url">@course.Shortcut</a>
+                </li>
+            }
+        </ul>
+    }
+    @if (coursesWatingForModeratorApprove.Count > 0)
+    {
+        <h4 class="mt-4">Moderátor: kurzy ke schválení:</h4>
+        <ul class="list-group">
+            @foreach (var course in coursesWatingForModeratorApprove)
+            {
+                <li class="list-group-item">
+                    <button class="btn btn-sm btn-success" @onclick="() => Approve(course.Id)">Schválit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Decline(course.Id)">Odmítnout</button>
+                    @course.Shortcut
+                </li>
+            }
+        </ul>
+    }
 }
 
 @code
 {
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
     [Parameter]
     public string Username { get; set; }
 
-    UserDetailModel? userModel = null;
+    UserDetailModel userModel = null;
+
+    List<CourseListModel> lecturingCourses = new();
+
+    List<CourseListModel> coursesWatingForModeratorApprove = new();
 
     string EmailLink => $"mailto:{userModel.Email}";
 
@@ -51,6 +85,34 @@ else
     protected override async Task OnInitializedAsync()
     {
         userModel = await Http.GetFromJsonAsync<UserDetailModel>(ApiEndpoints.UserNameUrl(Username));
+        lecturingCourses = await Http.GetFromJsonAsync<List<CourseListModel>>(ApiEndpoints.CourseLecrurersUrl(userModel.Id));
+
+        var identityUser = (await AuthenticationState).User;
+        if (identityUser.Identity.IsAuthenticated
+            && (identityUser.IsInRole(RoleNames.ModeratorRoleName) || identityUser.IsInRole(RoleNames.AdminRoleName)))
+        {
+            coursesWatingForModeratorApprove = await Http.GetFromJsonAsync<List<CourseListModel>>(ApiEndpoints.CourseModeratorUrl());
+        }
         await base.OnInitializedAsync();
+    }
+
+    async Task Approve(Guid courseId)
+    {
+        var response = await Http.GetAsync(ApiEndpoints.CourseModeratorApprovalUrl(courseId));
+        RemoveFromApprovalWaitList(response, courseId);
+    }
+
+    async Task Decline(Guid courseId)
+    {
+        var response = await Http.DeleteAsync(ApiEndpoints.CourseIdUrl(courseId));
+        RemoveFromApprovalWaitList(response, courseId);
+    }
+
+    void RemoveFromApprovalWaitList(HttpResponseMessage response, Guid id)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            coursesWatingForModeratorApprove.Remove(coursesWatingForModeratorApprove.First(c => c.Id == id));
+        }
     }
 }
