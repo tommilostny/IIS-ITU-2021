@@ -60,7 +60,7 @@ public static class SeedRolesAndUsers
 
             if (identityResult.Succeeded)
             {
-                await userManager.AddToRoleAsync(modUser, RoleNames.AdminRoleName);
+                await userManager.AddToRoleAsync(modUser, RoleNames.ModeratorRoleName);
             }
         }
     }
@@ -75,12 +75,7 @@ public static class SeedRolesAndUsers
                 Email = "xfranta01@stud.fit.vutbr.cz",
                 RegistrationDate = DateTime.UtcNow,
             };
-            var identityResult = await userManager.CreateAsync(modUser, "franta1");
-
-            if (identityResult.Succeeded)
-            {
-                await userManager.AddToRoleAsync(modUser, RoleNames.AdminRoleName);
-            }
+            await userManager.CreateAsync(modUser, "franta1");
         }
     }
 }
