@@ -75,4 +75,42 @@ public class CourseController : ControllerBase
         var result = mapper.Map<CourseListModel>(entity);
         return Ok(result);
     }
+
+    [Route("foredit/{url}")]
+    [HttpGet]
+    public ActionResult<CourseNewModel> GetForEdit(string url)
+    {
+        var entity = repository.GetByUrl(url);
+        if (entity == null)
+        {
+            return BadRequest();
+        }
+        return Ok(mapper.Map<CourseNewModel>(entity));
+    }
+
+    [AllowAnonymous]
+    [HttpGet("user/{lecturerId}")]
+    public ActionResult<List<CourseListModel>> GetAllForLecturer(Guid lecturerId)
+    {
+        List<CourseEntity> entities = repository.GetAll().Where(course => course.LecturerId == lecturerId).ToList();
+        var listDetailModels = mapper.Map<List<CourseListModel>>(entities);
+        return Ok(listDetailModels);
+    }
+
+    [HttpGet("forapproval")]
+    public ActionResult<List<CourseListModel>> GetAllForModeratorApprove()
+    {
+        List<CourseEntity> entities = repository.GetAll().Where(course => !course.ModeratorApproved).ToList();
+        var listDetailModels = mapper.Map<List<CourseListModel>>(entities);
+        return Ok(listDetailModels);
+    }
+
+    [HttpGet("approve/{id}")]
+    public ActionResult ModeratorApprovesCourse(Guid id)
+    {
+        var entity = repository.GetByID(id);
+        entity.ModeratorApproved = true;
+        repository.Update(entity);
+        return Ok();
+    }
 }

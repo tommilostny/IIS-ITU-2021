@@ -28,8 +28,8 @@
         <div class="row">
         @foreach (var course in courses.Where(c => c.YearOfStudy == yearOfStudy))
         {
-            //@if (course.ModeratorApproved)
-            //{
+            @if (course.ModeratorApproved)
+            {
                 <div class="col-md-6">
                     <a href="course/@course.Url">
                         <div class="card border-info courses-list">
@@ -41,7 +41,7 @@
                         </div>
                     </a>
                 </div>       
-            //}
+            }
         }
         </div>
         <hr />

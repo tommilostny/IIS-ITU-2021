@@ -31,7 +31,17 @@ public static class ApiEndpoints
 
     public static string CommentIdUrl(Guid id) => $"{CommentUrl}/{id}";
 
+    public static string CourseIdUrl(Guid id) => $"{CourseUrl}/{id}";
+
     public static string CourseUrlUrl(string url) => $"{CourseUrl}/{url}";
+
+    public static string CourseEditUrl(string url) => $"{CourseUrl}/foredit/{url}";
+
+    public static string CourseLecrurersUrl(Guid userId) => $"{CourseUrl}/user/{userId}";
+
+    public static string CourseModeratorUrl() => $"{CourseUrl}/forapproval";
+
+    public static string CourseModeratorApprovalUrl(Guid id) => $"{CourseUrl}/approve/{id}";
 
     public static string CourseAttendanceIdUrl(Guid id) => $"{CourseAttendanceUrl}/{id}";
 
