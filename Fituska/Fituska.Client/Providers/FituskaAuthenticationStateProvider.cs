@@ -45,6 +45,7 @@ public class FituskaAuthenticationStateProvider : AuthenticationStateProvider
     {
         var claims = jwtSecurityToken.Claims.ToList();
         claims.Add(new Claim(ClaimTypes.Name, jwtSecurityToken.Subject));
+        claims.Add(new Claim(ClaimTypes.NameIdentifier, ClaimTypes.Name));
         return claims;
     }
 

@@ -1,0 +1,98 @@
+﻿@page "/course/add"
+@using Fituska.Shared.Models.Course
+@using Fituska.Shared.Enums
+@using System.Security.Claims
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h2>Přidat kurz</h2>
+
+@if (newCourse is not null)
+{
+    @newCourse.Semester
+    @newCourse.YearOfStudy
+
+    <EditForm Model="newCourse" OnValidSubmit="CreateAsync">
+
+        <DataAnnotationsValidator />
+
+        <div class="form-group my-3">
+            <label for="name">Název:</label>
+            <InputText id="name" class="form-control" @bind-Value="newCourse.Name" />
+            <ValidationMessage For="@(() => newCourse.Name)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="shortcut">Zkratka:</label>
+            <InputText id="shortcut" class="form-control" @bind-Value="newCourse.Shortcut" />
+            <ValidationMessage For="@(() => newCourse.Shortcut)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="desc">Popis:</label>
+            <InputText id="desc" class="form-control" @bind-Value="newCourse.Description" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="credits">Počet kreditů:</label>
+            <InputNumber id="credits" class="form-control" @bind-Value="creditsVal" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="yos">Ročník:</label>
+            <InputSelect id="yos" @bind-Value="newCourse.YearOfStudy">
+                @foreach (YearOfStudy y in Enum.GetValues(typeof(YearOfStudy)))
+                {
+                    <option value="@y">@ConverterService.YearOfStudyDecode(y)</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="semester">Semestr:</label>
+            <InputSelect id="semester" @bind-Value="newCourse.Semester">
+                @foreach (Semester s in Enum.GetValues(typeof(Semester)))
+                {
+                    <option value="@s">@ConverterService.SemesterDecode(s)</option>
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Uložit</button>
+    </EditForm> 
+}
+@if (errorText is not null)
+{
+    <p class="text-danger">@errorText</p>
+}
+
+@code
+{
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    CourseNewModel newCourse;
+    int creditsVal = 0;
+    string? errorText;
+
+    async Task CreateAsync()
+    {
+        newCourse.Credits = (byte)creditsVal;
+        var response = await Http.PostAsJsonAsync(ApiEndpoints.CourseUrl, newCourse);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<CourseListModel>();
+            NavigationManager.NavigateTo($"/course/{result.Url}");
+        }
+        else errorText = $"Chyba {response.StatusCode}";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        newCourse = new CourseNewModel
+        {
+            LecturerId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+        };
+        await base.OnInitializedAsync();
+    }
+}

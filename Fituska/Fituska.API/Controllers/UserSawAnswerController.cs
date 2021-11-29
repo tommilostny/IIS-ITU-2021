@@ -62,7 +62,7 @@ public class UserSawAnswerController : ControllerBase
         entity = repository.Insert(entity);
         if(entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         var detailModel = mapper.Map<UserSawAnswerModel>(entity);
         return Ok(detailModel);

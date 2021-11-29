@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using Fituska.Shared.Enums
+@using Fituska.Shared.Models.Course
 @inherits LastPageSavableComponentBase
+@inject HttpClient Http
 
 <!-- Zapsané kurzy? (komponenta s AuthorizeView) -->
 
@@ -8,32 +10,55 @@
     <div class="col">
         <h2>Všechny kurzy</h2>
     </div>
-    <div class="col-3">
-        <button class="btn btn-outline-success">Přidat kurz</button>
-    </div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="col-3">
+                <a class="btn btn-outline-success" href="/course/add">Přidat kurz</a>
+            </div>
+        </Authorized>
+    </AuthorizeView>
 </div>
 <br />
-@foreach (YearOfStudy yearOfStudy in Enum.GetValues(typeof(YearOfStudy)))
+
+@if (courses is not null)
 {
-    <h4>@ConverterService.YearOfStudyDecode(yearOfStudy)</h4>
-    <div class="row">
-    @foreach (var course in DesignTimeSeed.CourseListModels.Where(c => c.YearOfStudy == yearOfStudy))
+    @foreach (YearOfStudy yearOfStudy in Enum.GetValues(typeof(YearOfStudy)))
     {
-        @if (course.ModeratorApproved)
+        <h4>@ConverterService.YearOfStudyDecode(yearOfStudy)</h4>
+        <div class="row">
+        @foreach (var course in courses.Where(c => c.YearOfStudy == yearOfStudy))
         {
-            <div class="col-md-6">
-                <a href="course/@course.Url">
-                    <div class="card border-info courses-list">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                @course.Shortcut (@ConverterService.SemesterDecode(course.Semester) semestr)
-                            </h5>
+            //@if (course.ModeratorApproved)
+            //{
+                <div class="col-md-6">
+                    <a href="course/@course.Url">
+                        <div class="card border-info courses-list">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    @course.Shortcut (@ConverterService.SemesterDecode(course.Semester) semestr)
+                                </h5>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>       
+                    </a>
+                </div>       
+            //}
         }
+        </div>
+        <hr />
     }
-    </div>
-    <hr />
+}
+else
+{
+    <p>Načítání...</p>
+}
+
+@code
+{
+    List<CourseListModel>? courses = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        courses = await Http.GetFromJsonAsync<List<CourseListModel>>(ApiEndpoints.CourseUrl);
+        await base.OnInitializedAsync();
+    }
 }

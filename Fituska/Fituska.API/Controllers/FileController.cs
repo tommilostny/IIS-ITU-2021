@@ -36,7 +36,7 @@ public class FileController : ControllerBase
         var detailModel = mapper.Map<FileModelBase>(entity);
         if(detailModel != null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
         return Ok(detailModel);
     }
@@ -58,7 +58,7 @@ public class FileController : ControllerBase
         entity = repository.Update(entity);
         if (entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         return Ok();
     }
@@ -72,7 +72,7 @@ public class FileController : ControllerBase
         entity = repository.Insert(entity);
         if(entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         var detailModel = mapper.Map<FileAnswerModel>(entity);
         return Ok(detailModel);

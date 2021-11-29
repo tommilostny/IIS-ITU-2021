@@ -36,7 +36,7 @@ public class CommentController : ControllerBase
         var detailModel = mapper.Map<CommentDetailModel>(entity);
         if(detailModel == null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
         return Ok(detailModel);
     }
@@ -68,10 +68,11 @@ public class CommentController : ControllerBase
     {
         var entity = mapper.Map<CommentEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null){
-            return BadRequest(entity);
+        if(entity == null)
+        {
+            return BadRequest();
         }
-        var detailModel = mapper.Map<CommentDetailModel>(model);
+        var detailModel = mapper.Map<CommentDetailModel>(entity);
         return Ok(detailModel);
     }
 }

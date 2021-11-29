@@ -44,10 +44,11 @@ public class AnswerController : ControllerBase
     {
         var entity = mapper.Map<AnswerEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null){
-            return BadRequest(entity);
+        if(entity == null)
+        {
+            return BadRequest();
         }
-        var detailModel = mapper.Map<AnswerDetailModel>(model);
+        var detailModel = mapper.Map<AnswerDetailModel>(entity);
         return Ok(detailModel);
     }
 }

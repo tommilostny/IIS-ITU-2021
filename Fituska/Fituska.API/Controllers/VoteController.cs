@@ -66,7 +66,7 @@ public class VoteController : ControllerBase
         entity = repository.Insert(entity);
         if(entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         var detailModel = mapper.Map<VoteModel>(entity);
         return Ok(detailModel);

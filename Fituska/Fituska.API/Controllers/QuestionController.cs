@@ -62,7 +62,7 @@ public class QuestionController : ControllerBase
         entity = repository.Insert(entity);
         if(entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         var detailModel = mapper.Map<QuestionDetailModel>(entity);
         return Ok(detailModel);

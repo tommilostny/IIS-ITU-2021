@@ -36,7 +36,7 @@ public class CourseAttendanceController : ControllerBase
         var model = mapper.Map<CourseAttendanceListModel>(entity);
         if(model == null)
         {
-            return BadRequest(model);
+            return BadRequest();
         }
         return Ok(model);
     }
@@ -68,10 +68,11 @@ public class CourseAttendanceController : ControllerBase
     {
         var entity = mapper.Map<CourseAttendanceEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null){
-            return BadRequest(entity);
+        if(entity == null)
+        {
+            return BadRequest();
         }
-        var detailModel = mapper.Map<CourseAttendanceListModel>(model);
+        var detailModel = mapper.Map<CourseAttendanceListModel>(entity);
         return Ok(detailModel);
     }
 }

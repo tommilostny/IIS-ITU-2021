@@ -53,7 +53,7 @@ public class CategoryController : ControllerBase
         entity = repository.Update(entity);
         if(entity == null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
         return Ok(detailModel);
     }
@@ -63,12 +63,12 @@ public class CategoryController : ControllerBase
     public ActionResult<CategoryDetailModel> Insert(CategoryNewModel categoryModel)
     {
         var entity = mapper.Map<CategoryEntity>(categoryModel);
-        var detailModel = mapper.Map<CategoryDetailModel>(categoryModel);
         entity = repository.Insert(entity);
-        if(entity == null)
+        if (entity == null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
+        var detailModel = mapper.Map<CategoryDetailModel>(entity);
         return Ok(detailModel);
     }
 }
