@@ -49,13 +49,22 @@ else
         await base.OnInitializedAsync();
     }
 
-    void AddCategory(string name)
+    async Task AddCategory(string name)
     {
-        course.Categories.Add(new CategoryDetailModel { Name = name, Year = DateTime.UtcNow.Year, Questions = new() });
+        var response = await Http.PostAsJsonAsync<CategoryNewModel>(ApiEndpoints.CategoryUrl, new CategoryNewModel { Name = name, Year = DateTime.UtcNow.Year,CourseId = course.Id});
+        if (response.IsSuccessStatusCode)
+        {
+            CategoryDetailModel model = await response.Content.ReadFromJsonAsync<CategoryDetailModel>();
+            course.Categories.Add(model);
+        }
     }
 
-    void RemoveCategory(CategoryDetailModel category)
+    async Task RemoveCategory(CategoryDetailModel category)
     {
-        course.Categories.Remove(category);
+        var response  = await Http.DeleteAsync(ApiEndpoints.CategoryIdUrl(category.Id));
+        if (response.IsSuccessStatusCode)
+        {
+            course.Categories.Remove(category);
+        }
     }
 }
