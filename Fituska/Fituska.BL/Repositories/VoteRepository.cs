@@ -35,8 +35,7 @@ public class VoteRepository : IRepository<VoteEntity>
         {
             if(entity.Vote == voteFromDb.Vote)
             {
-                database.Votes.Remove(voteFromDb);
-                database.SaveChanges();
+                Delete(entity.Id);
                 return null;
             }
             else
