@@ -3,7 +3,6 @@ global using Fituska.BL.MapperProfiles;
 global using Fituska.DAL;
 global using Fituska.DAL.Entities;
 global using Fituska.Shared.Models;
-global using Fituska.Shared.Static;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using System;
