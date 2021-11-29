@@ -63,23 +63,28 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    using (var serviceProvider = builder.Services.BuildServiceProvider())
-    {
-        var dbContext = serviceProvider.GetService<FituskaDbContext>();
-        dbContext?.Database.Migrate();
-
-        var roleManager = serviceProvider.GetService<RoleManager<IdentityRole<Guid>>>();
-        var userManager = serviceProvider.GetService<UserManager<UserEntity>>();
-        if (roleManager is not null && userManager is not null)
-        {
-            await SeedRolesAndUsers.Seed(roleManager, userManager);
-        }
-    }
     app.UseDeveloperExceptionPage();
-
 }
+
+using (var serviceProvider = builder.Services.BuildServiceProvider())
+{
+    var dbContext = serviceProvider.GetService<FituskaDbContext>();
+    dbContext?.Database.Migrate();
+
+    var roleManager = serviceProvider.GetService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = serviceProvider.GetService<UserManager<UserEntity>>();
+    if (roleManager is not null && userManager is not null)
+    {
+        await SeedRolesAndUsers.Seed(roleManager, userManager);
+    }
+}
+
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fituška API v1"));
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fituška API v1");
+    c.RoutePrefix = string.Empty;
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();
