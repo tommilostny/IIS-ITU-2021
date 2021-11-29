@@ -60,7 +60,7 @@ public class VoteController : ControllerBase
 
     [HttpPost]
     [OpenApiOperation("Vote" + nameof(Insert))]
-    public ActionResult<VoteModel> Insert(VoteModel model)
+    public ActionResult<VoteNewModel> Insert(VoteNewModel model)
     {
         var entity = mapper.Map<VoteEntity>(model);
         entity = repository.Insert(entity);
@@ -68,7 +68,7 @@ public class VoteController : ControllerBase
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<VoteModel>(entity);
+        var detailModel = mapper.Map<VoteNewModel>(entity);
         return Ok(detailModel);
     }
 }

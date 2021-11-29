@@ -45,7 +45,6 @@ public class VoteRepository : IRepository<VoteEntity>
                 return updatedEntity;
             }
         }
-        return voteFromDb;
     }
 
     public VoteEntity Update(VoteEntity entity)

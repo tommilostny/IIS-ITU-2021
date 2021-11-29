@@ -89,10 +89,11 @@
         VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
         VoteNewModel vote = new VoteNewModel
             {
+                Id = new Guid(),
                 Vote = VoteValue.Upvote,
                 AnswerId = AnswerId,
                 UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
-                
+
          };
         await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         await OnVoteChange.InvokeAsync();
@@ -106,9 +107,14 @@
                 Vote = VoteValue.Downvote,
                 AnswerId = AnswerId,
                 UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
-                
+
          };
-        await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
+        var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
+        if (response.IsSuccessStatusCode)
+        {
+            VoteModel model = await response.Content.ReadFromJsonAsync<VoteModel>();
+            Votes.Add(model);
+        }
         await OnVoteChange.InvokeAsync();
     }
 

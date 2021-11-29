@@ -21,8 +21,6 @@ public class CommentRepository : IRepository<CommentEntity>
         {
             comment.Text = "[deleted]";
             comment.UserId = Guid.Empty;
-            //discussion.Files
-            //TODO: Co všechno budeme mazat ??
             Update(comment);
             database.SaveChanges();
         }
