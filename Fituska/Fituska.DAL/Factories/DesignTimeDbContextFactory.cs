@@ -8,7 +8,6 @@ internal class DesignTimeDbContextFactory : IDbContextFactory, IDesignTimeDbCont
 {
     public FituskaDbContext Create()
     {
-        Console.WriteLine(Directory.GetCurrentDirectory());
         var builder = new DbContextOptionsBuilder<FituskaDbContext>();
 
     #if DEBUG

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fituska.DAL.Migrations
 {
     [DbContext(typeof(FituskaDbContext))]
-    [Migration("20211129002902_AzureMigration")]
-    partial class AzureMigration
+    [Migration("20211129130342_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
