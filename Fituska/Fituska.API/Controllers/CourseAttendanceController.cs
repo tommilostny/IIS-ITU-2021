@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.CourseAttendance;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class CourseAttendanceController : ControllerBase
 {
@@ -41,7 +41,7 @@ public class CourseAttendanceController : ControllerBase
         return Ok(model);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Course attendence" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {

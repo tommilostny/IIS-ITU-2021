@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Answer;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class AnswerController : ControllerBase
 {
@@ -17,7 +17,7 @@ public class AnswerController : ControllerBase
         mapper = _mapper;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Answer" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {

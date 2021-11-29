@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Comment;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class CommentController : ControllerBase
 {
@@ -41,7 +41,7 @@ public class CommentController : ControllerBase
         return Ok(detailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Comment" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {

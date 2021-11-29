@@ -7,6 +7,7 @@ using System.Security.Claims;
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -93,10 +94,11 @@ public class UserController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
     }
 
-    [Route(nameof(GetAll))]
+    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll() => Ok(mapper.Map<List<UserListModel>>(userManager.Users.ToList()));
 
+    [AllowAnonymous]
     [Route("{username}")]
     [HttpGet]
     public async Task<IActionResult> Get(string username)

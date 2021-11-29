@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Question;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class QuestionController : ControllerBase
 {
@@ -17,6 +17,7 @@ public class QuestionController : ControllerBase
         mapper = _mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [OpenApiOperation("Question" + nameof(GetAll))]
     public ActionResult<List<QuestionListModel>> GetAll()
@@ -26,6 +27,7 @@ public class QuestionController : ControllerBase
         return Ok(listModels);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("Question" + nameof(GetById))]
     public ActionResult<QuestionDetailModel> GetById(Guid id)
@@ -35,7 +37,7 @@ public class QuestionController : ControllerBase
         return Ok(detailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Question" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -45,9 +47,10 @@ public class QuestionController : ControllerBase
 
     [HttpPut]
     [OpenApiOperation("Question" + nameof(Update))]
-    public ActionResult Update(IEntity entity)
+    public ActionResult Update(QuestionNewModel model)
     {
-        repository.Update((QuestionEntity)entity);
+        var entity = mapper.Map<QuestionEntity>(model);
+        repository.Update(entity);
         return Ok();
     }
 
