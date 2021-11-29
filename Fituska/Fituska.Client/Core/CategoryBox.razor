@@ -1,7 +1,7 @@
 ﻿@using Fituska.Shared.Models.Category
 @using Fituska.Shared.Models.Question
 @using Fituska.Shared.Models.User
-
+@inject HttpClient Http
 @if (confirmDelete)
 {
     <div class="card">
@@ -96,7 +96,7 @@
 
     bool expandQuestions = false;
     bool showLoadMoreQuestionsButtion = false;
-    const int questionLimit = 10;
+    const int questionLimit = 20;
     bool confirmDelete = false;
 
     int QuestionLimit()
@@ -129,23 +129,24 @@
             return;
         }
         var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
-        var listModel = new QuestionListModel { Title = newQuestionTitle, User = user, CreationTime = DateTime.Now, Id = Guid.NewGuid() };
-        Category.Questions.Add(listModel);
-
-        //simulate adding detail to database
-        var detailModel = new QuestionDetailModel
-        {
-            Title = newQuestionTitle,
+        var model = new QuestionNewModel 
+        { Title = newQuestionTitle,
             Text = newQuestionText,
-            User = user,
-            CreationTime = listModel.CreationTime,
-            Id = listModel.Id
+            CategoryId = Category.Id, 
+            UserId= new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
         };
-        DesignTimeSeed.QuestionDetailModels.Add(detailModel);
 
-        showAddForm = false;
-        newQuestionText = string.Empty;
-        newQuestionTitle = string.Empty;
+
+        var response = await Http.PostAsJsonAsync<QuestionNewModel>(ApiEndpoints.QuestionUrl, model);
+        if (response.IsSuccessStatusCode)
+        {
+            QuestionListModel detailModel = await response.Content.ReadFromJsonAsync<QuestionListModel>();
+            Category.Questions.Add(detailModel);
+
+            showAddForm = false;
+            newQuestionText = string.Empty;
+            newQuestionTitle = string.Empty;
+        }
 
         SortQuestionsByDate();
     }
@@ -154,11 +155,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Category = await Http.GetFromJsonAsync<CategoryDetailModel>(ApiEndpoints.CategoryIdUrl(Category.Id));
         SortQuestionsByDate();
         await base.OnInitializedAsync();
     }
 
-    async Task RemoveSelf() => await OnRemoveClick.InvokeAsync(Category);
+    async Task RemoveSelf()
+    {
+        await OnRemoveClick.InvokeAsync(Category);
+        confirmDelete = false;
+    }
 
     void ToggleDeleteConfirm() => confirmDelete = !confirmDelete;
 }

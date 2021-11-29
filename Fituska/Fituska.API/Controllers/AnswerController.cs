@@ -17,6 +17,26 @@ public class AnswerController : ControllerBase
         mapper = _mapper;
     }
 
+
+    [AllowAnonymous]
+    [HttpGet]
+    public ActionResult<List<AnswerDetailModel>> GetAll()
+    {
+        List<AnswerEntity> entities = (List<AnswerEntity>)repository.GetAll();
+        var models = mapper.Map<List<AnswerDetailModel>>(entities);
+        return Ok(models);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    [OpenApiOperation("Category" + nameof(GetById))]
+    public ActionResult<AnswerDetailModel> GetById(Guid id)
+    {
+        var entitiy = repository.GetByID(id);
+        var model = mapper.Map<AnswerDetailModel>(entitiy);
+        return Ok(model);
+    }
+
     [HttpDelete("{id}")]
     [OpenApiOperation("Answer" + nameof(Delete))]
     public ActionResult Delete(Guid id)

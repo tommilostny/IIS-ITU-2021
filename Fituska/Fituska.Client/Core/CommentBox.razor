@@ -1,6 +1,6 @@
 ﻿@using Fituska.Shared.Models.Comment
 @using Fituska.Shared.Models.User
-
+@inject HttpClient Http
 <div class="card m-2 ms-4">
     <div class="card-body">
         <h6 class="card-subtitle mb-2 text-muted"><a href="user/@Comment.User.UserName">@Comment.User.UserName</a> (@Comment.CreationTime)</h6>
@@ -26,5 +26,11 @@
         var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
         var comment = new CommentDetailModel { User = user, Text = text, CreationTime = DateTime.Now };
         Comment.SubComments.Add(comment);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Comment = await Http.GetFromJsonAsync<CommentDetailModel>(ApiEndpoints.CommentIdUrl(Comment.Id));      
+        await base.OnInitializedAsync();
     }
 }

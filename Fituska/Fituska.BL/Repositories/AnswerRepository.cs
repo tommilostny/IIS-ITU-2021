@@ -37,6 +37,7 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
     public IEnumerable<AnswerEntity> GetAll()
     {
         return database.Answers
+            .Include(answer => answer.User)
             .Include(answer => answer.UsersSawAnswer)
             .Include(answer => answer.UsersVoteAnswers)
             .Include(answer => answer.Comments)
@@ -47,11 +48,14 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
     public AnswerEntity GetByID(Guid entityID)
     {
         var answer = database.Answers
+            .Include(answer => answer.User)
             .Include(answer => answer.UsersSawAnswer)
             .Include(answer => answer.UsersVoteAnswers)
             .Include(answer => answer.Comments)
             .Include(answer => answer.Files)
             .FirstOrDefault(answer => answer.Id == entityID);
+
+        answer.User = database.Users.FirstOrDefault(user => user.Id == answer.UserId);
         return answer;
     }
 

@@ -1,6 +1,7 @@
 ﻿@using Fituska.Shared.Enums
 @using Fituska.Shared.Models.User
 @using Fituska.Shared.Models.Vote
+@inject HttpClient Http
 
 <AuthorizeView>
     <Authorized>
@@ -34,7 +35,13 @@
 @code
 {
     [Parameter]
+    public EventCallback<int> OnVoteChange { get; set; }
+
+    [Parameter]
     public List<VoteModel> Votes { get; set; }
+
+    [Parameter]
+    public Guid AnswerId { get; set; }
 
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
@@ -68,6 +75,7 @@
                 return;
             }
         }
+
         Votes.Add(new VoteModel { User = user, Vote = voteType });
         clickFlag = true;
     }
@@ -76,9 +84,39 @@
 
     string? DownvoteButtonStyle => downvoteClicked ? "btn-danger" : "btn-outline-danger";
 
-    void UpvoteClick() => VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
+    async Task UpvoteClick()
+    {
+        VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
+        VoteNewModel vote = new VoteNewModel
+            {
+                Id = new Guid(),
+                Vote = VoteValue.Upvote,
+                AnswerId = AnswerId,
+                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
 
-    void DownvoteClick() => VoteButtonClick(VoteValue.Downvote, ref downvoteClicked, ref upvoteClicked);
+         };
+        await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
+        await OnVoteChange.InvokeAsync();
+    }
+
+    async Task DownvoteClick()
+    {
+        VoteButtonClick(VoteValue.Downvote, ref downvoteClicked, ref upvoteClicked);
+        VoteNewModel vote = new VoteNewModel
+            {
+                Vote = VoteValue.Downvote,
+                AnswerId = AnswerId,
+                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+
+         };
+        var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
+        if (response.IsSuccessStatusCode)
+        {
+            VoteModel model = await response.Content.ReadFromJsonAsync<VoteModel>();
+            Votes.Add(model);
+        }
+        await OnVoteChange.InvokeAsync();
+    }
 
     protected override async Task OnInitializedAsync()
     {
