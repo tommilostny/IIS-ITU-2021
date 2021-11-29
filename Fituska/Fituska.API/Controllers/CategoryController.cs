@@ -1,12 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Category;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
-[Authorize()]
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class CategoryController : ControllerBase
 {
@@ -18,6 +17,7 @@ public class CategoryController : ControllerBase
         mapper = _mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public ActionResult<List<CategoryListModel>> GetAll()
     {
@@ -26,6 +26,7 @@ public class CategoryController : ControllerBase
         return Ok(categoriesListModels);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("Category" + nameof(GetById))]
     public ActionResult<CategoryListModel> GetById(Guid id)
@@ -35,7 +36,7 @@ public class CategoryController : ControllerBase
         return Ok(categoryDetailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Category" + nameof(Delete))]
     public ActionResult<CategoryListModel> Delete(Guid id)
     {
@@ -52,7 +53,7 @@ public class CategoryController : ControllerBase
         entity = repository.Update(entity);
         if(entity == null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
         return Ok(detailModel);
     }
@@ -62,12 +63,12 @@ public class CategoryController : ControllerBase
     public ActionResult<CategoryDetailModel> Insert(CategoryNewModel categoryModel)
     {
         var entity = mapper.Map<CategoryEntity>(categoryModel);
-        var detailModel = mapper.Map<CategoryDetailModel>(categoryModel);
         entity = repository.Insert(entity);
-        if(entity == null)
+        if (entity == null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
+        var detailModel = mapper.Map<CategoryDetailModel>(entity);
         return Ok(detailModel);
     }
 }

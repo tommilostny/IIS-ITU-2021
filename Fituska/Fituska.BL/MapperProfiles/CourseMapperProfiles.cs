@@ -7,8 +7,8 @@ public class CourseMapperProfiles : Profile
     public CourseMapperProfiles()
     {
         CreateMap<CourseEntity, CourseDetailModel>();
-
         CreateMap<CourseEntity, CourseListModel>();
+        CreateMap<CourseEntity, CourseNewModel>();
 
         CreateMap<CourseNewModel, CourseEntity>()
             .ForMember(dst => dst.Attendees, config => config.Ignore())

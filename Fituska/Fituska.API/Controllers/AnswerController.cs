@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Answer;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class AnswerController : ControllerBase
 {
@@ -17,7 +17,27 @@ public class AnswerController : ControllerBase
         mapper = _mapper;
     }
 
-    [HttpDelete]
+
+    [AllowAnonymous]
+    [HttpGet]
+    public ActionResult<List<AnswerDetailModel>> GetAll()
+    {
+        List<AnswerEntity> entities = (List<AnswerEntity>)repository.GetAll();
+        var models = mapper.Map<List<AnswerDetailModel>>(entities);
+        return Ok(models);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    [OpenApiOperation("Category" + nameof(GetById))]
+    public ActionResult<AnswerDetailModel> GetById(Guid id)
+    {
+        var entitiy = repository.GetByID(id);
+        var model = mapper.Map<AnswerDetailModel>(entitiy);
+        return Ok(model);
+    }
+
+    [HttpDelete("{id}")]
     [OpenApiOperation("Answer" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -44,10 +64,11 @@ public class AnswerController : ControllerBase
     {
         var entity = mapper.Map<AnswerEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null){
-            return BadRequest(entity);
+        if(entity == null)
+        {
+            return BadRequest();
         }
-        var detailModel = mapper.Map<AnswerDetailModel>(model);
+        var detailModel = mapper.Map<AnswerDetailModel>(entity);
         return Ok(detailModel);
     }
 }

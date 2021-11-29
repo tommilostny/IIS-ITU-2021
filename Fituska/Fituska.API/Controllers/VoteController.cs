@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Vote;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class VoteController : ControllerBase
 {
@@ -17,6 +17,7 @@ public class VoteController : ControllerBase
         mapper = _mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [OpenApiOperation("Vote" + nameof(GetAll))]
     public ActionResult<List<VoteModel>> GetAll()
@@ -26,6 +27,18 @@ public class VoteController : ControllerBase
         return Ok(models);
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("answer/{id}")]
+    [OpenApiOperation("Vote" + nameof(GetAllForAnswer))]
+    public ActionResult<List<VoteModel>> GetAllForAnswer(Guid id)
+    {
+        List<VoteEntity> entities = repository.GetAll().Where(vote => vote.AnswerId == id).ToList();
+        var models = mapper.Map<List<VoteModel>>(entities);
+        return Ok(models);
+    }
+
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("Vote" + nameof(GetById))]
     public ActionResult<VoteModel> GetById(Guid id)
@@ -35,7 +48,7 @@ public class VoteController : ControllerBase
         return Ok(detailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Vote" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -58,14 +71,10 @@ public class VoteController : ControllerBase
 
     [HttpPost]
     [OpenApiOperation("Vote" + nameof(Insert))]
-    public ActionResult<VoteModel> Insert(VoteModel model)
+    public ActionResult<VoteModel> Insert(VoteNewModel model)
     {
         var entity = mapper.Map<VoteEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null)
-        {
-            return BadRequest(entity);
-        }
         var detailModel = mapper.Map<VoteModel>(entity);
         return Ok(detailModel);
     }

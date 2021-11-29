@@ -19,7 +19,7 @@
 {
     async Task Delete(string username)
     {
-        await Http.DeleteAsync(ApiEndpoints.UserUrl(username));
+        await Http.DeleteAsync(ApiEndpoints.UserNameUrl(username));
 
         if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
         {

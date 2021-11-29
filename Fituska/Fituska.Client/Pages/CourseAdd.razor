@@ -1,0 +1,116 @@
+﻿@page "/course/add"
+@using Fituska.Shared.Models.Course
+@using Fituska.Shared.Enums
+@inject HttpClient Http
+
+
+@if (creationSuccess)
+{
+    <h4>Kurz byl úspěšně vytvořen!</h4>
+    <h5>Vyčkejte na schválení moderátorem/administrátorem.</h5>
+}
+else
+{
+    <h2>Přidat kurz</h2>
+    
+    @if (newCourse is not null)
+    {
+        <EditForm Model="newCourse" OnValidSubmit="CreateAsync">
+
+            <DataAnnotationsValidator />
+
+            <div class="form-group my-3">
+                <label for="name">Název:</label>
+                <InputText id="name" class="form-control" @bind-Value="newCourse.Name" />
+                <ValidationMessage For="@(() => newCourse.Name)" />
+            </div>
+
+            <div class="form-group my-3">
+                <label for="shortcut">Zkratka:</label>
+                <InputText id="shortcut" class="form-control" @bind-Value="newCourse.Shortcut" />
+                <ValidationMessage For="@(() => newCourse.Shortcut)" />
+            </div>
+
+            <div class="form-group my-3">
+                <label for="desc">Popis:</label>
+                <InputText id="desc" class="form-control" @bind-Value="newCourse.Description" />
+            </div>
+
+            <div class="form-group my-3">
+                <label for="credits">Počet kreditů:</label>
+                <InputNumber id="credits" class="form-control" @bind-Value="creditsVal" />
+                @if (creditsError)
+                {
+                    <p class="text-danger">Kredity musí být z rozsahu 1-15.</p>
+                }
+            </div>
+
+            <div class="form-group my-3">
+                <label for="yos">Ročník:</label>
+                <InputSelect id="yos" @bind-Value="newCourse.YearOfStudy" class="form-select">
+                    @{ bool selectedYear = true; }
+                    @foreach (YearOfStudy y in Enum.GetValues(typeof(YearOfStudy)))
+                    {
+                        <option value="@y" selected=@selectedYear>@ConverterService.YearOfStudyDecode(y)</option>
+
+                        @if (selectedYear) selectedYear = false;
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group my-3">
+                <label for="semester">Semestr:</label>
+                <InputSelect id="semester" @bind-Value="newCourse.Semester" class="form-select">
+                    @{ bool selectedSemester = true; }
+                    @foreach (Semester s in Enum.GetValues(typeof(Semester)))
+                    {
+                        <option value="@s" selected=@selectedSemester>@ConverterService.SemesterDecode(s)</option>
+                    
+                        @if (selectedSemester) selectedSemester = false;
+                    }
+                </InputSelect>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg">Uložit</button>
+        </EditForm> 
+    }
+    @if (!string.IsNullOrEmpty(errorText))
+    {
+        <p class="text-danger mt-3">@errorText</p>
+    }
+}
+
+@code
+{
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    CourseNewModel newCourse;
+    int creditsVal = 1;
+    bool creditsError = false;
+    string? errorText;
+    bool creationSuccess = false;
+
+    async Task CreateAsync()
+    {
+        if (creditsError = creditsVal <= 0 || creditsVal > 15)
+            return;
+
+        newCourse.Credits = (byte)creditsVal;
+        var response = await Http.PostAsJsonAsync(ApiEndpoints.CourseUrl, newCourse);
+        if (response.IsSuccessStatusCode)
+        {
+            creationSuccess = true;
+        }
+        else errorText = $"Chyba {response.StatusCode}";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        newCourse = new CourseNewModel
+        {
+            LecturerId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+        };
+        await base.OnInitializedAsync();
+    }
+}

@@ -31,7 +31,19 @@ public class VoteRepository : IRepository<VoteEntity>
             database.SaveChanges();
             return entity;
         }
-        return voteFromDb;
+        else
+        {
+            if(entity.Vote == voteFromDb.Vote)
+            {
+                Delete(entity.Id);
+                return null;
+            }
+            else
+            {
+                var updatedEntity = Update(entity);
+                return updatedEntity;
+            }
+        }
     }
 
     public VoteEntity Update(VoteEntity entity)

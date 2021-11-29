@@ -21,8 +21,6 @@ public class CommentRepository : IRepository<CommentEntity>
         {
             comment.Text = "[deleted]";
             comment.UserId = Guid.Empty;
-            //discussion.Files
-            //TODO: Co všechno budeme mazat ??
             Update(comment);
             database.SaveChanges();
         }
@@ -55,25 +53,11 @@ public class CommentRepository : IRepository<CommentEntity>
     public CommentEntity GetByID(Guid entityID)
     {
         var comment = database.Comments
+            .Include(c => c.User)
             .Include(c => c.Files)
+            .Include(c => c.SubComments)
             .FirstOrDefault(c => c.Id == entityID);
 
-        if (comment is not null)
-            comment.SubComments = GetSubComments(entityID);
-
         return comment;
-    }
-
-    private ValueCollection<CommentEntity> GetSubComments(Guid parentId)
-    {
-        var children = database.Comments
-            .Where(c => c.ParentCommentId == parentId)
-            .Include(c => c.Files)
-            .ToList();
-
-        foreach (var child in children)
-            child.SubComments = GetSubComments(child.Id);
-
-        return new(children);
     }
 }

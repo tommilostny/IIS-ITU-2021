@@ -5,21 +5,54 @@
 @inherits LastPageSavableComponentBase
 
 <h3>Výsledky hledání pro: <em>@SearchTerm</em></h3>
-@if (SearchRequest.IncludeAnswers)
+@if (result is not null)
 {
-    <h4>Odpovědi</h4>
+    @if (SearchRequest.IncludeAnswers && result.Answers is not null)
+    {
+        <h4>Odpovědi</h4>
+        <ul>
+            @foreach (var answer in result.Answers)
+            {
+                <li><a href="/question/@answer.QuestionId">@answer.Text</a></li>
+            }
+        </ul>
+    }
+    @if (SearchRequest.IncludeCourses  && result.Courses is not null)
+    {
+        <h4>Kurzy</h4>
+        <ul>
+            @foreach (var course in result.Courses)
+            {
+                <li><a href="/course/@course.Url">@course.Shortcut</a> (@course.Name)</li>
+            }
+        </ul>
+    }
+    @if (SearchRequest.IncludeQuestions  && result.Questions is not null)
+    {
+        <h4>Otázky</h4>
+        <ul>
+            @foreach (var question in result.Questions)
+            {
+                <li><a href="/question/@question.Id">@question.Title</a>
+                    <ul>
+                        <li>@question.Text</li>
+                    </ul>
+                </li>
+            }
+        </ul>
+    }
+    @if (SearchRequest.IncludeUsers  && result.Users is not null)
+    {
+        <h4>Uživatelé</h4>
+        @foreach (var user in result.Users)
+        {
+            <li><a href="/user/@user.UserName">@user.UserName</a></li>
+        }
+    }
 }
-@if (SearchRequest.IncludeCourses)
+else
 {
-    <h4>Kurzy</h4>
-}
-@if (SearchRequest.IncludeQuestions)
-{
-    <h4>Otázky</h4>
-}
-@if (SearchRequest.IncludeUsers)
-{
-    <h4>Uživatelé</h4>
+    <p>Načítání...</p>
 }
 
 @code
@@ -27,10 +60,16 @@
     [Parameter]
     public string SearchTerm { get; set; }
 
+    SearchResponseModel result = null;
+
     protected override async Task OnInitializedAsync()
     {
         SearchRequest.SearchTerm = SearchTerm;
-        //var response = await Http.PostAsJsonAsync(ApiEndpoints.SearchUrl, SearchRequest);
+        var response = await Http.PostAsJsonAsync(ApiEndpoints.SearchUrl, SearchRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            result = await response.Content.ReadFromJsonAsync<SearchResponseModel>();
+        }
         await base.OnInitializedAsync();
     }
 }

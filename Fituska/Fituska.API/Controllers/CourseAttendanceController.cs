@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.CourseAttendance;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class CourseAttendanceController : ControllerBase
 {
@@ -36,12 +36,12 @@ public class CourseAttendanceController : ControllerBase
         var model = mapper.Map<CourseAttendanceListModel>(entity);
         if(model == null)
         {
-            return BadRequest(model);
+            return BadRequest();
         }
         return Ok(model);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Course attendence" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -68,10 +68,11 @@ public class CourseAttendanceController : ControllerBase
     {
         var entity = mapper.Map<CourseAttendanceEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null){
-            return BadRequest(entity);
+        if(entity == null)
+        {
+            return BadRequest();
         }
-        var detailModel = mapper.Map<CourseAttendanceListModel>(model);
+        var detailModel = mapper.Map<CourseAttendanceListModel>(entity);
         return Ok(detailModel);
     }
 }

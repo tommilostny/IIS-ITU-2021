@@ -66,7 +66,7 @@
         var identityUser = (await AuthenticationState!).User.Identity;
         if (identityUser.IsAuthenticated)
         {
-            userToEdit = await Http.GetFromJsonAsync<UserEditModel>(ApiEndpoints.UserUrl(identityUser.Name));
+            userToEdit = await Http.GetFromJsonAsync<UserEditModel>(ApiEndpoints.UserNameUrl(identityUser.Name));
         }
         else
         {

@@ -8,6 +8,8 @@ public static class SeedRolesAndUsers
     {
         await SeedRoles(roleManager);
         await SeedAdministratorUser(userManager);
+        await SeedModeratorUser(userManager);
+        await SeedSampleStudentUser(userManager);
     }
 
     private static async Task SeedRoles(RoleManager<IdentityRole<Guid>> roleManager)
@@ -40,6 +42,44 @@ public static class SeedRolesAndUsers
             if (identityResult.Succeeded)
             {
                 await userManager.AddToRoleAsync(adminUser, RoleNames.AdminRoleName);
+            }
+        }
+    }
+
+    private static async Task SeedModeratorUser(UserManager<UserEntity> userManager)
+    {
+        if (await userManager.FindByEmailAsync("moderator1@fituska.net") is null)
+        {
+            var modUser = new UserEntity
+            {
+                UserName = "moderator",
+                Email = "moderator1@fituska.net",
+                RegistrationDate = DateTime.UtcNow,
+            };
+            var identityResult = await userManager.CreateAsync(modUser, "Password1");
+
+            if (identityResult.Succeeded)
+            {
+                await userManager.AddToRoleAsync(modUser, RoleNames.AdminRoleName);
+            }
+        }
+    }
+
+    private static async Task SeedSampleStudentUser(UserManager<UserEntity> userManager)
+    {
+        if (await userManager.FindByEmailAsync("xfranta01@stud.fit.vutbr.cz") is null)
+        {
+            var modUser = new UserEntity
+            {
+                UserName = "franta",
+                Email = "xfranta01@stud.fit.vutbr.cz",
+                RegistrationDate = DateTime.UtcNow,
+            };
+            var identityResult = await userManager.CreateAsync(modUser, "franta1");
+
+            if (identityResult.Succeeded)
+            {
+                await userManager.AddToRoleAsync(modUser, RoleNames.AdminRoleName);
             }
         }
     }

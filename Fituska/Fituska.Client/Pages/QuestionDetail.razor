@@ -4,6 +4,7 @@
 @using Fituska.Shared.Models.User
 @inherits LastPageSavableComponentBase
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
 
 @if (question is null)
 {
@@ -66,15 +67,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        question = DesignTimeSeed.QuestionDetailModels.FirstOrDefault(q => q.Id == Id);
+        question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));     
         await base.OnInitializedAsync();
     }
 
     async Task AddAnswer(string text)
     {
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
-        var answer = new AnswerDetailModel { Text = text, User = user, CreationTime = DateTime.Now };
-        question.Answers.Add(answer);
+        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name};
+        var answer = new AnswerNewModel {
+            Text = text,
+            QuestionId = question.Id,
+            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+        };
+        var response = await Http.PostAsJsonAsync<AnswerNewModel>(ApiEndpoints.AnswerUrl, answer);
+        if (response.IsSuccessStatusCode)
+        {
+            AnswerDetailModel model = await response.Content.ReadFromJsonAsync<AnswerDetailModel>();
+            question.Answers.Add(model);
+            Console.WriteLine("Inserted answer");
+        }
+        Console.WriteLine("End answer");
     }
 
     string AnswersCount => question.Answers.Count.ToString() + question.Answers.Count switch
@@ -86,10 +98,12 @@ else
 
     void ToggleDeleteConfirm() => confirmDelete = !confirmDelete;
 
-    void /*async Task*/ Delete()
+    async Task Delete()
     {
-        //await Http.DeleteAsync(ApiEndpoints.QuestionUrl(Id));
-        DesignTimeSeed.QuestionDetailModels.Remove(DesignTimeSeed.QuestionDetailModels.First(q => q.Id == Id));
-        NavigationManager.NavigateTo("/");
+        var response  = await Http.DeleteAsync(ApiEndpoints.QuestionIdUrl(question.Id));
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

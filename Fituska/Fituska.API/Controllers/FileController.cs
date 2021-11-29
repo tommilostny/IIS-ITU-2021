@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.File;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class FileController : ControllerBase
 {
@@ -17,6 +17,7 @@ public class FileController : ControllerBase
         mapper = _mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [OpenApiOperation("File" + nameof(GetAll))]
     public ActionResult<List<FileListModel>> GetAll()
@@ -26,6 +27,7 @@ public class FileController : ControllerBase
         return Ok(listModels);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("File" + nameof(GetById))]
     public ActionResult<FileModelBase> GetById(Guid id)
@@ -34,12 +36,12 @@ public class FileController : ControllerBase
         var detailModel = mapper.Map<FileModelBase>(entity);
         if(detailModel != null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
         return Ok(detailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("File" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -56,7 +58,7 @@ public class FileController : ControllerBase
         entity = repository.Update(entity);
         if (entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         return Ok();
     }
@@ -70,7 +72,7 @@ public class FileController : ControllerBase
         entity = repository.Insert(entity);
         if(entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         var detailModel = mapper.Map<FileAnswerModel>(entity);
         return Ok(detailModel);

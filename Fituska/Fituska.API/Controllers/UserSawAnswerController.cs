@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Answer;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class UserSawAnswerController : ControllerBase
 {
@@ -17,6 +17,7 @@ public class UserSawAnswerController : ControllerBase
         mapper = _mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [OpenApiOperation("User saw answer" + nameof(GetAll))]
     public ActionResult<List<UserSawAnswerModel>> GetAll()
@@ -26,6 +27,7 @@ public class UserSawAnswerController : ControllerBase
         return Ok(listModels);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [OpenApiOperation("User saw answer" + nameof(GetById))]
     public ActionResult<UserSawAnswerModel> GetById(Guid id)
@@ -35,7 +37,7 @@ public class UserSawAnswerController : ControllerBase
         return Ok(detailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("User saw answer" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -45,9 +47,10 @@ public class UserSawAnswerController : ControllerBase
 
     [HttpPut]
     [OpenApiOperation("User saw answer" + nameof(Update))]
-    public ActionResult Update(IEntity entity)
+    public ActionResult Update(UserSawAnswerModel model)
     {
-        repository.Update((UserSawAnswerEntity)entity);
+        var entity = mapper.Map<UserSawAnswerEntity>(model);
+        repository.Update(entity);
         return Ok();
     }
 
@@ -59,7 +62,7 @@ public class UserSawAnswerController : ControllerBase
         entity = repository.Insert(entity);
         if(entity == null)
         {
-            return BadRequest(entity);
+            return BadRequest();
         }
         var detailModel = mapper.Map<UserSawAnswerModel>(entity);
         return Ok(detailModel);

@@ -1,0 +1,109 @@
+﻿@page "/course/edit/{CourseUrl}"
+@using Fituska.Shared.Models.Course
+@using Fituska.Shared.Enums
+@using System.Security.Claims
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h2>Upravit kurz</h2>
+
+@if (editingCourse is not null)
+{
+    <EditForm Model="editingCourse" OnValidSubmit="UpdateAsync">
+
+        <DataAnnotationsValidator />
+
+        <div class="form-group my-3">
+            <label for="name">Název:</label>
+            <InputText id="name" class="form-control" @bind-Value="editingCourse.Name" />
+            <ValidationMessage For="@(() => editingCourse.Name)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="shortcut">Zkratka:</label>
+            <InputText id="shortcut" class="form-control" @bind-Value="editingCourse.Shortcut" />
+            <ValidationMessage For="@(() => editingCourse.Shortcut)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="desc">Popis:</label>
+            <InputText id="desc" class="form-control" @bind-Value="editingCourse.Description" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="credits">Počet kreditů:</label>
+            <InputNumber id="credits" class="form-control" @bind-Value="creditsVal" />
+            @if (creditsError)
+            {
+                <p class="text-danger">Kredity musí být z rozsahu 1-15.</p>
+            }
+        </div>
+
+        <div class="form-group my-3">
+            <label for="yos">Ročník:</label>
+            <InputSelect id="yos" @bind-Value="editingCourse.YearOfStudy" class="form-select">
+                @{ bool selectedYear = true; }
+                @foreach (YearOfStudy y in Enum.GetValues(typeof(YearOfStudy)))
+                {
+                    <option value="@y" selected=@selectedYear>@ConverterService.YearOfStudyDecode(y)</option>
+
+                    @if (selectedYear) selectedYear = false;
+                }
+            </InputSelect>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="semester">Semestr:</label>
+            <InputSelect id="semester" @bind-Value="editingCourse.Semester" class="form-select">
+                @{ bool selectedSemester = true; }
+                @foreach (Semester s in Enum.GetValues(typeof(Semester)))
+                {
+                    <option value="@s" selected=@selectedSemester>@ConverterService.SemesterDecode(s)</option>
+                    
+                    @if (selectedSemester) selectedSemester = false;
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Uložit</button>
+    </EditForm> 
+}
+@if (!string.IsNullOrEmpty(errorText))
+{
+    <p class="text-danger mt-3">@errorText</p>
+}
+
+@code
+{
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    [Parameter]
+    public string CourseUrl { get; set; }
+
+    CourseNewModel editingCourse;
+    int creditsVal;
+    bool creditsError = false;
+    string? errorText;
+
+    async Task UpdateAsync()
+    {
+        if (creditsError = creditsVal <= 0 || creditsVal > 15)
+            return;
+
+        editingCourse.Credits = (byte)creditsVal;
+        var response = await Http.PutAsJsonAsync(ApiEndpoints.CourseUrl, editingCourse);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo($"/course/{CourseUrl}");
+        }
+        else errorText = $"Chyba {response.StatusCode}";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        editingCourse = await Http.GetFromJsonAsync<CourseNewModel>(ApiEndpoints.CourseEditUrl(CourseUrl));
+        creditsVal = editingCourse.Credits;
+        await base.OnInitializedAsync();
+    }
+}

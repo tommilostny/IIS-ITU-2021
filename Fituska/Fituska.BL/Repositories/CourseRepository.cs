@@ -31,14 +31,27 @@ public class CourseRepository : IRepository<CourseEntity>, ISearchableRepository
     public CourseEntity GetByID(Guid entityID)
     {
         return database.Courses
-            .Include(c => c.Lecturer)
-            .Include(c => c.Attendees)
-            .Include(c => c.Categories)
-            .FirstOrDefault(usa => usa.Id == entityID);
+            .Include(course => course.Lecturer)
+            .Include(course => course.Attendees)
+            .Include(course => course.Categories)
+            .FirstOrDefault(course => course.Id == entityID);
+    }
+
+    public CourseEntity GetByUrl(string courseUrl)
+    {
+        return database.Courses
+            .Include(course => course.Lecturer)
+            .Include(course => course.Attendees)
+            .Include(course => course.Categories)
+            .FirstOrDefault(course => course.Url == courseUrl);
     }
 
     public CourseEntity Insert(CourseEntity entity)
     {
+        if (database.Courses.FirstOrDefault(course => course.Url == entity.Url) != null)
+        {
+            return null;
+        }
         database.Courses.Add(entity);
         database.SaveChanges();
         return entity;

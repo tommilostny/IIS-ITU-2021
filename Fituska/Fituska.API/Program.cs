@@ -1,3 +1,4 @@
+using Fituska.BL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,17 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddAutoMapper(typeof(EntityBase), typeof(ModelBase), typeof(UserMapperProfiles));
+
+builder.Services.AddScoped<AnswerRepository>();
+builder.Services.AddScoped<CategoryRepository>();
+builder.Services.AddScoped<CommentRepository>();
+builder.Services.AddScoped<CourseAttendanceRepository>();
+builder.Services.AddScoped<CourseRepository>();
+builder.Services.AddScoped<FileRepository>();
+builder.Services.AddScoped<QuestionRepository>();
+builder.Services.AddScoped<UserSawAnswerRespository>();
+builder.Services.AddScoped<UserSawQuestionRepository>();
+builder.Services.AddScoped<VoteRepository>();
 
 
 var app = builder.Build();

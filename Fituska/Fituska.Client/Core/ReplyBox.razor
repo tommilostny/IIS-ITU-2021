@@ -10,6 +10,10 @@
             <textarea @bind="text" class="form-control mb-2 mt-2"></textarea>
             <button class="btn btn-primary" @onclick="SendReply">Odeslat</button>
         }
+        @if(showError){
+            <br />
+            <p class="text-danger">Zadejte text</p>
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -22,17 +26,26 @@
     public string AddButtonLabel { get; set; } = "Odpovědět";
 
     bool showTextBox = false;
+    bool showError = false;
     string text = string.Empty;
 
-    void ToggleShowTextBox() => showTextBox = !showTextBox;
+    void ToggleShowTextBox() {
+        showError = false;
+        showTextBox = !showTextBox;
+    }
 
     async Task SendReply()
     {
         if (text.Length > 0)
         {
+            showError = false;
             showTextBox = false;
             await OnSubmit.InvokeAsync(text);
             text = string.Empty;
+        }
+        else
+        {
+            showError = true;
         }
     }
 }

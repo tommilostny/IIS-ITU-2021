@@ -2,9 +2,10 @@
 @using Fituska.Shared.Models.Comment
 @using Fituska.Shared.Models.User
 @using System.Drawing;
+@inject HttpClient Http
 
 <div class="card answer-box mb-3" style="background-color: rgba(@GetColor().R,@GetColor().G,@GetColor().B,@GetColor().A)">
-    <div class="card-body">
+     <div class="card-body">
         <div class="row">
             <div class="col">
                 <h6 class="card-subtitle mb-2 text-muted">
@@ -16,11 +17,11 @@
                 <ReplyBox OnSubmit="AddComment" />
             </div>
             <div class="col-3 col-sm-2 col-md-1">
-                <Voting Votes="Answer.Votes" />
+                <Voting Votes="Answer.Votes" OnVoteChange=UpdateVote AnswerId=Answer.Id/>
             </div>
         </div>
     </div>
-    @if (Answer.Comments.Count > 0)
+    @if (Answer.Comments is not null && Answer.Comments.Count > 0)
     {
         @foreach (var comment in Answer.Comments.OrderBy(c => c.CreationTime).Reverse())
         {
@@ -39,14 +40,37 @@
 
     async Task AddComment(string text)
     {
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
-        var comment = new CommentDetailModel { User = user, Text = text, CreationTime = DateTime.Now };
-        Answer.Comments.Add(comment);
+        var comment = new CommentNewModel {
+            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
+            Text = text,
+            AnswerId = Answer.Id
+        };
+        var response = await Http.PostAsJsonAsync<CommentNewModel>(ApiEndpoints.CommentUrl, comment);
+        if (response.IsSuccessStatusCode)
+        {       
+            CommentDetailModel detailModel = await response.Content.ReadFromJsonAsync<CommentDetailModel>();
+            Answer.Comments.Add(detailModel);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Answer = await Http.GetFromJsonAsync<AnswerDetailModel>(ApiEndpoints.AnswerIdUrl(Answer.Id));
+        await base.OnInitializedAsync();
+
     }
 
     Color GetColor()
     {
-        int votes = Answer.Votes.Sum(v => (int)v.Vote);
+        int votes = 0;
+        if(Answer.Votes != null)
+            votes = Answer.Votes.Sum(v => (int)v.Vote);
         return ColorTints.GetColorFromVotes(votes);
+    }
+
+    void UpdateVote()
+    {
+
+        GetColor();
     }
 }

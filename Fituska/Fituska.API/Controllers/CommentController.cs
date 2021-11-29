@@ -1,11 +1,11 @@
 ﻿using Fituska.BL.Repositories;
-using Fituska.DAL.Entities.Interfaces;
 using Fituska.Shared.Models.Comment;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class CommentController : ControllerBase
 {
@@ -36,12 +36,12 @@ public class CommentController : ControllerBase
         var detailModel = mapper.Map<CommentDetailModel>(entity);
         if(detailModel == null)
         {
-            return BadRequest(detailModel);
+            return BadRequest();
         }
         return Ok(detailModel);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [OpenApiOperation("Comment" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
@@ -68,10 +68,11 @@ public class CommentController : ControllerBase
     {
         var entity = mapper.Map<CommentEntity>(model);
         entity = repository.Insert(entity);
-        if(entity == null){
-            return BadRequest(entity);
+        if(entity == null)
+        {
+            return BadRequest();
         }
-        var detailModel = mapper.Map<CommentDetailModel>(model);
+        var detailModel = mapper.Map<CommentDetailModel>(entity);
         return Ok(detailModel);
     }
 }
