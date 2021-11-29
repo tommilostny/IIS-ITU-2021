@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace Fituska.DAL.Factories;
 
@@ -7,9 +8,19 @@ internal class DesignTimeDbContextFactory : IDbContextFactory, IDesignTimeDbCont
 {
     public FituskaDbContext Create()
     {
+        Console.WriteLine(Directory.GetCurrentDirectory());
         var builder = new DbContextOptionsBuilder<FituskaDbContext>();
-        builder.UseSqlite("Data Source=FituskaDb.db");
 
+    #if DEBUG
+        builder.UseSqlite("Data Source=FituskaDb.db");
+    #else
+        var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory().Replace("Fituska.DAL", "Fituska.API"))
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+        builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+    #endif
         return new FituskaDbContext(builder.Options);
     }
 

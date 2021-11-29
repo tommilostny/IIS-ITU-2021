@@ -5,7 +5,7 @@ public static class ApiEndpoints
 #if DEBUG
     public const string ServerBaseUrl = "https://localhost:7120/";
 #else
-    public const string ServerBaseUrl = "https://fituska.net/";
+    public const string ServerBaseUrl = "https://fituska.azurewebsites.net/";
 #endif
 
     public const string UserBaseUrl = $"{ServerBaseUrl}api/user";

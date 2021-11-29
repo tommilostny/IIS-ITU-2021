@@ -4,7 +4,7 @@ public class UserSawQuestionEntity : EntityBase
 {
     public Guid UserId { get; set; }
     public UserEntity User { get; set; }
-    public Guid QuestionId { get; set; }
+    public Guid? QuestionId { get; set; }
     public QuestionEntity Question { get; set; }
 
     public override bool Equals(object? courseAttendence)

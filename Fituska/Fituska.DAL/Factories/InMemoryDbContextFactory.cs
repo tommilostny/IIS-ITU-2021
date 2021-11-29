@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace Fituska.DAL.Factories;
+
 public class InMemoryDbContextFactory : IDbContextFactory
 {
     private readonly string databaseName;
