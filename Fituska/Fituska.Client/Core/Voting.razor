@@ -94,7 +94,14 @@
                 UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
 
         };
-        await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
+        var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.Content == null) return;
+            VoteModel model = await response.Content.ReadFromJsonAsync<VoteModel>();
+            if(model != null)
+                Votes.Add(model);
+        }
         await OnVoteChange.InvokeAsync();
     }
 
@@ -111,14 +118,17 @@
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {
+            if (response.Content == null) return;
             VoteModel model = await response.Content.ReadFromJsonAsync<VoteModel>();
-            Votes.Add(model);
+            if(model != null)
+                Votes.Add(model);
         }
         await OnVoteChange.InvokeAsync();
     }
 
     protected override async Task OnInitializedAsync()
     {
+        Votes = await Http.GetFromJsonAsync<List<VoteModel>>(ApiEndpoints.VoteAnswerIdUrl(AnswerId));
         var identityUser = (await AuthenticationState).User.Identity;
         if (identityUser.IsAuthenticated)
         {
@@ -127,7 +137,6 @@
             (upvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Upvote);
             (downvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Downvote);
         }
-        Votes = await Http.GetFromJsonAsync<List<VoteModel>>(ApiEndpoints.VoteAnswerIdUrl(AnswerId));
         Console.WriteLine("Rating is: " + Rating);
         StateHasChanged();
         await base.OnInitializedAsync();
