@@ -18,6 +18,8 @@ public static class ApiEndpoints
     public const string CommentUrl = $"{ServerBaseUrl}api/comment";
     public const string CourseUrl = $"{ServerBaseUrl}api/course";
     public const string CourseAttendanceUrl = $"{ServerBaseUrl}api/courseattendance";
+    public const string FileUrl = $"{ServerBaseUrl}api/file";
+    public const string UserFileUrl = $"{FileUrl}/user";
     public const string QuestionUrl = $"{ServerBaseUrl}api/question";
     public const string UserSawQuestionUrl = $"{ServerBaseUrl}api/usersawquestion";
     public const string UserSawAnswerUrl = $"{ServerBaseUrl}api/usersawanswer";
@@ -46,6 +48,8 @@ public static class ApiEndpoints
     public static string CourseAttendanceIdUrl(Guid id) => $"{CourseAttendanceUrl}/{id}";
 
     public static string QuestionIdUrl(Guid id) => $"{QuestionUrl}/{id}";
+
+    public static string UserIdFileUrl(Guid id) => $"{UserFileUrl}/{id}";
 
     public static string UserSawQuestionIdUrl(Guid id) => $"{UserSawQuestionUrl}/{id}";
 

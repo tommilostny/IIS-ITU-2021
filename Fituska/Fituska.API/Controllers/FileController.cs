@@ -1,5 +1,6 @@
 ﻿using Fituska.BL.Repositories;
 using Fituska.Shared.Models.File;
+using Microsoft.AspNetCore.Identity;
 using NSwag.Annotations;
 
 namespace Fituska.API.Controllers;
@@ -10,10 +11,12 @@ namespace Fituska.API.Controllers;
 public class FileController : ControllerBase
 {
     private readonly FileRepository repository;
+    private readonly UserManager<UserEntity> userManager;
     private readonly IMapper mapper;
-    public FileController(FileRepository _repository, IMapper _mapper)
+    public FileController(FileRepository _repository, UserManager<UserEntity> _userManager, IMapper _mapper)
     {
         repository = _repository;
+        userManager = _userManager;
         mapper = _mapper;
     }
 
@@ -137,31 +140,32 @@ public class FileController : ControllerBase
     }
 
     [Route("user")]
-    [HttpPut]
-    [OpenApiOperation("File" + nameof(UpdateUserFile))]
-    public ActionResult UpdateUserFile(FileUserModel model)
+    [HttpPost]
+    [OpenApiOperation("File" + nameof(InsertUserFile))]
+    public async Task<ActionResult> InsertUserFile(FileUserModel model)
     {
-        var entity = mapper.Map<FileEntity>(model);
-        entity = repository.Update(entity);
-        if (entity == null)
+        var userEntity = await userManager.FindByIdAsync(model.UserId.ToString());
+        if (userEntity is null)
         {
             return BadRequest();
         }
+        userEntity.Photo = model.Content;
+        userEntity.PhotoFileName = model.Name;
+
+        await userManager.UpdateAsync(userEntity);
         return Ok();
     }
 
-    [Route("user")]
-    [HttpPost]
-    [OpenApiOperation("File" + nameof(InsertUserFile))]
-    public ActionResult<FileUserModel> InsertUserFile(FileUserModel model)
+    [AllowAnonymous]
+    [Route("user/{id}")]
+    [HttpGet]
+    public async Task<IActionResult> GetUserPhoto(string id)
     {
-        var entity = mapper.Map<FileEntity>(model);
-        entity = repository.Insert(entity);
-        if (entity == null)
+        var userEntity = await userManager.FindByIdAsync(id.ToString());
+        if (userEntity is null)
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<FileUserModel>(entity);
-        return Ok(detailModel);
+        return Ok(mapper.Map<FileUserModel>(userEntity));
     }
 }

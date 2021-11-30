@@ -1,5 +1,7 @@
 ﻿@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.User
+@inject HttpClient Http
+@inject Base64ImageService Base64ImageService
 
 @if (UserModel.Photo is not null && UserModel.Photo.Length > 0)
 {
@@ -10,7 +12,7 @@
         @if (context.User.Identity.Name == UserModel.UserName)
         {
             <FileLoader OnChange="SavePhoto" TFileModel="FileUserModel" ParentId="Guid.Empty" />
-            <button class="btn btn-success mt-3" disabled=@(!photoFileChanged)>
+            <button class="btn btn-success mt-3" disabled="@(!photoFileChanged)" @onclick="UploadPhoto">
                 <span class="oi oi-data-transfer-upload" aria-hidden="true" /> Uložit
             </button>
         }
@@ -22,30 +24,23 @@
     [Parameter]
     public UserDetailModel UserModel { get; set; }
 
-    string[] extensions = { "jpg", "png", "jpeg", "gif", "svg", "bmp" };
-
-    string PhotoToBase64 => $"data:{DecodeImageTypeFromFilePath()};base64,{Convert.ToBase64String(UserModel.Photo)}";
-
     bool photoFileChanged = false;
+    FileUserModel fileToUpload;
 
-    string? DecodeImageTypeFromFilePath()
-    {
-        if (UserModel.PhotoFileName is null)
-        {
-            return null;
-        }
-        var imgType = extensions.FirstOrDefault(ext => UserModel.PhotoFileName.EndsWith($".{ext}"));
-        if (imgType is not null)
-        {
-            imgType = $"image/{imgType}";
-        }
-        return imgType;
-    }
+    string PhotoToBase64 => Base64ImageService.ImageFileToBase64(UserModel.PhotoFileName, UserModel.Photo);
 
     void SavePhoto(FileUserModel fileModel)
     {
         UserModel.Photo = fileModel.Content;
         UserModel.PhotoFileName = fileModel.Name;
         photoFileChanged = true;
+        fileToUpload = fileModel;
+        fileToUpload.UserId = UserModel.Id;
+    }
+
+    async Task UploadPhoto()
+    {
+        await Http.PostAsJsonAsync<FileUserModel>(ApiEndpoints.UserFileUrl, fileToUpload);
+        photoFileChanged = false;
     }
 }
