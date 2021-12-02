@@ -59,7 +59,7 @@
 
     async Task UpvoteClick()
     {
-        VoteNewModel vote = CreateNewVote(VoteValue.Upvote).Result;
+        VoteNewModel vote = (await CreateNewVote(VoteValue.Upvote));
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {
@@ -92,7 +92,7 @@
 
     async Task DownvoteClick()
     {
-        VoteNewModel vote = CreateNewVote(VoteValue.Downvote).Result;
+        VoteNewModel vote = (await CreateNewVote(VoteValue.Downvote));
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {

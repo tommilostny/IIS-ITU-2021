@@ -40,15 +40,7 @@ public class VoteRepository : IRepository<VoteEntity>
             else
             {
                 voteFromDb.Vote = entity.Vote;
-                try
-                {
-                    database.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return null;
-                }
+                database.SaveChanges();
                 return entity;
 
             }
