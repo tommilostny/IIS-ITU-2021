@@ -33,5 +33,11 @@ public class FileMapperProfiles : Profile
             .ForMember(dst => dst.Question, config => config.Ignore())
             .ForMember(dst => dst.AnswerId, config => config.Ignore())
             .ForMember(dst => dst.CommentId, config => config.Ignore());
+
+        CreateMap<UserEntity, FileUserModel>()
+            .ForMember(dst => dst.Content, config => config.MapFrom(src => src.Photo))
+            .ForMember(dst => dst.Name, config => config.MapFrom(src => src.PhotoFileName))
+            .ForMember(dst => dst.UserId, config => config.MapFrom(src => src.Id))
+            .ForMember(dst => dst.Id, config => config.Ignore());
     }
 }

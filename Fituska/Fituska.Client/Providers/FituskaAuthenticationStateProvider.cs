@@ -17,7 +17,7 @@ public class FituskaAuthenticationStateProvider : AuthenticationStateProvider
     {
         try
         {
-            var savedToken = await localStorageService.GetItemAsStringAsync(JwtNames.BearerToken);
+            var savedToken = await localStorageService.GetItemAsStringAsync(StorageNames.BearerToken);
             // No token stored in local storage => no user is signed in, return empty authentication state.
             if (string.IsNullOrWhiteSpace(savedToken))
             {
@@ -27,7 +27,7 @@ public class FituskaAuthenticationStateProvider : AuthenticationStateProvider
             // Check validity of the loaded Token (expired => remove from local storage).
             if (jwtSecurityToken.ValidTo < DateTime.UtcNow)
             {
-                await localStorageService.RemoveItemAsync(JwtNames.BearerToken);
+                await localStorageService.RemoveItemAsync(StorageNames.BearerToken);
                 return EmptyAuthenticationState();
             }
             // Get claims from the JWT and create authenticated user object.
@@ -53,7 +53,7 @@ public class FituskaAuthenticationStateProvider : AuthenticationStateProvider
 
     internal async Task SignIn()
     {
-        var savedToken = await localStorageService.GetItemAsync<string>(JwtNames.BearerToken);
+        var savedToken = await localStorageService.GetItemAsync<string>(StorageNames.BearerToken);
         var jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(savedToken);
         var claims = ParseClaims(jwtSecurityToken);
         var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));

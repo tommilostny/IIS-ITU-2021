@@ -17,12 +17,12 @@
 {
     protected override async Task OnInitializedAsync()
     {
-        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
+        if (await LocalStorageService.ContainKeyAsync(StorageNames.BearerToken))
         {
-            var savedToken = await LocalStorageService.GetItemAsync<string>(JwtNames.BearerToken);
+            var savedToken = await LocalStorageService.GetItemAsync<string>(StorageNames.BearerToken);
             await AuthenticationStateProvider.SignIn();
 
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames.Bearer, savedToken);
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(StorageNames.Bearer, savedToken);            
             StateHasChanged();
         }
         await base.OnInitializedAsync();

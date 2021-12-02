@@ -12,9 +12,13 @@
 
     async Task SignOutAsync()
     {
-        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
+        if (await LocalStorageService.ContainKeyAsync(StorageNames.UserPhoto))
         {
-            await LocalStorageService.RemoveItemAsync(JwtNames.BearerToken);
+            await LocalStorageService.RemoveItemAsync(StorageNames.UserPhoto);
+        }
+        if (await LocalStorageService.ContainKeyAsync(StorageNames.BearerToken))
+        {
+            await LocalStorageService.RemoveItemAsync(StorageNames.BearerToken);
             AuthenticationStateProvider.SignOut();
         }
         StateHasChanged();

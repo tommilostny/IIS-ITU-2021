@@ -4,5 +4,7 @@
 /// <remarks> Not mapped to FileEntity </remarks>
 public record FileUserModel : FileModelBase
 {
+    public Guid UserId { get; set; }
+
     public override bool ImageOnly() => true;
 }

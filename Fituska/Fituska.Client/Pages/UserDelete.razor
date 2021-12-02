@@ -1,8 +1,9 @@
 ﻿@page "/user/delete"
-@inject LastPageStorageService LastPageStorageService
 @inject HttpClient Http
 @inject FituskaAuthenticationStateProvider AuthenticationStateProvider
 @inject ILocalStorageService LocalStorageService
+@inject LastPageStorageService LastPageStorageService
+@inject NavigationManager NavigationManager
 
 <AuthorizeView>
     <Authorized>
@@ -21,12 +22,12 @@
     {
         await Http.DeleteAsync(ApiEndpoints.UserNameUrl(username));
 
-        if (await LocalStorageService.ContainKeyAsync(JwtNames.BearerToken))
+        if (await LocalStorageService.ContainKeyAsync(StorageNames.BearerToken))
         {
-            await LocalStorageService.RemoveItemAsync(JwtNames.BearerToken);
+            await LocalStorageService.RemoveItemAsync(StorageNames.BearerToken);
             AuthenticationStateProvider.SignOut();
         }
         StateHasChanged();
-        LastPageStorageService.NavigateToLastPage();
+        NavigationManager.NavigateTo("/");
     }
 }

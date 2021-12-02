@@ -53,10 +53,11 @@ else
         if (httpResponseMessage.IsSuccessStatusCode)
         {
             var jsonWebToken = await httpResponseMessage.Content.ReadAsStringAsync();
-            await LocalStorageService.SetItemAsync(JwtNames.BearerToken, jsonWebToken);
+            await LocalStorageService.SetItemAsync(StorageNames.BearerToken, jsonWebToken);
+
             await AuthenticationStateProvider.SignIn();
 
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtNames.Bearer, jsonWebToken);
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(StorageNames.Bearer, jsonWebToken);
             signInSuccess = true;
             return;
         }
