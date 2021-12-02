@@ -6,11 +6,16 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#if DEBUG
+var clientUrl = "https://localhost:7029";
+#else
+var clientUrl = "https://icy-flower-0d67f0203.azurestaticapps.net";
+#endif
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FituskaCorsPolicy", policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins(clientUrl).AllowAnyHeader().AllowAnyMethod();
     });
 });
 

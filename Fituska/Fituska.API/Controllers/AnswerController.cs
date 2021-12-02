@@ -47,7 +47,7 @@ public class AnswerController : ControllerBase
 
     [HttpPut]
     [OpenApiOperation("Answer" + nameof(Update))]
-    public ActionResult Update(AnswerNewModel model)
+    public ActionResult<AnswerDetailModel> Update(AnswerNewModel model)
     {
         AnswerEntity entity = mapper.Map<AnswerEntity>(model);
         entity = repository.Update(entity);
@@ -55,7 +55,7 @@ public class AnswerController : ControllerBase
         {
             return BadRequest();
         }
-        return Ok();
+        return Ok(mapper.Map<AnswerDetailModel>(entity));
     }
 
     [HttpPost]

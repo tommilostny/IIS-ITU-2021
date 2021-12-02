@@ -4,22 +4,39 @@
 @using System.Drawing;
 @inject HttpClient Http
 
-<div class="card answer-box mb-3" style="background-color: rgba(@GetColor().R,@GetColor().G,@GetColor().B,@GetColor().A)">
+<div class="card answer-box mb-3" style="background-color: rgba(@backColor.R,@backColor.G,@backColor.B,@backColor.A)">
      <div class="card-body">
-        <div class="row">
-            <div class="col">
-                <h6 class="card-subtitle mb-2 text-muted">
-                    <a href="user/@Answer.User.UserName">@Answer.User.UserName</a> (@Answer.CreationTime)
-                </h6>
-                <p class="card-text">
-                    @Answer.Text
-                </p>
-                <ReplyBox OnSubmit="AddComment" />
+        @if (!editingMode)
+        {
+            <div class="row">
+                <div class="col">
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <a href="user/@Answer.User?.UserName">@Answer.User?.UserName</a> (@Answer.CreationTime)
+                    </h6>
+                    <p class="card-text">
+                        @Answer.Text
+                    </p>
+
+                    <AuthorizeView>
+                        <Authorized>
+                            @if (context.User.Identity.Name == Answer.User?.UserName)
+                            {
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleEditingMode">Upravit</button>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+
+                    <ReplyBox OnSubmit="AddComment" />
+                </div>
+                <div class="col-3 col-sm-2 col-md-1">
+                     <Voting Votes="Answer.Votes" OnVoteChange="UpdateVote" AnswerId="Answer.Id" /> 
+                </div>
             </div>
-            <div class="col-3 col-sm-2 col-md-1">
-                <Voting Votes="Answer.Votes" OnVoteChange=UpdateVote AnswerId=Answer.Id/>
-            </div>
-        </div>
+        }
+        else
+        {
+            <AnswerEditor Answer="Answer" OnSubmit="LoadUpdatedAnswer" />
+        }
     </div>
     @if (Answer.Comments is not null && Answer.Comments.Count > 0)
     {
@@ -38,6 +55,9 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
+    bool editingMode = false;
+    Color backColor = new();
+
     async Task AddComment(string text)
     {
         var comment = new CommentNewModel {
@@ -53,24 +73,36 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    Color GetColor(int? rating = null)
     {
-        Answer = await Http.GetFromJsonAsync<AnswerDetailModel>(ApiEndpoints.AnswerIdUrl(Answer.Id));
-        await base.OnInitializedAsync();
+        if (rating is not null)
+            return ColorTints.GetColorFromVotes((int)rating);
 
-    }
-
-    Color GetColor()
-    {
         int votes = 0;
         if(Answer.Votes != null)
             votes = Answer.Votes.Sum(v => (int)v.Vote);
         return ColorTints.GetColorFromVotes(votes);
     }
 
-    void UpdateVote()
+    void UpdateVote(int rating)
     {
+        backColor = GetColor(rating);
+    }
 
-        GetColor();
+    void ToggleEditingMode() => editingMode = !editingMode;
+
+    void LoadUpdatedAnswer(AnswerDetailModel? model)
+    {
+        if (model is not null)
+        {
+            Answer = model;
+        }
+        ToggleEditingMode();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Answer = await Http.GetFromJsonAsync<AnswerDetailModel>(ApiEndpoints.AnswerIdUrl(Answer.Id));
+        await base.OnInitializedAsync();
     }
 }

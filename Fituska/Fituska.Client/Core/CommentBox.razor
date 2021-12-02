@@ -3,13 +3,16 @@
 @inject HttpClient Http
 <div class="card m-2 ms-4">
     <div class="card-body">
-        <h6 class="card-subtitle mb-2 text-muted"><a href="user/@Comment.User.UserName">@Comment.User.UserName</a> (@Comment.CreationTime)</h6>
-        <p class="card-text">@Comment.Text</p>
+        <h6 class="card-subtitle mb-2 text-muted"><a href="user/@Comment?.User?.UserName">@Comment?.User?.UserName</a> (@Comment?.CreationTime)</h6>
+        <p class="card-text">@Comment?.Text</p>
         <ReplyBox OnSubmit="AddComment" />
     </div>
-    @foreach (var comment in Comment.SubComments.OrderBy(c => c.CreationTime).Reverse())
+    @if (Comment.SubComments is not null && Comment.SubComments.Count > 0)
     {
-        <CommentBox Comment="@comment" />
+        @foreach (var comment in Comment.SubComments.OrderBy(c => c.CreationTime).Reverse())
+        {
+            <CommentBox Comment="@comment" />
+        }
     }
 </div>
 
@@ -23,11 +26,12 @@
 
     async Task AddComment(string text)
     {
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
-        var comment = new CommentNewModel 
-        { UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value), 
-            Text = text
-        };
+        var comment = new CommentNewModel
+            {
+                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
+                ParentCommentId = Comment.Id,
+                Text = text
+            };
         var response = await Http.PostAsJsonAsync<CommentNewModel>(ApiEndpoints.CommentUrl,comment);
         if (response.IsSuccessStatusCode)
         {       
@@ -38,7 +42,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Comment = await Http.GetFromJsonAsync<CommentDetailModel>(ApiEndpoints.CommentIdUrl(Comment.Id));      
+        Comment = await Http.GetFromJsonAsync<CommentDetailModel>(ApiEndpoints.CommentIdUrl(Comment.Id));
+        if (Comment.User == null) Console.WriteLine("USER IS NULL");
+        StateHasChanged();
         await base.OnInitializedAsync();
     }
 }

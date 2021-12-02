@@ -21,6 +21,13 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
 
     public AnswerEntity Insert(AnswerEntity entity)
     {
+        var entityInDb = database.Answers
+            .FirstOrDefault(answer => answer.UserId == entity.UserId && answer.QuestionId == entity.QuestionId);
+
+        if (entityInDb is not null)
+        {
+            return null;
+        }
         database.Answers.Add(entity);
         database.SaveChanges();
         return entity;
@@ -31,7 +38,7 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
         var answerToUpdate = database.Answers.Attach(entity);
         answerToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return entity;
+        return GetByID(entity.Id);
     }
 
     public IEnumerable<AnswerEntity> GetAll()

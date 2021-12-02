@@ -1,6 +1,7 @@
 ﻿@using Fituska.Shared.Enums
 @using Fituska.Shared.Models.User
 @using Fituska.Shared.Models.Vote
+@using System.Linq;
 @inject HttpClient Http
 
 <AuthorizeView>
@@ -10,7 +11,7 @@
                 <span class="oi oi-chevron-top" aria-hidden="true"></span>
             </button>
             <p class="rating-text">
-                @Rating
+                @rating
             </p>
             <button @onclick="DownvoteClick" class="btn btn-sm btn-downvote @DownvoteButtonStyle">
                 <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
@@ -23,7 +24,7 @@
                 <span class="oi oi-chevron-top" aria-hidden="true"></span>
             </button>
             <p class="rating-text">
-                @Rating
+                @rating
             </p>
             <button class="btn btn-sm btn-downvote btn-outline-secondary" disabled>
                 <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
@@ -46,39 +47,12 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
-    public int Rating => Votes.Sum(v => (int)v.Vote);
+    void UpdateRating() => rating = Votes.Sum(v => (int)v.Vote);
 
-    UserListModel user;
+    int rating;
+    Guid userId;
     bool upvoteClicked = false;
     bool downvoteClicked = false;
-
-    (bool, VoteModel) VoteFromUserInVotes(int vote)
-    {
-        foreach (var v in Votes)
-        {
-            if (v.User.UserName == user.UserName && (vote == 0 || (int)v.Vote == vote))
-                return (true, v);
-        }
-        return (false, null);
-    }
-
-    void VoteButtonClick(VoteValue voteType, ref bool clickFlag, ref bool opositeClickFlag)
-    {
-        (bool voteInDb, var voteModel) = VoteFromUserInVotes(0);
-        if (voteInDb)
-        {
-            Votes.Remove(voteModel);
-            opositeClickFlag = false;
-            if (voteModel.Vote == voteType)
-            {
-                clickFlag = false;
-                return;
-            }
-        }
-
-        Votes.Add(new VoteModel { User = user, Vote = voteType });
-        clickFlag = true;
-    }
 
     string? UpvoteButtonStyle => upvoteClicked ? "btn-success" : "btn-outline-success";
 
@@ -86,59 +60,102 @@
 
     async Task UpvoteClick()
     {
-        VoteButtonClick(VoteValue.Upvote, ref upvoteClicked, ref downvoteClicked);
-        VoteNewModel vote = new VoteNewModel
-        {
-                Vote = VoteValue.Upvote,
-                AnswerId = AnswerId,
-                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
-
-        };
+        VoteNewModel vote = await CreateNewVote(VoteValue.Upvote);
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {
             if (response.Content == null) return;
-            VoteModel model = await response.Content.ReadFromJsonAsync<VoteModel>();
-            if(model != null)
-                Votes.Add(model);
+            VoteModel newVote = await response.Content.ReadFromJsonAsync<VoteModel>();
+            if (newVote == null) return;
+
+            VoteModel oldVote = oldVote = Votes.FirstOrDefault(vote => vote.UserId == userId);
+            downvoteClicked = false;
+            if (oldVote is not null)
+            {
+                Console.WriteLine($"Already voted, changing vote from {oldVote.ToString()} to {newVote.ToString()}");
+                upvoteClicked = false;
+                Votes.Remove(oldVote);
+                if (oldVote.Vote != newVote.Vote)
+                {
+                    upvoteClicked = true;
+                    Votes.Add(newVote);
+                }
+            }
+            else
+            {
+                upvoteClicked = true;
+                Votes.Add(newVote);
+            }
         }
-        await OnVoteChange.InvokeAsync();
+        UpdateRating();
+        StateHasChanged();
+        await OnVoteChange.InvokeAsync(rating);
     }
 
     async Task DownvoteClick()
     {
-        VoteButtonClick(VoteValue.Downvote, ref downvoteClicked, ref upvoteClicked);
-        VoteNewModel vote = new VoteNewModel
-            {
-                Vote = VoteValue.Downvote,
-                AnswerId = AnswerId,
-                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
-
-         };
+        VoteNewModel vote = await CreateNewVote(VoteValue.Downvote);
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {
             if (response.Content == null) return;
-            VoteModel model = await response.Content.ReadFromJsonAsync<VoteModel>();
-            if(model != null)
-                Votes.Add(model);
+            VoteModel newVote = await response.Content.ReadFromJsonAsync<VoteModel>();
+            if (newVote == null) return;
+            VoteModel oldVote = Votes.FirstOrDefault(vote => vote.UserId == userId);
+            if (oldVote is not null)
+            {
+                Console.WriteLine($"Already voted, changing vote from {oldVote.Vote.ToString()} to {newVote.Vote.ToString()}");
+                upvoteClicked = false;
+                downvoteClicked = false;
+                Votes.Remove(oldVote);
+                if (oldVote.Vote != newVote.Vote)
+                {
+                    downvoteClicked = true;
+                    Votes.Add(newVote);
+                }
+            }
+            else
+            {
+                upvoteClicked = false;
+                downvoteClicked = true;
+                Votes.Add(newVote);
+            }
         }
-        await OnVoteChange.InvokeAsync();
+        UpdateRating();
+        StateHasChanged();
+        await OnVoteChange.InvokeAsync(rating);
     }
 
     protected override async Task OnInitializedAsync()
     {
+        userId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
         Votes = await Http.GetFromJsonAsync<List<VoteModel>>(ApiEndpoints.VoteAnswerIdUrl(AnswerId));
         var identityUser = (await AuthenticationState).User.Identity;
         if (identityUser.IsAuthenticated)
         {
-            user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
-
-            (upvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Upvote);
-            (downvoteClicked, _) = VoteFromUserInVotes((int)VoteValue.Downvote);
+            var vote = Votes.FirstOrDefault(vote => vote.UserId == userId);
+            if(vote is not null)
+            {
+                Console.WriteLine($"Init vote value is {vote.Vote}");
+                if (vote.Vote == VoteValue.Upvote) upvoteClicked = true;
+                if (vote.Vote == VoteValue.Downvote) downvoteClicked = true;
+            }
         }
-        Console.WriteLine("Rating is: " + Rating);
+        UpdateRating();
+        Console.WriteLine($"Rating is: {rating}.");
         StateHasChanged();
+        await OnVoteChange.InvokeAsync(rating);
         await base.OnInitializedAsync();
+    }
+
+    private async Task<VoteNewModel> CreateNewVote(VoteValue voteValue)
+    {
+        VoteNewModel vote = new VoteNewModel
+        {
+            Vote = voteValue,
+            AnswerId = AnswerId,
+            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+        };
+        return vote;
     }
 }
