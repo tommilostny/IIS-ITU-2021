@@ -4,7 +4,7 @@
 @using System.Drawing;
 @inject HttpClient Http
 
-<div class="card answer-box mb-3" style="background-color: rgba(@GetColor().R,@GetColor().G,@GetColor().B,@GetColor().A)">
+<div class="card answer-box mb-3" style="background-color: rgba(@backColor.R,@backColor.G,@backColor.B,@backColor.A)">
      <div class="card-body">
         @if (!editingMode)
         {
@@ -56,6 +56,7 @@
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
     bool editingMode = false;
+    Color backColor = new();
 
     async Task AddComment(string text)
     {
@@ -72,15 +73,21 @@
         }
     }
 
-    Color GetColor()
+    Color GetColor(int? rating = null)
     {
+        if (rating is not null)
+            return ColorTints.GetColorFromVotes((int)rating);
+
         int votes = 0;
         if(Answer.Votes != null)
             votes = Answer.Votes.Sum(v => (int)v.Vote);
         return ColorTints.GetColorFromVotes(votes);
     }
 
-    void UpdateVote() => GetColor();
+    void UpdateVote(int rating)
+    {
+        backColor = GetColor(rating);
+    }
 
     void ToggleEditingMode() => editingMode = !editingMode;
 

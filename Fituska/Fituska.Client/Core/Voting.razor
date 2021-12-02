@@ -11,7 +11,7 @@
                 <span class="oi oi-chevron-top" aria-hidden="true"></span>
             </button>
             <p class="rating-text">
-                @Rating
+                @rating
             </p>
             <button @onclick="DownvoteClick" class="btn btn-sm btn-downvote @DownvoteButtonStyle">
                 <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
@@ -24,7 +24,7 @@
                 <span class="oi oi-chevron-top" aria-hidden="true"></span>
             </button>
             <p class="rating-text">
-                @Rating
+                @rating
             </p>
             <button class="btn btn-sm btn-downvote btn-outline-secondary" disabled>
                 <span class="oi oi-chevron-bottom" aria-hidden="true"></span>
@@ -47,8 +47,9 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
-    public int Rating => Votes.Sum(v => (int)v.Vote);
+    void UpdateRating() => rating = Votes.Sum(v => (int)v.Vote);
 
+    int rating;
     Guid userId;
     bool upvoteClicked = false;
     bool downvoteClicked = false;
@@ -59,7 +60,7 @@
 
     async Task UpvoteClick()
     {
-        VoteNewModel vote = (await CreateNewVote(VoteValue.Upvote));
+        VoteNewModel vote = await CreateNewVote(VoteValue.Upvote);
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {
@@ -85,14 +86,15 @@
                 upvoteClicked = true;
                 Votes.Add(newVote);
             }
-
         }
-        await OnVoteChange.InvokeAsync();
+        UpdateRating();
+        StateHasChanged();
+        await OnVoteChange.InvokeAsync(rating);
     }
 
     async Task DownvoteClick()
     {
-        VoteNewModel vote = (await CreateNewVote(VoteValue.Downvote));
+        VoteNewModel vote = await CreateNewVote(VoteValue.Downvote);
         var response = await Http.PostAsJsonAsync<VoteNewModel>(ApiEndpoints.VoteUrl,vote);
         if (response.IsSuccessStatusCode)
         {
@@ -118,9 +120,10 @@
                 downvoteClicked = true;
                 Votes.Add(newVote);
             }
-
         }
-        await OnVoteChange.InvokeAsync();
+        UpdateRating();
+        StateHasChanged();
+        await OnVoteChange.InvokeAsync(rating);
     }
 
     protected override async Task OnInitializedAsync()
@@ -138,9 +141,10 @@
                 if (vote.Vote == VoteValue.Downvote) downvoteClicked = true;
             }
         }
-        Console.WriteLine("Rating is: " + Rating);
+        UpdateRating();
+        Console.WriteLine($"Rating is: {rating}.");
         StateHasChanged();
-        await OnVoteChange.InvokeAsync();
+        await OnVoteChange.InvokeAsync(rating);
         await base.OnInitializedAsync();
     }
 
@@ -148,10 +152,9 @@
     {
         VoteNewModel vote = new VoteNewModel
         {
-                Vote = voteValue,
-                AnswerId = AnswerId,
-                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
-
+            Vote = voteValue,
+            AnswerId = AnswerId,
+            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
         };
         return vote;
     }
