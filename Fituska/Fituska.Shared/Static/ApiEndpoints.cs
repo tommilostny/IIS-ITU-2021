@@ -17,7 +17,6 @@ public static class ApiEndpoints
     public const string CategoryUrl = $"{ServerBaseUrl}api/category";
     public const string CommentUrl = $"{ServerBaseUrl}api/comment";
     public const string CourseUrl = $"{ServerBaseUrl}api/course";
-
     public const string CourseAttendanceUrl = $"{ServerBaseUrl}api/courseattendance";
     public const string FileUrl = $"{ServerBaseUrl}api/file";
     public const string UserFileUrl = $"{FileUrl}/user";
