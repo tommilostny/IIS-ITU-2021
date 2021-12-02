@@ -24,7 +24,6 @@ public class VoteRepository : IRepository<VoteEntity>
         VoteEntity? voteFromDb = database.Votes
             .Where(vote => vote.UserId == entity.UserId)
             .FirstOrDefault(vote => vote.AnswerId == entity.AnswerId);
-
         if (voteFromDb is null)
         {
             database.Votes.Add(entity);
@@ -36,12 +35,14 @@ public class VoteRepository : IRepository<VoteEntity>
             if(entity.Vote == voteFromDb.Vote)
             {
                 Delete(entity.Id);
-                return null;
+                return entity;
             }
             else
             {
-                var updatedEntity = Update(entity);
-                return updatedEntity;
+                voteFromDb.Vote = entity.Vote;
+                database.SaveChanges();
+                return entity;
+
             }
         }
     }
