@@ -21,6 +21,13 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
 
     public AnswerEntity Insert(AnswerEntity entity)
     {
+        var entityInDb = database.Answers
+            .FirstOrDefault(answer => answer.UserId == entity.UserId && answer.QuestionId == entity.QuestionId);
+
+        if (entityInDb is not null)
+        {
+            return null;
+        }
         database.Answers.Add(entity);
         database.SaveChanges();
         return entity;

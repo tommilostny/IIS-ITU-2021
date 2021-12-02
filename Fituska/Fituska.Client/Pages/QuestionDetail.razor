@@ -21,6 +21,10 @@ else
     @if (!confirmDelete)
     {
         <ReplyBox OnSubmit="AddAnswer" />
+        @if (!answerAddSuccess)
+        {
+            <p class="text-danger mt-3">Nelze vložit více než jednu odpověď uživatelem <em>@user?.UserName</em>.</p>
+        }
     }
     <AuthorizeView>
         <Authorized>
@@ -64,6 +68,8 @@ else
     QuestionDetailModel question;
 
     bool confirmDelete = false;
+    bool answerAddSuccess = true;
+    UserListModel? user;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,20 +79,23 @@ else
 
     async Task AddAnswer(string text)
     {
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name};
-        var answer = new AnswerNewModel {
+        user = new UserListModel
+        {
+            UserName = (await AuthenticationState).User.Identity.Name
+        };
+        var answer = new AnswerNewModel
+        {
             Text = text,
             QuestionId = question.Id,
             UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
         };
         var response = await Http.PostAsJsonAsync<AnswerNewModel>(ApiEndpoints.AnswerUrl, answer);
-        if (response.IsSuccessStatusCode)
+
+        if (answerAddSuccess = response.IsSuccessStatusCode)
         {
             AnswerDetailModel model = await response.Content.ReadFromJsonAsync<AnswerDetailModel>();
             question.Answers.Add(model);
-            Console.WriteLine("Inserted answer");
         }
-        Console.WriteLine("End answer");
     }
 
     string AnswersCount => question.Answers.Count.ToString() + question.Answers.Count switch
