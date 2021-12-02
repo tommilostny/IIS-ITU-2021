@@ -38,7 +38,7 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
         var answerToUpdate = database.Answers.Attach(entity);
         answerToUpdate.State = EntityState.Modified;
         database.SaveChanges();
-        return entity;
+        return GetByID(entity.Id);
     }
 
     public IEnumerable<AnswerEntity> GetAll()
