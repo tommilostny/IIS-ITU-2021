@@ -28,7 +28,19 @@ public class UserSawQuestionController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("{id}")]
+    [HttpGet]
+    [Route("question/{questionId}")]
+    [OpenApiOperation("User saw answer" + nameof(GetAllFromQuestion))]
+    public ActionResult<List<UserSawQuestionModel>> GetAllFromQuestion(Guid questionId)
+    {
+        List<UserSawQuestionEntity> entities = (List<UserSawQuestionEntity>)repository.GetAll();
+        List<UserSawQuestionEntity> entitiesForQuestion = entities.Where(userSawQuestion => userSawQuestion.QuestionId == questionId).ToList(); ;
+        var models = mapper.Map<List<UserSawQuestionModel>>(entitiesForQuestion);
+        return Ok(models);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{questionid}")]
     [OpenApiOperation("User saw answer" + nameof(GetById))]
     public ActionResult<UserSawQuestionModel> GetById(Guid id)
     {
@@ -67,4 +79,5 @@ public class UserSawQuestionController : ControllerBase
         var detailModel = mapper.Map<UserSawQuestionModel>(entity);
         return Ok(detailModel);
     }
+
 }

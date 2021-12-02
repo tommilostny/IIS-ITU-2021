@@ -58,4 +58,6 @@ public static class ApiEndpoints
     public static string VoteIdUrl(Guid id) => $"{VoteUrl}/{id}";
 
     public static string VoteAnswerIdUrl(Guid id) => $"{VoteUrl}/answer/{id}";
+
+    public static string UserSawQuestionQuestionIdUrl(Guid id) => $"{UserSawQuestionUrl}/question/{id}";
 }

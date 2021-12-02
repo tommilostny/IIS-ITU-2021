@@ -43,7 +43,6 @@
     protected override async Task OnInitializedAsync()
     {
         Comment = await Http.GetFromJsonAsync<CommentDetailModel>(ApiEndpoints.CommentIdUrl(Comment.Id));
-        if (Comment.User == null) Console.WriteLine("USER IS NULL");
         StateHasChanged();
         await base.OnInitializedAsync();
     }
