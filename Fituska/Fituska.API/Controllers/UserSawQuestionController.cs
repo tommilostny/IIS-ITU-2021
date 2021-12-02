@@ -19,7 +19,7 @@ public class UserSawQuestionController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    [OpenApiOperation("User saw answer" + nameof(GetAll))]
+    [OpenApiOperation("User saw question" + nameof(GetAll))]
     public ActionResult<List<UserSawQuestionModel>> GetAll()
     {
         List<UserSawQuestionEntity> models = (List<UserSawQuestionEntity>)repository.GetAll();
@@ -28,8 +28,20 @@ public class UserSawQuestionController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("{id}")]
-    [OpenApiOperation("User saw answer" + nameof(GetById))]
+    [HttpGet]
+    [Route("question/{questionId}")]
+    [OpenApiOperation("User saw question" + nameof(GetAllFromQuestion))]
+    public ActionResult<List<UserSawQuestionModel>> GetAllFromQuestion(Guid questionId)
+    {
+        List<UserSawQuestionEntity> entities = (List<UserSawQuestionEntity>)repository.GetAll();
+        List<UserSawQuestionEntity> entitiesForQuestion = entities.Where(userSawQuestion => userSawQuestion.QuestionId == questionId).ToList();
+        var models = mapper.Map<List<UserSawQuestionModel>>(entitiesForQuestion);
+        return Ok(models);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{questionid}")]
+    [OpenApiOperation("User saw question" + nameof(GetById))]
     public ActionResult<UserSawQuestionModel> GetById(Guid id)
     {
         var entity = repository.GetByID(id);
@@ -38,7 +50,7 @@ public class UserSawQuestionController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [OpenApiOperation("User saw answer" + nameof(Delete))]
+    [OpenApiOperation("User saw question" + nameof(Delete))]
     public ActionResult Delete(Guid id)
     {
         repository.Delete(id);
@@ -46,7 +58,7 @@ public class UserSawQuestionController : ControllerBase
     }
 
     [HttpPut]
-    [OpenApiOperation("User saw answer" + nameof(Update))]
+    [OpenApiOperation("User saw question" + nameof(Update))]
     public ActionResult Update(UserSawQuestionModel model)
     {
         var entity = mapper.Map<UserSawQuestionEntity>(model);
@@ -55,7 +67,7 @@ public class UserSawQuestionController : ControllerBase
     }
 
     [HttpPost]
-    [OpenApiOperation("User saw answer" + nameof(Insert))]
+    [OpenApiOperation("User saw question" + nameof(Insert))]
     public ActionResult<UserSawQuestionModel> Insert(UserSawQuestionModel model)
     {
         var entity = mapper.Map<UserSawQuestionEntity>(model);
@@ -67,4 +79,5 @@ public class UserSawQuestionController : ControllerBase
         var detailModel = mapper.Map<UserSawQuestionModel>(entity);
         return Ok(detailModel);
     }
+
 }

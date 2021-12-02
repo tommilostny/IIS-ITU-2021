@@ -17,7 +17,9 @@ else
         <h4>@question.Text</h4>
     </div>
     <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.</p>
-    
+    <p> 
+        @UserSawString()
+    </p>
     @if (!confirmDelete)
     {
         <ReplyBox OnSubmit="AddAnswer" />
@@ -59,30 +61,42 @@ else
 
 @code
 {
+
     [Parameter]
     public Guid Id { get; set; }
-
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
-
+    Guid userId { get; set; }
+    List<UserSawQuestionModel> userSawQuestion { get; set; }
     QuestionDetailModel question;
 
+    int UserSawThisCount()
+    {
+        if (userSawQuestion is null) return 0;
+        return userSawQuestion.Count;
+    }
     bool confirmDelete = false;
     bool answerAddSuccess = true;
     UserListModel? user;
 
     protected override async Task OnInitializedAsync()
     {
-        question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));     
+        userId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+        question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
+        UserSawQuestionModel userSawThis = new UserSawQuestionModel
+            {
+                QuestionId = question.Id,
+                UserId = userId
+            };
+
+        var response = await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
+        userSawQuestion = await Http.GetFromJsonAsync<List<UserSawQuestionModel>>(ApiEndpoints.UserSawQuestionQuestionIdUrl(question.Id));
+        StateHasChanged();
         await base.OnInitializedAsync();
     }
 
     async Task AddAnswer(string text)
     {
-        user = new UserListModel
-        {
-            UserName = (await AuthenticationState).User.Identity.Name
-        };
         var answer = new AnswerNewModel
         {
             Text = text,
@@ -114,5 +128,17 @@ else
         {
             NavigationManager.NavigateTo("/");
         }
+    }
+
+    private string UserSawString()
+    {
+        int count = 1;
+        if (userSawQuestion is not null)
+        {
+            count = userSawQuestion.Count;
+        }
+        if (count == 1) return "Jsi první kdo tuto otázku viděl!";
+        if (count >= 2 && count <= 4) return $"Tuto otázku viděli {count} uživatelé";
+        else return $"Tuto otázku vidělo {count} uživatelů";
     }
 }
