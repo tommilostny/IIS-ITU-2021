@@ -7,7 +7,7 @@
     <Authorized>        
         <div class="btns-group">
             <button @onclick="ToggleUserBox" class="show-box-button">
-                <img class="person-icon" src="@userImage" />
+                <img class="person-icon" src="@ProfilePictureProvider.ImageSource" />
                 <span class="oi oi-caret-bottom" aria-hidden="true"></span>
             </button>
         </div>
@@ -61,9 +61,10 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
-    bool collapseBox = true;
+    [CascadingParameter]
+    protected ProfilePictureProvider? ProfilePictureProvider { get; set; }
 
-    string userImage;
+    bool collapseBox = true;
 
     string? BoxCssClass => collapseBox ? "collapse" : null;
 
@@ -71,35 +72,5 @@
 
     void ResetCollapse() => collapseBox = true;
 
-    async Task<string> LoadProfilePicture()
-    {
-        var authUser = (await AuthenticationState).User;
-        if (authUser.Identity.IsAuthenticated)
-        {
-            if (await LocalStorageService.ContainKeyAsync(StorageNames.UserPhoto))
-            {
-                return await LocalStorageService.GetItemAsStringAsync(StorageNames.UserPhoto);
-            }
-            else
-            {
-                var userID = new Guid(authUser.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
-
-                var fileModel = await Http.GetFromJsonAsync<FileUserModel>(ApiEndpoints.UserIdFileUrl(userID));
-
-                if (fileModel is not null && !string.IsNullOrEmpty(fileModel.Name) && fileModel.Content.Length > 0)
-                {
-                    var base64Image = Base64ImageService.ImageFileToBase64(fileModel.Name, fileModel.Content);
-                    await LocalStorageService.SetItemAsStringAsync(StorageNames.UserPhoto, base64Image);
-                    return base64Image;
-                }
-            }
-        }
-        return "/person-icon.png";
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        userImage = await LoadProfilePicture();
-        await base.OnParametersSetAsync();
-    }
+    public void Refresh() => StateHasChanged();
 }

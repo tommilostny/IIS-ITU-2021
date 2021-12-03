@@ -13,7 +13,7 @@
     </div>
 
     <div class="col">
-        <NavMenuAuthorization />
+        <NavMenuAuthorization @ref="navMenuAuthorization" />
     </div>
 </div>
 
@@ -27,10 +27,11 @@
 {
     bool collapseMobileSearchBox = true;
 
+    NavMenuAuthorization navMenuAuthorization;
+
     string MobileSearchBoxCssClass => collapseMobileSearchBox ? "collapse" : "d-block d-sm-none";
 
-    void ToggleMobileSearchBox()
-    {
-        collapseMobileSearchBox = !collapseMobileSearchBox;
-    }
+    void ToggleMobileSearchBox() => collapseMobileSearchBox = !collapseMobileSearchBox;
+
+    public void Refresh() => navMenuAuthorization.Refresh();
 }

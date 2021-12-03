@@ -8,14 +8,16 @@
 
 @code
 {
-    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    [CascadingParameter]
+    protected ProfilePictureProvider? ProfilePictureProvider { get; set; }
 
     async Task SignOutAsync()
     {
-        if (await LocalStorageService.ContainKeyAsync(StorageNames.UserPhoto))
-        {
-            await LocalStorageService.RemoveItemAsync(StorageNames.UserPhoto);
-        }
+        await ProfilePictureProvider?.ClearCachedImage();
+        
         if (await LocalStorageService.ContainKeyAsync(StorageNames.BearerToken))
         {
             await LocalStorageService.RemoveItemAsync(StorageNames.BearerToken);

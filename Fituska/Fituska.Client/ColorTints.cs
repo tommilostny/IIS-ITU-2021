@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 
 namespace Fituska.Client;
+
 public class ColorTints
 {
     public struct ColorTint

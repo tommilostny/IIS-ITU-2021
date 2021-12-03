@@ -9,8 +9,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddSingleton<LastPageStorageService>();
-builder.Services.AddSingleton<SearchRequestModel>();
 builder.Services.AddSingleton<Base64ImageService>();
+builder.Services.AddSingleton<SearchRequestModel>();
 
 builder.Services.AddBlazoredLocalStorage();
 

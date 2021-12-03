@@ -132,7 +132,6 @@ public class UserController : ControllerBase
         entity.Email = user.Email;
         entity.FirstName = user.FirstName;
         entity.LastName = user.LastName;
-        entity.Photo = user.Photo;
 
         await userManager.UpdateAsync(entity);
         return Ok();

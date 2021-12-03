@@ -2,8 +2,9 @@
 @using Fituska.Shared.Models.User
 @inject HttpClient Http
 @inject Base64ImageService Base64ImageService
+@inject ILocalStorageService LocalStorageService
 
-@if (UserModel.Photo is not null && UserModel.Photo.Length > 0)
+@if (UserHasPhoto)
 {
     <img src="@PhotoToBase64" class="img-fluid mb-4" />
 }
@@ -12,8 +13,11 @@
         @if (context.User.Identity.Name == UserModel.UserName)
         {
             <FileLoader OnChange="SavePhoto" TFileModel="FileUserModel" ParentId="Guid.Empty" />
-            <button class="btn btn-success mt-3" disabled="@(!photoFileChanged)" @onclick="UploadPhoto">
+            <button class="btn btn-sm btn-success mt-3" disabled="@(!photoFileChanged)" @onclick="UploadPhoto">
                 <span class="oi oi-data-transfer-upload" aria-hidden="true" /> Uložit
+            </button>
+            <button class="btn btn-sm btn-outline-danger mt-3" disabled="@(!photoSavedOnServer)" @onclick="DeletePhoto">
+                <span class="oi oi-delete" aria-hidden="true" /> Smazat
             </button>
         }
     </Authorized>
@@ -24,13 +28,27 @@
     [Parameter]
     public UserDetailModel UserModel { get; set; }
 
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
+    [CascadingParameter]
+    protected ProfilePictureProvider? ProfilePictureProvider { get; set; }
+
+    [CascadingParameter]
+    protected NavMenu? NavMenu { get; set; }
+
+    bool UserHasPhoto => UserModel.Photo is not null && UserModel.Photo.Length > 0;
+
     bool photoFileChanged = false;
+    bool photoSavedOnServer = false;
     FileUserModel fileToUpload;
 
     string PhotoToBase64 => Base64ImageService.ImageFileToBase64(UserModel.PhotoFileName, UserModel.Photo);
 
-    void SavePhoto(FileUserModel fileModel)
+    void SavePhoto(IEnumerable<FileUserModel> fileModels)
     {
+        var fileModel = fileModels.First();
+
         UserModel.Photo = fileModel.Content;
         UserModel.PhotoFileName = fileModel.Name;
         photoFileChanged = true;
@@ -40,7 +58,29 @@
 
     async Task UploadPhoto()
     {
+        await ProfilePictureProvider?.ClearCachedImage();
+
         await Http.PostAsJsonAsync<FileUserModel>(ApiEndpoints.UserFileUrl, fileToUpload);
+
+        await ProfilePictureProvider?.LoadProfilePicture(navMenuToNotify: NavMenu);
         photoFileChanged = false;
+        photoSavedOnServer = true;
+    }
+
+    async Task DeletePhoto()
+    {
+        fileToUpload = new();
+        fileToUpload.Content = UserModel.Photo = Array.Empty<byte>();
+        fileToUpload.Name = UserModel.PhotoFileName = string.Empty;
+        fileToUpload.UserId = UserModel.Id;
+
+        await UploadPhoto();
+        photoSavedOnServer = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        photoSavedOnServer = UserHasPhoto;
+        await base.OnParametersSetAsync();
     }
 }
