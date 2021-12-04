@@ -136,4 +136,25 @@ public class UserController : ControllerBase
         await userManager.UpdateAsync(entity);
         return Ok();
     }
+
+    [Route("passwordchange")]
+    [HttpPut]
+    public async Task<IActionResult> ChangePassword([FromBody] UserPasswordChangeModel user)
+    {
+        var signInResult = await signInManager.PasswordSignInAsync(user.UserName, user.OldPassword, isPersistent: false, lockoutOnFailure: false);
+        if (signInResult.Succeeded)
+        {
+            var identityUser = await userManager.FindByNameAsync(user.UserName);
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(identityUser);
+
+            var result = await userManager.ResetPasswordAsync(identityUser, token, newPassword: user.Password);
+            if (result.Succeeded)
+            {
+                var jsonWebToken = await CreateJsonWebToken(identityUser);
+                return Ok(jsonWebToken);
+            }
+        }
+        return Unauthorized(user);
+    }
 }
