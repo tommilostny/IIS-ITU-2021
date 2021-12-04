@@ -73,10 +73,12 @@ else
 
     [Parameter]
     public Guid Id { get; set; }
+
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
-    Guid userId { get; set; }
-    List<UserSawQuestionModel> userSawQuestion { get; set; }
+
+    Guid userId;
+    List<UserSawQuestionModel> userSawQuestion = new();
     QuestionDetailModel question;
 
     int UserSawThisCount()
@@ -90,15 +92,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        userId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
         question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
-        UserSawQuestionModel userSawThis = new UserSawQuestionModel
-        {
-            QuestionId = question.Id,
-            UserId = userId
-        };
 
-        var response = await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
+        var authUser = (await AuthenticationState).User;
+        if (authUser.Identity.IsAuthenticated)
+        {
+            userId = new Guid(authUser.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+            var userSawThis = new UserSawQuestionModel
+            {
+                QuestionId = question.Id,
+                UserId = userId
+            };
+            await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
+        }
+
         userSawQuestion = await Http.GetFromJsonAsync<List<UserSawQuestionModel>>(ApiEndpoints.UserSawQuestionQuestionIdUrl(question.Id));
         StateHasChanged();
         await base.OnInitializedAsync();

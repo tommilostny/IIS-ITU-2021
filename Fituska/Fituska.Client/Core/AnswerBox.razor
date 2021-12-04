@@ -83,10 +83,7 @@
         return ColorTints.GetColorFromVotes(votes);
     }
 
-    void UpdateVote(int rating)
-    {
-        backColor = GetColor(rating);
-    }
+    void UpdateVote(int rating) => backColor = GetColor(rating);
 
     void ToggleEditingMode() => editingMode = !editingMode;
 
@@ -99,9 +96,9 @@
         ToggleEditingMode();
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         Answer = await Http.GetFromJsonAsync<AnswerDetailModel>(ApiEndpoints.AnswerIdUrl(Answer.Id));
-        await base.OnInitializedAsync();
+        await base.OnParametersSetAsync();
     }
 }

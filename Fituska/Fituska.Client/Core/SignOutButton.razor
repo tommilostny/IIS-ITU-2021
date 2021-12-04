@@ -1,6 +1,5 @@
 ﻿@inject ILocalStorageService LocalStorageService
 @inject FituskaAuthenticationStateProvider AuthenticationStateProvider
-@inject LastPageStorageService LastPageStorageService
 
 <button class="btn btn-secondary" @onclick="SignOutAsync">
     Odhlásit
@@ -17,7 +16,7 @@
     async Task SignOutAsync()
     {
         await ProfilePictureProvider?.ClearCachedImage();
-        
+
         if (await LocalStorageService.ContainKeyAsync(StorageNames.BearerToken))
         {
             await LocalStorageService.RemoveItemAsync(StorageNames.BearerToken);
