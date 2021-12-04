@@ -18,9 +18,9 @@ public class FituskaDbContext : IdentityDbContext<UserEntity, IdentityRole<Guid>
     public DbSet<FileEntity> Files { get; set; }
     public DbSet<QuestionEntity> Questions { get; set; }
     public DbSet<VoteEntity> Votes { get; set; }
-    public DbSet<UserSawAnswerEntity> UsersSawAnswers { get; set; }
     public DbSet<UserSawQuestionEntity> UsersSawQuestions { get; set; }
 
+#if !DEBUG
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<CourseAttendanceEntity>()
@@ -58,16 +58,12 @@ public class FituskaDbContext : IdentityDbContext<UserEntity, IdentityRole<Guid>
             .WithMany(question => question.UserSawQuestions)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<UserSawAnswerEntity>()
-            .HasOne(sawA => sawA.Answer)
-            .WithMany(answer => answer.UsersSawAnswer)
-            .OnDelete(DeleteBehavior.NoAction);
-
         builder.Entity<VoteEntity>()
             .HasOne(vote => vote.Answer)
-            .WithMany(answer => answer.UsersVoteAnswers)
+            .WithMany(answer => answer.Votes)
             .OnDelete(DeleteBehavior.NoAction);
 
         base.OnModelCreating(builder);
     }
+#endif
 }

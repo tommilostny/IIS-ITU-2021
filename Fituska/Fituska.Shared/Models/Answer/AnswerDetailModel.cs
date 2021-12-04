@@ -11,7 +11,6 @@ public record AnswerDetailModel : ModelBase
     public DateTime CreationTime { get; set; }
     public Guid QuestionId { get; set; }
     public UserListModel User { get; set; }
-    public List<UserSawAnswerModel> UsersSawAnswer { get; set; }
     public List<VoteModel> Votes { get; set; } = new();
     public List<CommentDetailModel> Comments { get; set; } = new();
     public List<FileListModel> Files { get; set; } = new();

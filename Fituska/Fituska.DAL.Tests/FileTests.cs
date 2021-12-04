@@ -58,29 +58,6 @@ public class FileTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AddNewFileWithDiscussion()
-    {
-        var newFile = new FileEntity
-        {
-            Name = "luxusnívideosešumem.wav",
-            Content = new byte[] { 1, 5, 6, 255 },
-            Comment = new CommentEntity()
-            {
-                CreationTime = new DateTime(2021, 12, 9),
-                Text = "Tady je odpověď s obrázkem",
-            },
-        };
-        dbContext.Files.Add(newFile);
-        dbContext.SaveChanges();
-        //Assert
-        using var testDbContext = dbContextFactory.Create();
-        var retrievedFile = testDbContext.Files
-            .Include(file => file.Comment)
-            .FirstOrDefault(file => file.Id == newFile.Id);
-        Assert.StrictEqual(newFile, retrievedFile);
-    }
-
-    [Fact]
     public void AddNewFileWithQuestion()
     {
         var newFile = new FileEntity

@@ -45,8 +45,7 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
     {
         return database.Answers
             .Include(answer => answer.User)
-            .Include(answer => answer.UsersSawAnswer)
-            .Include(answer => answer.UsersVoteAnswers)
+            .Include(answer => answer.Votes)
             .Include(answer => answer.Comments)
             .Include(answer => answer.Files)
             .ToList();
@@ -56,8 +55,7 @@ public class AnswerRepository : IRepository<AnswerEntity>, ISearchableRepository
     {
         var answer = database.Answers
             .Include(answer => answer.User)
-            .Include(answer => answer.UsersSawAnswer)
-            .Include(answer => answer.UsersVoteAnswers)
+            .Include(answer => answer.Votes)
             .Include(answer => answer.Comments)
             .Include(answer => answer.Files)
             .FirstOrDefault(answer => answer.Id == entityID);

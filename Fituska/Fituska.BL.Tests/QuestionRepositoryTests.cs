@@ -82,9 +82,11 @@ public class QuestionRepositoryTests
         QuestionEntity question = SeedData();
         dbContext.Questions.Add(question);
         dbContext.SaveChanges();
+
         using var database = dbContextFactory.Create();
         var questionFromDb = database.Questions
             .FirstOrDefault(fileToFind => fileToFind.Id == question.Id);
+
         Assert.StrictEqual(question, questionFromDb);
         questionRepository.Delete(question.Id);
         var deletedCategory = database.Questions.FirstOrDefault(deletingUser => deletingUser.Id == question.Id);

@@ -57,7 +57,7 @@ else
         <ReplyBox OnSubmitWithFiles="AddAnswer" />
         @if (!answerAddSuccess)
         {
-            <p class="text-danger mt-3">Nelze vložit více než jednu odpověď uživatelem <em>@user?.UserName</em>.</p>
+            <p class="text-danger mt-3">Nelze vložit více než jednu odpověď uživatelem <em>@userName</em>.</p>
         }
     }
 
@@ -89,7 +89,7 @@ else
     }
     bool confirmDelete = false;
     bool answerAddSuccess = true;
-    UserListModel? user;
+    string userName;
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,6 +98,7 @@ else
         var authUser = (await AuthenticationState).User;
         if (authUser.Identity.IsAuthenticated)
         {
+            userName = authUser.Identity.Name;
             userId = new Guid(authUser.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
             var userSawThis = new UserSawQuestionModel
             {

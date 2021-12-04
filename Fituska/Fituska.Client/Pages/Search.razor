@@ -7,7 +7,7 @@
 <h3>Výsledky hledání pro: <em>@SearchTerm</em></h3>
 @if (result is not null)
 {
-    @if (SearchRequest.IncludeAnswers && result.Answers is not null)
+    @if (SearchRequest.IncludeAnswers && result.Answers is not null && result.Answers.Count > 0)
     {
         <h4>Odpovědi</h4>
         <ul>
@@ -17,7 +17,7 @@
             }
         </ul>
     }
-    @if (SearchRequest.IncludeCourses  && result.Courses is not null)
+    @if (SearchRequest.IncludeCourses && result.Courses is not null && result.Courses.Count > 0)
     {
         <h4>Kurzy</h4>
         <ul>
@@ -27,7 +27,7 @@
             }
         </ul>
     }
-    @if (SearchRequest.IncludeQuestions  && result.Questions is not null)
+    @if (SearchRequest.IncludeQuestions && result.Questions is not null && result.Courses.Count > 0)
     {
         <h4>Otázky</h4>
         <ul>
@@ -41,7 +41,7 @@
             }
         </ul>
     }
-    @if (SearchRequest.IncludeUsers  && result.Users is not null)
+    @if (SearchRequest.IncludeUsers && result.Users is not null && result.Users.Count > 0)
     {
         <h4>Uživatelé</h4>
         @foreach (var user in result.Users)

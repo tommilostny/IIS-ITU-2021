@@ -4,9 +4,10 @@ public class CommentEntity : EntityBase
 {
     public string Text { get; set; }
     public DateTime CreationTime { get; set; }
+    public DateTime? ModifiedTime { get; set; }
+
     public Guid UserId { get; set; }
     public UserEntity User { get; set; }
-
     public Guid? AnswerId { get; set; }
     public AnswerEntity? Answer { get; set; }
     public Guid? ParentCommentId { get; set; }

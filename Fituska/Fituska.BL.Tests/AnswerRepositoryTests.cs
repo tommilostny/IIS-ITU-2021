@@ -39,10 +39,7 @@ public class AnswerRepositoryTests
 
         answerRepository.Insert(answer);
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers
-            .Include(answer => answer.UsersSawAnswer)
-            .ThenInclude(userSawQuestion => userSawQuestion.User)
-            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
+        var answerFromDB = database.Answers.FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         database.Answers.Remove(answerFromDB);
         database.SaveChanges();
@@ -72,17 +69,11 @@ public class AnswerRepositoryTests
         dbContext.Answers.Add(answer);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers
-            .Include(answers => answers.UsersSawAnswer)
-            .ThenInclude(userSawAnswers => userSawAnswers.User)
-            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
+        var answerFromDB = database.Answers.FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerFromDB.Text = "UpdatedText";
         answer = (AnswerEntity)answerRepository.Update(answer);
-        var updatedUserFromDb = database.Answers
-            .Include(answers => answers.UsersSawAnswer)
-            .ThenInclude(userSawAnswers => userSawAnswers.User)
-            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
+        var updatedUserFromDb = database.Answers.FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answerFromDB, updatedUserFromDb);
     }
 
@@ -93,10 +84,7 @@ public class AnswerRepositoryTests
         dbContext.Answers.Add(answer);
         dbContext.SaveChanges();
         using var database = dbContextFactory.Create();
-        var answerFromDB = database.Answers
-            .Include(answer => answer.UsersSawAnswer)
-            .ThenInclude(usersSawQuestion => usersSawQuestion.User)
-            .FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
+        var answerFromDB = database.Answers.FirstOrDefault(answerToFind => answerToFind.Id == answer.Id);
         Assert.StrictEqual(answer, answerFromDB);
         answerRepository.Delete(answer.Id);
         var deletedAnswer = database.Answers.FirstOrDefault(deletingUser => deletingUser.Id == answer.Id);
@@ -113,18 +101,7 @@ public class AnswerRepositoryTests
                 FirstName = "Rivola"
             },
             CreationTime = new DateTime(2021, 10, 5, 17, 31, 50),
-            UsersSawAnswer = new Nemesis.Essentials.Design.ValueCollection<UserSawAnswerEntity>()
         };
-        UserSawAnswerEntity userSawAnswer = new()
-        {
-            User = new UserEntity()
-            {
-                FirstName = "Hater1",
-                LastName = "Hater1"
-            },
-            Answer = answer,
-        };
-        answer.UsersSawAnswer.Add(userSawAnswer);
         return answer;
     }
 }

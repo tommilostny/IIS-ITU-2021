@@ -102,7 +102,7 @@ public class FileController : ControllerBase
     [AllowAnonymous]
     [Route("user/{id}")]
     [HttpGet]
-    public async Task<IActionResult> GetUserPhoto(string id)
+    public async Task<IActionResult> GetUserPhoto(Guid id)
     {
         var userEntity = await userManager.FindByIdAsync(id.ToString());
         if (userEntity is null)

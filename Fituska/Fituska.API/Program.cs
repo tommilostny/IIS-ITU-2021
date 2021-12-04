@@ -15,6 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FituskaCorsPolicy", policy =>
     {
+        //policy.WithOrigins(clientUrl).AllowAnyHeader().AllowAnyMethod();
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
@@ -71,7 +72,6 @@ builder.Services.AddScoped<CourseAttendanceRepository>();
 builder.Services.AddScoped<CourseRepository>();
 builder.Services.AddScoped<FileRepository>();
 builder.Services.AddScoped<QuestionRepository>();
-builder.Services.AddScoped<UserSawAnswerRespository>();
 builder.Services.AddScoped<UserSawQuestionRepository>();
 builder.Services.AddScoped<VoteRepository>();
 

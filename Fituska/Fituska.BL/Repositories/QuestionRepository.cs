@@ -18,9 +18,11 @@ public class QuestionRepository : IRepository<QuestionEntity>, ISearchableReposi
             try
             {
                 database.SaveChanges();
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.InnerException.Message);
             }
         }
     }
