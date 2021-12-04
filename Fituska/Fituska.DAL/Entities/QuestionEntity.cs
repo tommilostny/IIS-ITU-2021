@@ -13,7 +13,7 @@ public class QuestionEntity : EntityBase
 
     public ValueCollection<AnswerEntity> Answers { get; set; } = new();
     public ValueCollection<UserSawQuestionEntity> UserSawQuestions { get; set; } = new();
-    public ValueCollection<FileEntity> Files { get; set; }
+    public ValueCollection<FileEntity> Files { get; set; } = new();
 
     public override bool Equals(object? obj)
     {

@@ -14,5 +14,5 @@ public record AnswerDetailModel : ModelBase
     public List<UserSawAnswerModel> UsersSawAnswer { get; set; }
     public List<VoteModel> Votes { get; set; } = new();
     public List<CommentDetailModel> Comments { get; set; } = new();
-    public List<FileModelBase> Files { get; set; } = new();
+    public List<FileListModel> Files { get; set; } = new();
 }

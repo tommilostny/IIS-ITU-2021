@@ -1,48 +1,80 @@
 ﻿@using Fituska.Shared.Models.File
 @typeparam TFileModel where TFileModel : FileModelBase, new()
 
+@if (loading)
+{
+    <p><strong>Načítání...</strong></p>
+}
 <InputFile OnChange="OnInputFileChange" multiple="@(!fileModel.ImageOnly())" />
 
 @code
 {
     [Parameter]
-    public Guid ParentId { get; set; }
+    public Guid ParentId { get; set; } = Guid.Empty;
 
     [Parameter]
-    public EventCallback<TFileModel> OnChange { get; set; }
+    public EventCallback<IEnumerable<TFileModel>> OnChange { get; set; }
 
     TFileModel fileModel = new();
 
+    bool loading = false;
+
     async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        switch (fileModel) //Set File parent Id based on meant parent type.
+        loading = true;
+
+        if (ParentId != Guid.Empty)
         {
-            case FileAnswerModel fileAnswerModel:
-                fileAnswerModel.AnswerId = ParentId;
-                break;
-            case FileCommentModel fileCommentModel:
-                fileCommentModel.CommentId = ParentId;
-                break;
-            case FileQuestionModel fileQuestionModel:
-                fileQuestionModel.QuestionId = ParentId;
-                break;
+            switch (fileModel) //Set File parent Id based on meant parent type.
+            {
+                case FileAnswerModel fileAnswerModel:
+                    fileAnswerModel.AnswerId = ParentId;
+                    break;
+                case FileCommentModel fileCommentModel:
+                    fileCommentModel.CommentId = ParentId;
+                    break;
+                case FileQuestionModel fileQuestionModel:
+                    fileQuestionModel.QuestionId = ParentId;
+                    break;
+            }
         }
         //Read file and send byte[] content via OnChange, sending to endpoint by component parent.
         if (fileModel.ImageOnly())
-        {
-            if (!e.File.ContentType.StartsWith("image/"))
-                return;
+            await ReadImageFile(e.File);
+        else
+            await ReadMultipleFiles(e.GetMultipleFiles());
 
-            var imageFile = await e.File.RequestImageFileAsync(e.File.ContentType, 512, 512);
-            using var fileContent = new StreamContent(imageFile.OpenReadStream(imageFile.Size));
+        loading = false;
+    }
 
-            fileModel.Name = imageFile.Name;
-            fileModel.Content = await fileContent.ReadAsByteArrayAsync();
-            await OnChange.InvokeAsync(fileModel);
+    async Task ReadImageFile(IBrowserFile browserFile)
+    {
+        if (!browserFile.ContentType.StartsWith("image/"))
             return;
+
+        var imageFile = await browserFile.RequestImageFileAsync(browserFile.ContentType, 512, 512);
+        using var stream = new StreamContent(imageFile.OpenReadStream(imageFile.Size));
+
+        fileModel.Name = imageFile.Name;
+        fileModel.Content = await stream.ReadAsByteArrayAsync();
+
+        await OnChange.InvokeAsync(new List<TFileModel> { fileModel });
+    }
+
+    async Task ReadMultipleFiles(IEnumerable<IBrowserFile> browserFiles)
+    {
+        var files = new List<TFileModel>();
+
+        foreach (var file in browserFiles)
+        {
+            using var stream = new StreamContent(file.OpenReadStream());
+            var newFile = fileModel with
+            {
+                Name = file.Name,
+                Content = await stream.ReadAsByteArrayAsync()
+            };
+            files.Add(newFile);
         }
-        
-        //Read multiple files into model.Content
-        //TODO: foreach file in e.Files...
+        await OnChange.InvokeAsync(files);
     }
 }

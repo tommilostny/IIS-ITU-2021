@@ -1,16 +1,24 @@
-﻿<AuthorizeView>
+﻿@using Fituska.Shared.Models.File
+
+<AuthorizeView>
     <Authorized>
         @if (!showTextBox)
         {
-            <button @onclick="ToggleShowTextBox" class="btn btn-outline-primary btn-sm">@AddButtonLabel</button>
+            <button @onclick="ToggleShowTextBox" class="btn btn-primary btn-sm">@AddButtonLabel</button>
         }
         else
         {
             <button @onclick="ToggleShowTextBox" class="btn btn-outline-secondary btn-sm">Zrušit</button>
             <textarea @bind="text" class="form-control mb-2 mt-2"></textarea>
+
+            @if (OnSubmitWithFiles.HasDelegate)
+            {
+                <FileLoader TFileModel="FileAnswerModel" OnChange="AddAnswerFiles" />
+            }
             <button class="btn btn-primary" @onclick="SendReply">Odeslat</button>
         }
-        @if(showError){
+        @if(showError)
+        {
             <br />
             <p class="text-danger">Zadejte text</p>
         }
@@ -23,11 +31,15 @@
     public EventCallback<string> OnSubmit { get; set; }
 
     [Parameter]
+    public EventCallback<(string, List<FileAnswerModel>)> OnSubmitWithFiles { get; set; }
+
+    [Parameter]
     public string AddButtonLabel { get; set; } = "Odpovědět";
 
     bool showTextBox = false;
     bool showError = false;
     string text = string.Empty;
+    List<FileAnswerModel> filesToUpload = new();
 
     void ToggleShowTextBox() {
         showError = false;
@@ -40,12 +52,21 @@
         {
             showError = false;
             showTextBox = false;
-            await OnSubmit.InvokeAsync(text);
+
+            if (OnSubmit.HasDelegate)
+                await OnSubmit.InvokeAsync(text);
+
+            if (OnSubmitWithFiles.HasDelegate)
+                await OnSubmitWithFiles.InvokeAsync((text, filesToUpload));
+
             text = string.Empty;
+            return;
         }
-        else
-        {
-            showError = true;
-        }
+        showError = true;
+    }
+
+    void AddAnswerFiles(IEnumerable<FileAnswerModel> files)
+    {
+        filesToUpload = files.ToList();
     }
 }

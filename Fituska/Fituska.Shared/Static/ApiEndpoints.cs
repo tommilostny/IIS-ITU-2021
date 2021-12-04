@@ -18,12 +18,14 @@ public static class ApiEndpoints
     public const string CommentUrl = $"{ServerBaseUrl}api/comment";
     public const string CourseUrl = $"{ServerBaseUrl}api/course";
     public const string CourseAttendanceUrl = $"{ServerBaseUrl}api/courseattendance";
-    public const string FileUrl = $"{ServerBaseUrl}api/file";
-    public const string UserFileUrl = $"{FileUrl}/user";
     public const string QuestionUrl = $"{ServerBaseUrl}api/question";
     public const string UserSawQuestionUrl = $"{ServerBaseUrl}api/usersawquestion";
-    public const string UserSawAnswerUrl = $"{ServerBaseUrl}api/usersawanswer";
     public const string VoteUrl = $"{ServerBaseUrl}api/vote";
+
+    public const string FileUrl = $"{ServerBaseUrl}api/file";
+    public const string UserFileUrl = $"{FileUrl}/user";
+    public const string QuestionFileUrl = $"{FileUrl}/question";
+    public const string AnswerFileUrl = $"{FileUrl}/answer";
 
     public static string UserNameUrl(string userName) => $"{UserBaseUrl}/{userName}";
 
@@ -45,6 +47,8 @@ public static class ApiEndpoints
 
     public static string CourseModeratorApprovalUrl(Guid id) => $"{CourseUrl}/approve/{id}";
 
+    public static string FileIdUrl(Guid id) => $"{FileUrl}/{id}";
+
     public static string CourseAttendanceIdUrl(Guid id) => $"{CourseAttendanceUrl}/{id}";
 
     public static string QuestionIdUrl(Guid id) => $"{QuestionUrl}/{id}";
@@ -52,8 +56,6 @@ public static class ApiEndpoints
     public static string UserIdFileUrl(Guid id) => $"{UserFileUrl}/{id}";
 
     public static string UserSawQuestionIdUrl(Guid id) => $"{UserSawQuestionUrl}/{id}";
-
-    public static string UserSawAnswerIdUrl(Guid id) => $"{UserSawAnswerUrl}/{id}";
 
     public static string VoteIdUrl(Guid id) => $"{VoteUrl}/{id}";
 

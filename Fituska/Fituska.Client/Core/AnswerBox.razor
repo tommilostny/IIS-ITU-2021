@@ -1,11 +1,12 @@
-﻿@using Fituska.Shared.Models.Answer
+@using Fituska.Shared.Models.Answer
 @using Fituska.Shared.Models.Comment
+@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.User
 @using System.Drawing;
 @inject HttpClient Http
 
 <div class="card answer-box mb-3" style="background-color: rgba(@backColor.R,@backColor.G,@backColor.B,@backColor.A)">
-     <div class="card-body">
+     <div class="card-body mb-0 pb-0">
         @if (!editingMode)
         {
             <div class="row">
@@ -17,6 +18,13 @@
                         @Answer.Text
                     </p>
 
+                    @if (Answer.User is not null)
+                    {
+                        <hr />
+                        <FileListBox FileGroupAuthorName="@Answer.User.UserName" Files="Answer.Files" ParentId="Answer.Id" TFileModel="FileAnswerModel" />
+                    }
+                    <ReplyBox OnSubmit="AddComment" />
+
                     <AuthorizeView>
                         <Authorized>
                             @if (context.User.Identity.Name == Answer.User?.UserName)
@@ -25,8 +33,6 @@
                             }
                         </Authorized>
                     </AuthorizeView>
-
-                    <ReplyBox OnSubmit="AddComment" />
                 </div>
                 <div class="col-3 col-sm-2 col-md-1">
                      <Voting Votes="Answer.Votes" OnVoteChange="UpdateVote" AnswerId="Answer.Id" /> 
@@ -84,10 +90,7 @@
         return ColorTints.GetColorFromVotes(votes);
     }
 
-    void UpdateVote(int rating)
-    {
-        backColor = GetColor(rating);
-    }
+    void UpdateVote(int rating) => backColor = GetColor(rating);
 
     void ToggleEditingMode() => editingMode = !editingMode;
 
@@ -100,9 +103,9 @@
         ToggleEditingMode();
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         Answer = await Http.GetFromJsonAsync<AnswerDetailModel>(ApiEndpoints.AnswerIdUrl(Answer.Id));
-        await base.OnInitializedAsync();
+        await base.OnParametersSetAsync();
     }
 }

@@ -1,5 +1,6 @@
-﻿@page "/question/{Id:guid}"
+@page "/question/{Id:guid}"
 @using Fituska.Shared.Models.Answer
+@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.Question
 @using Fituska.Shared.Models.User
 @inherits LastPageSavableComponentBase
@@ -16,41 +17,50 @@ else
         <h2>@question.Title</h2>
         <h4>@question.Text</h4>
     </div>
-    <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question?.User?.UserName">@question.User?.UserName</a>, @question.CreationTime.</p>
-    <p> 
-        @UserSawString()
+    <p class="text-muted">
+      @UserSawString()
     </p>
+    <p class="text-muted">
+        Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.
+    
+        <AuthorizeView>
+            <Authorized>
+                @if (context.User.Identity.Name == question.User.UserName)
+                {
+                    @if (!confirmDelete)
+                    {
+                        <button class="btn btn-sm btn-outline-danger m-2" @onclick="ToggleDeleteConfirm">
+                            <span class="oi oi-x me-1" aria-hidden="true"></span> Smazat otázku
+                        </button> 
+                    }
+                    else
+                    {
+                        <div class="card mt-4 mb-3">
+                            <div class="card-header">
+                                <h4><strong>Opravdu si přejete smazat vaši otázku?</strong></h4>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-danger" @onclick="Delete">Ano</button>
+                                <button class="btn btn-secondary" @onclick="ToggleDeleteConfirm">Ne</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </Authorized>
+        </AuthorizeView>
+    </p>
+
+    <FileListBox Files="question.Files" FileGroupAuthorName="@question.User.UserName" ParentId="question.Id" TFileModel="FileQuestionModel" />
+
     @if (!confirmDelete)
     {
-        <ReplyBox OnSubmit="AddAnswer" />
+        <ReplyBox OnSubmitWithFiles="AddAnswer" />
         @if (!answerAddSuccess)
         {
             <p class="text-danger mt-3">Nelze vložit více než jednu odpověď uživatelem <em>@user?.UserName</em>.</p>
         }
     }
-    <AuthorizeView>
-        <Authorized>
-            @if (context.User.Identity.Name == question.User.UserName)
-            {
-                @if (!confirmDelete)
-                {
-                    <button class="btn btn-sm btn-outline-danger m-2" @onclick="ToggleDeleteConfirm">Smazat otázku</button> 
-                }
-                else
-                {
-                    <div class="card mt-4 mb-3">
-                        <div class="card-header">
-                            <h4><strong>Opravdu si přejete smazat vaši otázku?</strong></h4>
-                        </div>
-                        <div class="card-body">
-                            <button class="btn btn-danger" @onclick="Delete">Ano</button>
-                            <button class="btn btn-secondary" @onclick="ToggleDeleteConfirm">Ne</button>
-                        </div>
-                    </div>
-                }
-            }
-        </Authorized>
-    </AuthorizeView>
+
     <hr />
     <h5 class="mb-3">@AnswersCount</h5>
     @foreach (var answer in question.Answers.OrderBy(a => a.Votes.Sum(v => (int)v.Vote)).ThenBy(a => a.CreationTime).Reverse())
@@ -64,10 +74,12 @@ else
 
     [Parameter]
     public Guid Id { get; set; }
+
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
-    Guid userId { get; set; }
-    List<UserSawQuestionModel> userSawQuestion { get; set; }
+
+    Guid userId;
+    List<UserSawQuestionModel> userSawQuestion = new();
     QuestionDetailModel question;
 
     int UserSawThisCount()
@@ -81,25 +93,30 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        userId = await GetUserInfo.GetUserId(AuthenticationState);
         question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
-        UserSawQuestionModel userSawThis = new UserSawQuestionModel
+
+        var authUser = (await AuthenticationState).User;
+        if (authUser.Identity.IsAuthenticated)
+        {
+            userId = new Guid(authUser.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+            var userSawThis = new UserSawQuestionModel
             {
                 QuestionId = question.Id,
                 UserId = userId
             };
-        var response = await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
-        Console.WriteLine(response.Content);
+            await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
+        }
+
         userSawQuestion = await Http.GetFromJsonAsync<List<UserSawQuestionModel>>(ApiEndpoints.UserSawQuestionQuestionIdUrl(question.Id));
         StateHasChanged();
         await base.OnInitializedAsync();
     }
 
-    async Task AddAnswer(string text)
+    async Task AddAnswer((string, List<FileAnswerModel>) args)
     {
         var answer = new AnswerNewModel
         {
-            Text = text,
+            Text = args.Item1,
             QuestionId = question.Id,
             UserId = userId
         };
@@ -108,6 +125,16 @@ else
         if (answerAddSuccess = response.IsSuccessStatusCode)
         {
             AnswerDetailModel model = await response.Content.ReadFromJsonAsync<AnswerDetailModel>();
+
+            foreach (var file in args.Item2)
+            {
+                file.AnswerId = model.Id;
+                response = await Http.PostAsJsonAsync<FileAnswerModel>(ApiEndpoints.AnswerFileUrl, file);
+                if (response.IsSuccessStatusCode)
+                {
+                    model.Files.Add(await response.Content.ReadFromJsonAsync<FileListModel>());
+                }
+            }
             question.Answers.Add(model);
         }
     }

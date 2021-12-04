@@ -41,9 +41,12 @@ else
 
 @code
 {
-    private readonly UserSignInModel userToSignIn = new();
-    private bool signInSuccess = false;
-    private bool signInFailure = false;
+    [CascadingParameter]
+    protected ProfilePictureProvider? ProfilePictureProvider { get; set; }
+
+    readonly UserSignInModel userToSignIn = new();
+    bool signInSuccess = false;
+    bool signInFailure = false;
 
     private async Task SignInAsync()
     {
@@ -55,10 +58,13 @@ else
             var jsonWebToken = await httpResponseMessage.Content.ReadAsStringAsync();
             await LocalStorageService.SetItemAsync(StorageNames.BearerToken, jsonWebToken);
 
-            await AuthenticationStateProvider.SignIn();
+            var userId = await AuthenticationStateProvider.SignIn();
 
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(StorageNames.Bearer, jsonWebToken);
             signInSuccess = true;
+
+            await ProfilePictureProvider?.ClearCachedImage();
+            await ProfilePictureProvider?.LoadProfilePicture(userId: userId);
             return;
         }
         signInFailure = true;

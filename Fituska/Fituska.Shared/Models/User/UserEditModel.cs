@@ -16,9 +16,6 @@ public record UserEditModel : UserModelBase
     [MaxLength(37, ErrorMessage = "Discord uživatelské jméno nesmí být delší než 37 znaků.")]
     public string? DiscordUsername { get; set; }
 
-    public string? PhotoFileName { get; set; }
-    public byte[]? Photo { get; set; }
-
     private class VutbrEmailValidator : ValidationAttribute
     {
         protected override ValidationResult IsValid(object? value, ValidationContext context)
