@@ -13,7 +13,7 @@ public class ProfilePictureProvider
     private readonly HttpClient _http;
     private readonly Base64ImageService _base64ImageService;
 
-    public string ImageSource { get; set; } = _defaultPicture;
+    public string ImageSource { get; private set; } = _defaultPicture;
 
     public ProfilePictureProvider(
         Task<AuthenticationState> authenticationStateTask,

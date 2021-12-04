@@ -16,10 +16,41 @@ else
         <h2>@question.Title</h2>
         <h4>@question.Text</h4>
     </div>
-    <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.</p>
-    <p> 
+    <p class="text-muted"> 
         @UserSawString()
     </p>
+    <p class="text-muted">
+        Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.
+    
+        <AuthorizeView>
+            <Authorized>
+                @if (context.User.Identity.Name == question.User.UserName)
+                {
+                    @if (!confirmDelete)
+                    {
+                        <button class="btn btn-sm btn-outline-danger m-2" @onclick="ToggleDeleteConfirm">
+                            <span class="oi oi-x me-1" aria-hidden="true"></span> Smazat otázku
+                        </button> 
+                    }
+                    else
+                    {
+                        <div class="card mt-4 mb-3">
+                            <div class="card-header">
+                                <h4><strong>Opravdu si přejete smazat vaši otázku?</strong></h4>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-danger" @onclick="Delete">Ano</button>
+                                <button class="btn btn-secondary" @onclick="ToggleDeleteConfirm">Ne</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </Authorized>
+        </AuthorizeView>
+    </p>
+
+    <FileListBox Files="question.Files" FileGroupAuthorName="@question.User.UserName" ParentId="question.Id" />
+
     @if (!confirmDelete)
     {
         <ReplyBox OnSubmit="AddAnswer" />
@@ -28,29 +59,7 @@ else
             <p class="text-danger mt-3">Nelze vložit více než jednu odpověď uživatelem <em>@user?.UserName</em>.</p>
         }
     }
-    <AuthorizeView>
-        <Authorized>
-            @if (context.User.Identity.Name == question.User.UserName)
-            {
-                @if (!confirmDelete)
-                {
-                    <button class="btn btn-sm btn-outline-danger m-2" @onclick="ToggleDeleteConfirm">Smazat otázku</button> 
-                }
-                else
-                {
-                    <div class="card mt-4 mb-3">
-                        <div class="card-header">
-                            <h4><strong>Opravdu si přejete smazat vaši otázku?</strong></h4>
-                        </div>
-                        <div class="card-body">
-                            <button class="btn btn-danger" @onclick="Delete">Ano</button>
-                            <button class="btn btn-secondary" @onclick="ToggleDeleteConfirm">Ne</button>
-                        </div>
-                    </div>
-                }
-            }
-        </Authorized>
-    </AuthorizeView>
+
     <hr />
     <h5 class="mb-3">@AnswersCount</h5>
     @foreach (var answer in question.Answers.OrderBy(a => a.Votes.Sum(v => (int)v.Vote)).ThenBy(a => a.CreationTime).Reverse())
@@ -84,10 +93,10 @@ else
         userId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
         question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
         UserSawQuestionModel userSawThis = new UserSawQuestionModel
-            {
-                QuestionId = question.Id,
-                UserId = userId
-            };
+        {
+            QuestionId = question.Id,
+            UserId = userId
+        };
 
         var response = await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
         userSawQuestion = await Http.GetFromJsonAsync<List<UserSawQuestionModel>>(ApiEndpoints.UserSawQuestionQuestionIdUrl(question.Id));

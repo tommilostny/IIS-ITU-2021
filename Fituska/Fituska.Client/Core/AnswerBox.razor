@@ -16,6 +16,7 @@
                     <p class="card-text">
                         @Answer.Text
                     </p>
+                    <ReplyBox OnSubmit="AddComment" />
 
                     <AuthorizeView>
                         <Authorized>
@@ -25,8 +26,6 @@
                             }
                         </Authorized>
                     </AuthorizeView>
-
-                    <ReplyBox OnSubmit="AddComment" />
                 </div>
                 <div class="col-3 col-sm-2 col-md-1">
                      <Voting Votes="Answer.Votes" OnVoteChange="UpdateVote" AnswerId="Answer.Id" /> 

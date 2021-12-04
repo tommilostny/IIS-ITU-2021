@@ -1,4 +1,5 @@
 ﻿@using Fituska.Shared.Models.Category
+@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.Question
 @using Fituska.Shared.Models.User
 @inject HttpClient Http
@@ -56,6 +57,9 @@
         <div class="card-body add-container">
             <input type="text" @bind="newQuestionTitle" class="form-control mb-2" placeholder="Titulek"></input>
             <textarea @bind="newQuestionText" class="form-control mb-2" placeholder="Text"></textarea>
+
+            <FileLoader TFileModel="FileQuestionModel" OnChange="GetLoadedFiles" />
+
             <button class="btn btn-primary" @onclick="AddQuestion">
                 Odeslat
             </button>
@@ -120,6 +124,8 @@
     string newQuestionTitle = string.Empty;
     string newQuestionText = string.Empty;
 
+    IEnumerable<FileQuestionModel> filesToUpload = new List<FileQuestionModel>();
+
     void ToggleShowAddForm() => showAddForm = !showAddForm;
 
     async Task AddQuestion()
@@ -128,27 +134,36 @@
         {
             return;
         }
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
         var model = new QuestionNewModel 
-        { Title = newQuestionTitle,
+        {
+            Title = newQuestionTitle,
             Text = newQuestionText,
             CategoryId = Category.Id, 
-            UserId= new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
         };
-
 
         var response = await Http.PostAsJsonAsync<QuestionNewModel>(ApiEndpoints.QuestionUrl, model);
         if (response.IsSuccessStatusCode)
         {
-            QuestionListModel detailModel = await response.Content.ReadFromJsonAsync<QuestionListModel>();
-            Category.Questions.Add(detailModel);
+            var questionFromServer = await response.Content.ReadFromJsonAsync<QuestionListModel>();
 
+            foreach (var file in filesToUpload)
+            {
+                file.QuestionId = questionFromServer.Id;
+                await Http.PostAsJsonAsync<FileQuestionModel>(ApiEndpoints.QuestionFileUrl, file);
+            }
+            Category.Questions.Add(questionFromServer);
             showAddForm = false;
             newQuestionText = string.Empty;
             newQuestionTitle = string.Empty;
         }
 
         SortQuestionsByDate();
+    }
+
+    void GetLoadedFiles(IEnumerable<FileQuestionModel> files)
+    {
+        filesToUpload = files;
     }
 
     void SortQuestionsByDate() => Category.Questions = Category.Questions.OrderBy(q => q.CreationTime).Reverse().ToList();

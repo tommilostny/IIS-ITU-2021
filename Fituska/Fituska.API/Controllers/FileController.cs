@@ -36,12 +36,12 @@ public class FileController : ControllerBase
     public ActionResult<FileModelBase> GetById(Guid id)
     {
         var entity = repository.GetByID(id);
-        var detailModel = mapper.Map<FileModelBase>(entity);
-        if(detailModel != null)
+        var fileModel = mapper.Map<FileModelBase>(entity);
+        if(fileModel is null)
         {
             return BadRequest();
         }
-        return Ok(detailModel);
+        return Ok(fileModel);
     }
 
     [HttpDelete("{id}")]
@@ -53,23 +53,9 @@ public class FileController : ControllerBase
     }
 
     [Route("answer")]
-    [HttpPut]
-    [OpenApiOperation("File" + nameof(UpdateAnswerFile))]
-    public ActionResult UpdateAnswerFile(FileAnswerModel model)
-    {
-        var entity = mapper.Map<FileEntity>(model);
-        entity = repository.Update(entity);
-        if (entity == null)
-        {
-            return BadRequest();
-        }
-        return Ok();
-    }
-
-    [Route("answer")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertAnswerFile))]
-    public ActionResult<FileAnswerModel> InsertAnswerFile(FileAnswerModel model)
+    public ActionResult<FileListModel> InsertAnswerFile(FileAnswerModel model)
     {
         var entity = mapper.Map<FileEntity>(model);
         entity = repository.Insert(entity);
@@ -77,28 +63,14 @@ public class FileController : ControllerBase
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<FileAnswerModel>(entity);
-        return Ok(detailModel);
-    }
-
-    [Route("comment")]
-    [HttpPut]
-    [OpenApiOperation("File" + nameof(UpdateCommentFile))]
-    public ActionResult UpdateCommentFile(FileCommentModel model)
-    {
-        var entity = mapper.Map<FileEntity>(model);
-        entity = repository.Update(entity);
-        if (entity == null)
-        {
-            return BadRequest();
-        }
-        return Ok();
+        var listModel = mapper.Map<FileListModel>(entity);
+        return Ok(listModel);
     }
 
     [Route("comment")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertCommentFile))]
-    public ActionResult<FileCommentModel> InsertCommentFile(FileCommentModel model)
+    public ActionResult<FileListModel> InsertCommentFile(FileCommentModel model)
     {
         var entity = mapper.Map<FileEntity>(model);
         entity = repository.Insert(entity);
@@ -106,28 +78,14 @@ public class FileController : ControllerBase
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<FileCommentModel>(entity);
-        return Ok(detailModel);
-    }
-
-    [Route("question")]
-    [HttpPut]
-    [OpenApiOperation("File" + nameof(UpdateQuestionFile))]
-    public ActionResult UpdateQuestionFile(FileQuestionModel model)
-    {
-        var entity = mapper.Map<FileEntity>(model);
-        entity = repository.Update(entity);
-        if (entity == null)
-        {
-            return BadRequest();
-        }
-        return Ok();
+        var listModel = mapper.Map<FileListModel>(entity);
+        return Ok(listModel);
     }
 
     [Route("question")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertQuestionFile))]
-    public ActionResult<FileQuestionModel> InsertQuestionFile(FileQuestionModel model)
+    public ActionResult<FileListModel> InsertQuestionFile(FileQuestionModel model)
     {
         var entity = mapper.Map<FileEntity>(model);
         entity = repository.Insert(entity);
@@ -135,8 +93,8 @@ public class FileController : ControllerBase
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<FileQuestionModel>(entity);
-        return Ok(detailModel);
+        var listModel = mapper.Map<FileListModel>(entity);
+        return Ok(listModel);
     }
 
     [Route("user")]

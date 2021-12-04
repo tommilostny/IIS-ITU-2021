@@ -1,4 +1,5 @@
 ﻿using Fituska.Shared.Models.Answer;
+using Fituska.Shared.Models.File;
 using Fituska.Shared.Models.User;
 
 namespace Fituska.Shared.Models.Question;
@@ -11,4 +12,5 @@ public record QuestionDetailModel : ModelBase
     public UserListModel User { get; set; }
     public List<AnswerDetailModel> Answers { get; set; } = new();
     public List<UserSawQuestionModel> UserSawQuestions { get; set; } = new();
+    public List<FileListModel> Files { get; set; } = new();
 }

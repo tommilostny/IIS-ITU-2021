@@ -10,7 +10,7 @@
 @code
 {
     [Parameter]
-    public Guid ParentId { get; set; }
+    public Guid ParentId { get; set; } = Guid.Empty;
 
     [Parameter]
     public EventCallback<IEnumerable<TFileModel>> OnChange { get; set; }
