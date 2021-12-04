@@ -11,11 +11,17 @@ public class QuestionRepository : IRepository<QuestionEntity>, ISearchableReposi
 
     public void Delete(Guid entityID)
     {
-        QuestionEntity? question = database.Questions.Find(entityID);
+        QuestionEntity? question = database.Questions.FirstOrDefault(question => question.Id == entityID);
         if (question != null)
         {
             database.Questions.Remove(question);
-            database.SaveChanges();
+            try
+            {
+                database.SaveChanges();
+            }catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 

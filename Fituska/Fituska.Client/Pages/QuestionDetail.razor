@@ -1,4 +1,4 @@
-﻿@page "/question/{Id:guid}"
+@page "/question/{Id:guid}"
 @using Fituska.Shared.Models.Answer
 @using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.Question
@@ -17,8 +17,8 @@ else
         <h2>@question.Title</h2>
         <h4>@question.Text</h4>
     </div>
-    <p class="text-muted"> 
-        @UserSawString()
+    <p class="text-muted">
+      @UserSawString()
     </p>
     <p class="text-muted">
         Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.
@@ -118,7 +118,7 @@ else
         {
             Text = args.Item1,
             QuestionId = question.Id,
-            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+            UserId = userId
         };
         var response = await Http.PostAsJsonAsync<AnswerNewModel>(ApiEndpoints.AnswerUrl, answer);
 

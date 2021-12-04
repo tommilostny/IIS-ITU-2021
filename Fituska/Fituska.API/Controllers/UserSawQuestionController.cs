@@ -40,7 +40,7 @@ public class UserSawQuestionController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("{questionid}")]
+    [HttpGet("{id}")]
     [OpenApiOperation("User saw question" + nameof(GetById))]
     public ActionResult<UserSawQuestionModel> GetById(Guid id)
     {

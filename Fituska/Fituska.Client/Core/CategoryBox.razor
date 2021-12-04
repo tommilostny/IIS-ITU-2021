@@ -1,4 +1,4 @@
-﻿@using Fituska.Shared.Models.Category
+@using Fituska.Shared.Models.Category
 @using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.Question
 @using Fituska.Shared.Models.User
@@ -139,7 +139,7 @@
             Title = newQuestionTitle,
             Text = newQuestionText,
             CategoryId = Category.Id, 
-            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+            UserId= await GetUserInfo.GetUserId(AuthenticationState),
         };
 
         var response = await Http.PostAsJsonAsync<QuestionNewModel>(ApiEndpoints.QuestionUrl, model);

@@ -1,4 +1,4 @@
-﻿@using Fituska.Shared.Models.Answer
+@using Fituska.Shared.Models.Answer
 @using Fituska.Shared.Models.Comment
 @using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.User
@@ -66,9 +66,8 @@
 
     async Task AddComment(string text)
     {
-        var comment = new CommentNewModel
-        {
-            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
+        var comment = new CommentNewModel {
+            UserId = await GetUserInfo.GetUserId(AuthenticationState),
             Text = text,
             AnswerId = Answer.Id
         };
