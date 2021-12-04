@@ -107,7 +107,7 @@ public class FileController : ControllerBase
         var userEntity = await userManager.FindByIdAsync(id.ToString());
         if (userEntity is null)
         {
-            return BadRequest();
+            return Ok(null);
         }
         return Ok(mapper.Map<FileUserModel>(userEntity));
     }
