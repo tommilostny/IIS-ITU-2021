@@ -16,7 +16,7 @@ else
         <h2>@question.Title</h2>
         <h4>@question.Text</h4>
     </div>
-    <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.</p>
+    <p class="text-muted">Vytvořeno uživatelem <a href="/user/@question?.User?.UserName">@question.User?.UserName</a>, @question.CreationTime.</p>
     <p> 
         @UserSawString()
     </p>
@@ -81,15 +81,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        userId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+        userId = await GetUserInfo.GetUserId(AuthenticationState);
         question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
         UserSawQuestionModel userSawThis = new UserSawQuestionModel
             {
                 QuestionId = question.Id,
                 UserId = userId
             };
-
         var response = await Http.PostAsJsonAsync(ApiEndpoints.UserSawQuestionUrl, userSawThis);
+        Console.WriteLine(response.Content);
         userSawQuestion = await Http.GetFromJsonAsync<List<UserSawQuestionModel>>(ApiEndpoints.UserSawQuestionQuestionIdUrl(question.Id));
         StateHasChanged();
         await base.OnInitializedAsync();
@@ -101,7 +101,7 @@ else
         {
             Text = text,
             QuestionId = question.Id,
-            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+            UserId = userId
         };
         var response = await Http.PostAsJsonAsync<AnswerNewModel>(ApiEndpoints.AnswerUrl, answer);
 

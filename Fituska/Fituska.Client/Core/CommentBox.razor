@@ -24,11 +24,12 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
+    private Guid userId { get; set; }
     async Task AddComment(string text)
     {
         var comment = new CommentNewModel
             {
-                UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
+                UserId = userId,
                 ParentCommentId = Comment.Id,
                 Text = text
             };
@@ -43,6 +44,7 @@
     protected override async Task OnInitializedAsync()
     {
         Comment = await Http.GetFromJsonAsync<CommentDetailModel>(ApiEndpoints.CommentIdUrl(Comment.Id));
+        userId = await GetUserInfo.GetUserId(AuthenticationState);
         StateHasChanged();
         await base.OnInitializedAsync();
     }
