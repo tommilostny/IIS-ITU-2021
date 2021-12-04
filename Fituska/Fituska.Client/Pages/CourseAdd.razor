@@ -109,7 +109,7 @@ else
     {
         newCourse = new CourseNewModel
         {
-            LecturerId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+            LecturerId = await GetUserInfo.GetUserId(AuthenticationState)
         };
         await base.OnInitializedAsync();
     }

@@ -28,21 +28,21 @@ public class VoteRepository : IRepository<VoteEntity>
         {
             database.Votes.Add(entity);
             database.SaveChanges();
-            return entity;
+            return voteFromDb;
         }
         else
         {
             if(entity.Vote == voteFromDb.Vote)
             {
-                Delete(entity.Id);
-                return entity;
+                voteFromDb.Vote = Shared.Enums.VoteValue.Neutral;
+                database.SaveChanges();
+                return voteFromDb;
             }
             else
             {
                 voteFromDb.Vote = entity.Vote;
                 database.SaveChanges();
-                return entity;
-
+                return voteFromDb;
             }
         }
     }

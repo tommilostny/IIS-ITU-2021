@@ -128,12 +128,11 @@
         {
             return;
         }
-        var user = new UserListModel { UserName = (await AuthenticationState).User.Identity.Name, Photo = null };
         var model = new QuestionNewModel 
         { Title = newQuestionTitle,
             Text = newQuestionText,
             CategoryId = Category.Id, 
-            UserId= new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
+            UserId= await GetUserInfo.GetUserId(AuthenticationState),
         };
 
 

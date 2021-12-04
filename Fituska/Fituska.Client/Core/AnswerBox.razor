@@ -61,7 +61,7 @@
     async Task AddComment(string text)
     {
         var comment = new CommentNewModel {
-            UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
+            UserId = await GetUserInfo.GetUserId(AuthenticationState),
             Text = text,
             AnswerId = Answer.Id
         };
