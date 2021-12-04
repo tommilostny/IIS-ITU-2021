@@ -53,7 +53,7 @@ public class QuestionRepository : IRepository<QuestionEntity>, ISearchableReposi
             .Include(question => question.Answers)
             .Include(question => question.User)
             .Include(question => question.Category)
-            .Include(answer => answer.Files)
+            .Include(question => question.Files)
             .FirstOrDefault(question => question.Id == entityID);
         return question;
     }

@@ -25,8 +25,7 @@ public static class ApiEndpoints
     public const string FileUrl = $"{ServerBaseUrl}api/file";
     public const string UserFileUrl = $"{FileUrl}/user";
     public const string QuestionFileUrl = $"{FileUrl}/question";
-    public const string AnswerFileUrl = $"{AnswerUrl}/question";
-    public const string CommentFileUrl = $"{CommentUrl}/question";
+    public const string AnswerFileUrl = $"{FileUrl}/answer";
 
     public static string UserNameUrl(string userName) => $"{UserBaseUrl}/{userName}";
 

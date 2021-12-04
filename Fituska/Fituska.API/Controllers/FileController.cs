@@ -67,21 +67,6 @@ public class FileController : ControllerBase
         return Ok(listModel);
     }
 
-    [Route("comment")]
-    [HttpPost]
-    [OpenApiOperation("File" + nameof(InsertCommentFile))]
-    public ActionResult<FileListModel> InsertCommentFile(FileCommentModel model)
-    {
-        var entity = mapper.Map<FileEntity>(model);
-        entity = repository.Insert(entity);
-        if (entity == null)
-        {
-            return BadRequest();
-        }
-        var listModel = mapper.Map<FileListModel>(entity);
-        return Ok(listModel);
-    }
-
     [Route("question")]
     [HttpPost]
     [OpenApiOperation("File" + nameof(InsertQuestionFile))]

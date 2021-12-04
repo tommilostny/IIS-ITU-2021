@@ -1,11 +1,12 @@
 ﻿@using Fituska.Shared.Models.Answer
 @using Fituska.Shared.Models.Comment
+@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.User
 @using System.Drawing;
 @inject HttpClient Http
 
 <div class="card answer-box mb-3" style="background-color: rgba(@backColor.R,@backColor.G,@backColor.B,@backColor.A)">
-     <div class="card-body">
+     <div class="card-body mb-0 pb-0">
         @if (!editingMode)
         {
             <div class="row">
@@ -16,6 +17,12 @@
                     <p class="card-text">
                         @Answer.Text
                     </p>
+
+                    @if (Answer.User is not null)
+                    {
+                        <hr />
+                        <FileListBox FileGroupAuthorName="@Answer.User.UserName" Files="Answer.Files" ParentId="Answer.Id" TFileModel="FileAnswerModel" />
+                    }
                     <ReplyBox OnSubmit="AddComment" />
 
                     <AuthorizeView>
@@ -59,7 +66,8 @@
 
     async Task AddComment(string text)
     {
-        var comment = new CommentNewModel {
+        var comment = new CommentNewModel
+        {
             UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value),
             Text = text,
             AnswerId = Answer.Id

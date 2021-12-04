@@ -23,17 +23,20 @@
     {
         loading = true;
 
-        switch (fileModel) //Set File parent Id based on meant parent type.
+        if (ParentId != Guid.Empty)
         {
-            case FileAnswerModel fileAnswerModel:
-                fileAnswerModel.AnswerId = ParentId;
-                break;
-            case FileCommentModel fileCommentModel:
-                fileCommentModel.CommentId = ParentId;
-                break;
-            case FileQuestionModel fileQuestionModel:
-                fileQuestionModel.QuestionId = ParentId;
-                break;
+            switch (fileModel) //Set File parent Id based on meant parent type.
+            {
+                case FileAnswerModel fileAnswerModel:
+                    fileAnswerModel.AnswerId = ParentId;
+                    break;
+                case FileCommentModel fileCommentModel:
+                    fileCommentModel.CommentId = ParentId;
+                    break;
+                case FileQuestionModel fileQuestionModel:
+                    fileQuestionModel.QuestionId = ParentId;
+                    break;
+            }
         }
         //Read file and send byte[] content via OnChange, sending to endpoint by component parent.
         if (fileModel.ImageOnly())

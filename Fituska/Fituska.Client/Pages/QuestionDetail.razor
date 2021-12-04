@@ -1,5 +1,6 @@
 ﻿@page "/question/{Id:guid}"
 @using Fituska.Shared.Models.Answer
+@using Fituska.Shared.Models.File
 @using Fituska.Shared.Models.Question
 @using Fituska.Shared.Models.User
 @inherits LastPageSavableComponentBase
@@ -49,11 +50,11 @@ else
         </AuthorizeView>
     </p>
 
-    <FileListBox Files="question.Files" FileGroupAuthorName="@question.User.UserName" ParentId="question.Id" />
+    <FileListBox Files="question.Files" FileGroupAuthorName="@question.User.UserName" ParentId="question.Id" TFileModel="FileQuestionModel" />
 
     @if (!confirmDelete)
     {
-        <ReplyBox OnSubmit="AddAnswer" />
+        <ReplyBox OnSubmitWithFiles="AddAnswer" />
         @if (!answerAddSuccess)
         {
             <p class="text-danger mt-3">Nelze vložit více než jednu odpověď uživatelem <em>@user?.UserName</em>.</p>
@@ -111,11 +112,11 @@ else
         await base.OnInitializedAsync();
     }
 
-    async Task AddAnswer(string text)
+    async Task AddAnswer((string, List<FileAnswerModel>) args)
     {
         var answer = new AnswerNewModel
         {
-            Text = text,
+            Text = args.Item1,
             QuestionId = question.Id,
             UserId = new Guid((await AuthenticationState).User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)
         };
@@ -124,6 +125,16 @@ else
         if (answerAddSuccess = response.IsSuccessStatusCode)
         {
             AnswerDetailModel model = await response.Content.ReadFromJsonAsync<AnswerDetailModel>();
+
+            foreach (var file in args.Item2)
+            {
+                file.AnswerId = model.Id;
+                response = await Http.PostAsJsonAsync<FileAnswerModel>(ApiEndpoints.AnswerFileUrl, file);
+                if (response.IsSuccessStatusCode)
+                {
+                    model.Files.Add(await response.Content.ReadFromJsonAsync<FileListModel>());
+                }
+            }
             question.Answers.Add(model);
         }
     }

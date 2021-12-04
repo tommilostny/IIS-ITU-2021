@@ -1,7 +1,8 @@
 ﻿@using Fituska.Shared.Models.Comment
 @using Fituska.Shared.Models.User
 @inject HttpClient Http
-<div class="card m-2 ms-4">
+
+<div class="card m-2 ms-4 mt-0">
     <div class="card-body">
         <h6 class="card-subtitle mb-2 text-muted"><a href="user/@Comment?.User?.UserName">@Comment?.User?.UserName</a> (@Comment?.CreationTime)</h6>
         <p class="card-text">@Comment?.Text</p>

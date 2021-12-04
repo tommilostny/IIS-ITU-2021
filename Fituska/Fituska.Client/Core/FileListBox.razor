@@ -1,4 +1,5 @@
 ﻿@using Fituska.Shared.Models.File
+@typeparam TFileModel where TFileModel : FileModelBase, new()
 @implements IAsyncDisposable
 @inject HttpClient Http
 @inject IJSRuntime JS
@@ -31,22 +32,22 @@
             </li>
         }
     </ul>
-
-    <AuthorizeView>
-        <Authorized>
-            @if (context.User.Identity.Name == FileGroupAuthorName)
-            {
-                <h6>Přidat další soubory:</h6>
-                <FileLoader TFileModel="FileQuestionModel" ParentId="ParentId" OnChange="AddFiles" />
-                <br />
-                <button class="btn btn-sm btn-primary mt-2" @onclick="UploadFiles" disabled="@(filesToUpload.Count == 0)">
-                    <span class="oi oi-data-transfer-upload me-1" aria-hidden="true"></span> Odeslat
-                </button>
-                <hr />
-            }
-        </Authorized>
-    </AuthorizeView>
+    <hr />
 }
+<AuthorizeView>
+    <Authorized>
+        @if (context.User.Identity.Name == FileGroupAuthorName)
+        {
+            <h6>Přidat soubory:</h6>
+            <FileLoader TFileModel="TFileModel" ParentId="ParentId" OnChange="AddFiles" />
+            <br />
+            <button class="btn btn-sm btn-primary mt-2" @onclick="UploadFiles" disabled="@(filesToUpload.Count == 0)">
+                <span class="oi oi-data-transfer-upload me-1" aria-hidden="true"></span> Odeslat
+            </button>
+            <hr />
+        }
+    </Authorized>
+</AuthorizeView>
 
 @code
 {
@@ -60,7 +61,7 @@
     public Guid ParentId { get; set; }
 
     IJSObjectReference? javascriptModule;
-    List<FileQuestionModel> filesToUpload = new List<FileQuestionModel>();
+    List<TFileModel> filesToUpload = new List<TFileModel>();
 
     async Task DeleteFile(FileListModel file)
     {
@@ -93,16 +94,25 @@
             await javascriptModule.DisposeAsync();
     }
 
-    void AddFiles(IEnumerable<FileQuestionModel> files)
+    void AddFiles(IEnumerable<TFileModel> files)
     {
         filesToUpload = files.ToList();
     }
 
     async Task UploadFiles()
     {
+        string? endpointUrl = filesToUpload.FirstOrDefault() switch
+        {
+            FileQuestionModel _ => ApiEndpoints.QuestionFileUrl,
+            FileAnswerModel _ => ApiEndpoints.AnswerFileUrl,
+            _ => null
+        };
+        if (endpointUrl is null)
+            return;
+
         foreach (var file in filesToUpload)
         {
-            var response = await Http.PostAsJsonAsync<FileQuestionModel>(ApiEndpoints.QuestionFileUrl, file);
+            var response = await Http.PostAsJsonAsync<TFileModel>(endpointUrl, file);
             if (response.IsSuccessStatusCode)
             {
                 Files.Add(await response.Content.ReadFromJsonAsync<FileListModel>());
