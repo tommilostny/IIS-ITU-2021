@@ -32,7 +32,15 @@ public class CourseAttendanceRepository : IRepository<CourseAttendanceEntity>
         return database.CourseAttendances
             .Include(ca => ca.Course)
             .Include(ca => ca.User)
-            .FirstOrDefault(usa => usa.Id == entityID);
+            .FirstOrDefault(ca => ca.Id == entityID);
+    }
+
+    public List<CourseAttendanceEntity> GetByUserId(Guid userId)
+    {
+        return database.CourseAttendances
+            .Include(ca => ca.Course)
+            .Where(ca => ca.UserId == userId)
+            .ToList();
     }
 
     public CourseAttendanceEntity Insert(CourseAttendanceEntity entity)
