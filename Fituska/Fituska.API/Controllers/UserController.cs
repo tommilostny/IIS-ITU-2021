@@ -1,4 +1,5 @@
 ﻿using Fituska.Shared.Models.User;
+using Fituska.Shared.Static;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -96,7 +97,16 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    public IActionResult GetAll() => Ok(mapper.Map<List<UserListModel>>(userManager.Users.ToList()));
+    public async Task<IActionResult> GetAll()
+    {
+        List<UserEntity> users = userManager.Users.ToList();
+        List< UserListModel> usersModels = mapper.Map<List<UserListModel>>(users);
+        for(int i = 0; i < users.Count; i++)
+        {
+            usersModels[i].RoleName = (await userManager.GetRolesAsync(users[i])).FirstOrDefault();
+        }
+        return Ok(usersModels);
+    }
 
     [AllowAnonymous]
     [Route("{username}")]
@@ -156,5 +166,22 @@ public class UserController : ControllerBase
             }
         }
         return Unauthorized(user);
+    }
+
+    [HttpPut]
+    [Route("rolechange")]
+    public async Task<IActionResult> UpdateRole([FromBody] UserListModel user)
+    {
+        var entity = await userManager.FindByIdAsync(user.Id.ToString());
+        var rolename = (await userManager.GetRolesAsync(entity)).FirstOrDefault();
+        if (rolename is not null)
+        {
+            await userManager.RemoveFromRoleAsync(entity, rolename);
+        }
+        if (user.RoleName != RoleNames.User)
+        {
+            await userManager.AddToRoleAsync(entity, user.RoleName);
+        }
+        return Ok();
     }
 }
