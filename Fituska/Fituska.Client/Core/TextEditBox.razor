@@ -1,4 +1,5 @@
 ﻿<textarea @bind="Text" class="form-control mb-2 mt-2"></textarea>
+
 @if(showError)
 {
     <br />
@@ -16,7 +17,6 @@
     [Parameter]
     public string Text { get; set; }
 
-    bool showTextBox = false;
     bool showError = false;
 
     async void CancelClick() => await OnSubmit.InvokeAsync(null);
@@ -26,8 +26,6 @@
         if (Text.Length > 0)
         {
             showError = false;
-            showTextBox = false;
-
             await OnSubmit.InvokeAsync(Text);
             return;
         }

@@ -3,34 +3,45 @@
 @inject HttpClient Http
 
 <div class="card m-2 ms-4 mt-0">
-    <div class="card-body">
-        @if (editingMode)
+    <div class="card-body">   
+        @if (Comment is not null)
         {
-            <TextEditBox OnSubmit="EditComment" Text="@Comment?.Text" /> 
-        }
-        else
-        {
-            <h6 class="card-subtitle mb-2 text-muted">
-                <a href="user/@Comment?.User?.UserName">@Comment?.User?.UserName</a> (@Comment?.CreationTime)
-                @if (Comment?.ModifiedTime is not null)
+            @if (Comment.Text != string.Empty)
+            {
+                @if (editingMode)
                 {
-                    <br />
-                    <small>Modifikováno: @Comment?.ModifiedTime</small>
+                    <TextEditBox OnSubmit="EditComment" Text="@Comment.Text" />
                 }
-            </h6>
+                else
+                {
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <a href="user/@Comment.User?.UserName">@Comment.User?.UserName</a> (@Comment.CreationTime)
+                        @if (Comment.ModifiedTime is not null)
+                        {
+                            <br />
+                            <small>Modifikováno: @Comment.ModifiedTime</small>
+                        }
+                    </h6>
             
-            <p class="card-text">@Comment?.Text</p>
+                    <p class="card-text">@Comment.Text</p>
 
-            <ReplyBox OnSubmit="AddComment" />
+                    <ReplyBox OnSubmit="AddComment" />
 
-            <AuthorizeView>
-                <Authorized>
-                    @if (context.User.Identity.Name == Comment?.User?.UserName)
-                    {
-                        <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ToggleEditingMode">Upravit</button>
-                    }
-                </Authorized>
-            </AuthorizeView>
+                    <AuthorizeView>
+                        <Authorized>
+                            @if (context.User.Identity.Name == Comment.User?.UserName)
+                            {
+                                <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ToggleEditingMode">Upravit</button>
+                                <button class="btn btn-sm btn-outline-danger ms-2" @onclick="MarkDeleted">Smazat</button>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                }
+            }
+            else
+            {
+                <p class="card-text">[smazáno @Comment.ModifiedTime]</p>
+            }
         }
     </div>
     @if (Comment.SubComments is not null && Comment.SubComments.Count > 0)
@@ -61,7 +72,7 @@
             ParentCommentId = Comment.Id,
             Text = text
         };
-        var response = await Http.PostAsJsonAsync<CommentNewModel>(ApiEndpoints.CommentUrl,comment);
+        var response = await Http.PostAsJsonAsync<CommentNewModel>(ApiEndpoints.CommentUrl, comment);
         if (response.IsSuccessStatusCode)
         {       
             CommentDetailModel detailModel = await response.Content.ReadFromJsonAsync<CommentDetailModel>();
@@ -88,6 +99,17 @@
     }
 
     void ToggleEditingMode() => editingMode = !editingMode;
+
+    async Task MarkDeleted()
+    {
+        var response = await Http.DeleteAsync(ApiEndpoints.CommentIdUrl(Comment.Id));
+        if (response.IsSuccessStatusCode)
+        {
+            var subCommentsTmp = Comment.SubComments;
+            Comment = await response.Content.ReadFromJsonAsync<CommentDetailModel>();
+            Comment.SubComments = subCommentsTmp;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

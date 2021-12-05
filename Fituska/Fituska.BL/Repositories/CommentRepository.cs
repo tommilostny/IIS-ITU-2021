@@ -13,15 +13,12 @@ public class CommentRepository : IRepository<CommentEntity>
 
     public void Delete(Guid entityID)
     {
-        var comment = database.Comments
-            .Include(discussion => discussion.Files)
-            .FirstOrDefault(discussion => discussion.Id == entityID);
+        var comment = database.Comments.FirstOrDefault(discussion => discussion.Id == entityID);
 
         if (comment is not null)
         {
-            comment.Text = "[deleted]";
-            comment.UserId = Guid.Empty;
-            Update(comment);
+            comment.Text = string.Empty;
+            comment.ModifiedTime = DateTime.UtcNow;
             database.SaveChanges();
         }
     }
@@ -30,7 +27,8 @@ public class CommentRepository : IRepository<CommentEntity>
     {
         database.Comments.Add(entity);
         database.SaveChanges();
-        return entity;
+        
+        return database.Comments.Include(comment => comment.User).FirstOrDefault(comment => comment.Id == entity.Id);
     }
 
     public CommentEntity Update(CommentEntity entity)
@@ -43,10 +41,7 @@ public class CommentRepository : IRepository<CommentEntity>
 
     public IEnumerable<CommentEntity> GetAll()
     {
-        var comments = database.Comments
-            .Include(comment => comment.Files)
-            .Include(comment => comment.SubComments)
-            .ToList();
+        var comments = database.Comments.Include(comment => comment.SubComments).ToList();
         return comments;
     }
 
@@ -54,7 +49,6 @@ public class CommentRepository : IRepository<CommentEntity>
     {
         var comment = database.Comments
             .Include(c => c.User)
-            .Include(c => c.Files)
             .Include(c => c.SubComments)
             .FirstOrDefault(c => c.Id == entityID);
 

@@ -43,10 +43,11 @@ public class CommentController : ControllerBase
 
     [HttpDelete("{id}")]
     [OpenApiOperation("Comment" + nameof(Delete))]
-    public ActionResult Delete(Guid id)
+    public ActionResult<CommentDetailModel> Delete(Guid id)
     {
         repository.Delete(id);
-        return Ok();
+        var result = mapper.Map<CommentDetailModel>(repository.GetByID(id));
+        return Ok(result);
     }
 
     [HttpPut]
