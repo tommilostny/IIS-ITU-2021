@@ -50,7 +50,10 @@ public class AnswerController : ControllerBase
     public ActionResult<AnswerDetailModel> Update(AnswerNewModel model)
     {
         AnswerEntity entity = mapper.Map<AnswerEntity>(model);
+
+        entity.ModifiedTime = DateTime.UtcNow;
         entity = repository.Update(entity);
+        
         if(entity == null)
         {
             return BadRequest();

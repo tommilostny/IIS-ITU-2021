@@ -21,29 +21,26 @@ public class VoteRepository : IRepository<VoteEntity>
 
     public VoteEntity Insert(VoteEntity entity)
     {
-        VoteEntity? voteFromDb = database.Votes
-            .Where(vote => vote.UserId == entity.UserId)
-            .FirstOrDefault(vote => vote.AnswerId == entity.AnswerId);
+        VoteEntity? voteFromDb = database.Votes.FirstOrDefault(vote => vote.AnswerId == entity.AnswerId && vote.UserId == entity.UserId);
+
         if (voteFromDb is null)
         {
             database.Votes.Add(entity);
             database.SaveChanges();
-            return voteFromDb;
+            return entity;
         }
         else
         {
             if(entity.Vote == voteFromDb.Vote)
             {
                 voteFromDb.Vote = Shared.Enums.VoteValue.Neutral;
-                database.SaveChanges();
-                return voteFromDb;
             }
             else
             {
                 voteFromDb.Vote = entity.Vote;
-                database.SaveChanges();
-                return voteFromDb;
             }
+            database.SaveChanges();
+            return voteFromDb;
         }
     }
 

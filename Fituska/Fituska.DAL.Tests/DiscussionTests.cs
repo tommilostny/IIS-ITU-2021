@@ -51,15 +51,7 @@ public class DiscussionTests : IAsyncLifetime
             User = new UserEntity()
             {
                 FirstName = "Author",
-            },
-            Files = new ValueCollection<FileEntity>()
-            {
-                new FileEntity()
-                {
-                    Name = "Graph",
-                    Content = new byte[]{1,2,3,4,5,6,7,8,9},
-                }
-            },
+            }
         };
 
         dbContext.Comments.Add(newDiscussion);
@@ -68,7 +60,6 @@ public class DiscussionTests : IAsyncLifetime
         //Assert
         using var testDbContext = dbContextFactory.Create();
         var retrievedDiscussion = testDbContext.Comments
-            .Include(file => file.Files)
             .Include(file => file.User)
             .Include(file => file.Answer)
             .FirstOrDefault(discussion => discussion.Id == newDiscussion.Id);

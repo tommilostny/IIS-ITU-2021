@@ -1,0 +1,34 @@
+﻿<textarea @bind="Text" class="form-control mb-2 mt-2"></textarea>
+
+@if(showError)
+{
+    <br />
+    <p class="text-danger">Zadejte text</p>
+}
+
+<button class="btn btn-sm btn-secondary" @onclick="SendUpdatedText">Odeslat</button>
+<button @onclick="CancelClick" class="btn btn-outline-danger btn-sm">Zrušit</button>
+
+@code
+{
+    [Parameter]
+    public EventCallback<string?> OnSubmit { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    bool showError = false;
+
+    async void CancelClick() => await OnSubmit.InvokeAsync(null);
+
+    async Task SendUpdatedText()
+    {
+        if (Text.Length > 0)
+        {
+            showError = false;
+            await OnSubmit.InvokeAsync(Text);
+            return;
+        }
+        showError = true;
+    }
+}

@@ -29,7 +29,14 @@ public class ProfilePictureProvider
 
     public async Task<ProfilePictureProvider> Inititialize()
     {
-        await LoadProfilePicture();
+        try
+        {
+            await LoadProfilePicture();
+        }
+        catch
+        {
+            ImageSource = _defaultPicture;
+        }
         return this;
     }
 

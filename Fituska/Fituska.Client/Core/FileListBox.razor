@@ -40,10 +40,14 @@
         {
             <h6>Přidat soubory:</h6>
             <FileLoader TFileModel="TFileModel" ParentId="ParentId" OnChange="AddFiles" />
-            <br />
-            <button class="btn btn-sm btn-primary mt-2" @onclick="UploadFiles" disabled="@(filesToUpload.Count == 0)">
-                <span class="oi oi-data-transfer-upload me-1" aria-hidden="true"></span> Odeslat
-            </button>
+
+            @if (filesToUpload.Count > 0)
+            {
+                <br />
+                <button class="btn btn-sm btn-primary mt-2" @onclick="UploadFiles">
+                    <span class="oi oi-data-transfer-upload me-1" aria-hidden="true"></span> Odeslat
+                </button>
+            }
             <hr />
         }
     </Authorized>

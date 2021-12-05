@@ -14,7 +14,6 @@ public class CommentEntity : EntityBase
     public CommentEntity? ParentComment { get; set; }
 
     public ValueCollection<CommentEntity> SubComments { get; set; }
-    public ValueCollection<FileEntity> Files { get; set; } = new();
 
     public override bool Equals(object? obj)
     {
@@ -23,14 +22,6 @@ public class CommentEntity : EntityBase
         if (ParentComment is not null && discussion?.ParentComment is not null)
         {
             if (ParentComment.Equals(discussion?.ParentComment)) return false;
-        }
-        if (Files is not null && discussion.Files is not null)
-        {
-            for (int i = 0; i < Files.Count; i++)
-            {
-                if (Files[i].Id != discussion.Files[i].Id) return false;
-                if ((bool)!(Files[i].Content?.SequenceEqual(discussion.Files[i].Content))) return false;
-            }
         }
         if (Answer is not null && discussion?.Answer is not null)
         {

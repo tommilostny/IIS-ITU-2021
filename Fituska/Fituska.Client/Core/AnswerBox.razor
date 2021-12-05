@@ -7,13 +7,23 @@
 
 <div class="card answer-box mb-3" style="background-color: rgba(@backColor.R,@backColor.G,@backColor.B,@backColor.A)">
      <div class="card-body mb-0 pb-0">
-        @if (!editingMode)
+        @if (editingMode)
+        {
+            <TextEditBox OnSubmit="EditAnswer" Text="@Answer.Text" />
+        }
+        else
         {
             <div class="row">
                 <div class="col">
                     <h6 class="card-subtitle mb-2 text-muted">
                         <a href="user/@Answer.User?.UserName">@Answer.User?.UserName</a> (@Answer.CreationTime)
+                        @if (Answer.ModifiedTime is not null)
+                        {
+                            <br />
+                            <small>Modifikováno: @Answer?.ModifiedTime</small>
+                        }
                     </h6>
+
                     <p class="card-text">
                         @Answer.Text
                     </p>
@@ -23,25 +33,24 @@
                         <hr />
                         <FileListBox FileGroupAuthorName="@Answer.User.UserName" Files="Answer.Files" ParentId="Answer.Id" TFileModel="FileAnswerModel" />
                     }
-                    <ReplyBox OnSubmit="AddComment" />
 
-                    <AuthorizeView>
-                        <Authorized>
-                            @if (context.User.Identity.Name == Answer.User?.UserName)
-                            {
-                                <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleEditingMode">Upravit</button>
-                            }
-                        </Authorized>
-                    </AuthorizeView>
+                    <div class="mb-2">
+                        <ReplyBox OnSubmit="AddComment" />
+
+                        <AuthorizeView>
+                            <Authorized>
+                                @if (context.User.Identity.Name == Answer.User?.UserName)
+                                {
+                                    <button class="btn btn-sm btn-outline-secondary ms-1" @onclick="ToggleEditingMode">Upravit</button>
+                                }
+                            </Authorized>
+                        </AuthorizeView>
+                    </div>
                 </div>
                 <div class="col-3 col-sm-2 col-md-1">
                      <Voting Votes="Answer.Votes" OnVoteChange="UpdateVote" AnswerId="Answer.Id" /> 
                 </div>
             </div>
-        }
-        else
-        {
-            <AnswerEditor Answer="Answer" OnSubmit="LoadUpdatedAnswer" />
         }
     </div>
     @if (Answer.Comments is not null && Answer.Comments.Count > 0)
@@ -94,11 +103,22 @@
 
     void ToggleEditingMode() => editingMode = !editingMode;
 
-    void LoadUpdatedAnswer(AnswerDetailModel? model)
+    async Task EditAnswer(string? updatedText)
     {
-        if (model is not null)
+        if (updatedText is not null)
         {
-            Answer = model;
+            var answerToUpdate = new AnswerNewModel
+            {
+                Id = Answer.Id,
+                Text = updatedText,
+                UserId = Answer.User.Id,
+                QuestionId = Answer.QuestionId
+            };
+            var response = await Http.PutAsJsonAsync<AnswerNewModel>(ApiEndpoints.AnswerUrl, answerToUpdate);
+            if (response.IsSuccessStatusCode)
+            {
+                Answer = await response.Content.ReadFromJsonAsync<AnswerDetailModel>();
+            }
         }
         ToggleEditingMode();
     }

@@ -43,23 +43,29 @@ public class CommentController : ControllerBase
 
     [HttpDelete("{id}")]
     [OpenApiOperation("Comment" + nameof(Delete))]
-    public ActionResult Delete(Guid id)
+    public ActionResult<CommentDetailModel> Delete(Guid id)
     {
         repository.Delete(id);
-        return Ok();
+        var result = mapper.Map<CommentDetailModel>(repository.GetByID(id));
+        return Ok(result);
     }
 
     [HttpPut]
     [OpenApiOperation("Comment" + nameof(Update))]
-    public ActionResult Update(CommentNewModel model)
+    public ActionResult<CommentDetailModel> Update(CommentNewModel model)
     {
-        CommentEntity entity = mapper.Map<CommentEntity>(model);
+        var entity = repository.GetByID(model.Id);
+
+        entity.Text = model.Text;
+        entity.ModifiedTime = DateTime.UtcNow;
+
         entity = repository.Update(entity);
+
         if(entity == null)
         {
             return BadRequest();
         }
-        return Ok();
+        return Ok(mapper.Map<CommentDetailModel>(entity));
     }
 
     [HttpPost]
