@@ -10,6 +10,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  delete-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: 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
+          expire-in: 0 # Setting this to 0 will delete all artifacts
+
   build:
     runs-on: windows-latest
 
