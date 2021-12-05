@@ -4,9 +4,34 @@
 
 <div class="card m-2 ms-4 mt-0">
     <div class="card-body">
-        <h6 class="card-subtitle mb-2 text-muted"><a href="user/@Comment?.User?.UserName">@Comment?.User?.UserName</a> (@Comment?.CreationTime)</h6>
-        <p class="card-text">@Comment?.Text</p>
-        <ReplyBox OnSubmit="AddComment" />
+        @if (editingMode)
+        {
+            <TextEditBox OnSubmit="EditComment" Text="@Comment?.Text" /> 
+        }
+        else
+        {
+            <h6 class="card-subtitle mb-2 text-muted">
+                <a href="user/@Comment?.User?.UserName">@Comment?.User?.UserName</a> (@Comment?.CreationTime)
+                @if (Comment?.ModifiedTime is not null)
+                {
+                    <br />
+                    <small>Modifikováno: @Comment?.ModifiedTime</small>
+                }
+            </h6>
+            
+            <p class="card-text">@Comment?.Text</p>
+
+            <ReplyBox OnSubmit="AddComment" />
+
+            <AuthorizeView>
+                <Authorized>
+                    @if (context.User.Identity.Name == Comment?.User?.UserName)
+                    {
+                        <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="ToggleEditingMode">Upravit</button>
+                    }
+                </Authorized>
+            </AuthorizeView>
+        }
     </div>
     @if (Comment.SubComments is not null && Comment.SubComments.Count > 0)
     {
@@ -25,15 +50,17 @@
     [CascadingParameter]
     protected Task<AuthenticationState> AuthenticationState { get; set; }
 
-    private Guid userId { get; set; }
+    Guid userId;
+    bool editingMode = false;
+
     async Task AddComment(string text)
     {
         var comment = new CommentNewModel
-            {
-                UserId = userId,
-                ParentCommentId = Comment.Id,
-                Text = text
-            };
+        {
+            UserId = userId,
+            ParentCommentId = Comment.Id,
+            Text = text
+        };
         var response = await Http.PostAsJsonAsync<CommentNewModel>(ApiEndpoints.CommentUrl,comment);
         if (response.IsSuccessStatusCode)
         {       
@@ -41,6 +68,26 @@
             Comment.SubComments.Add(detailModel);
         }     
     }
+
+    async Task EditComment(string? updatedText)
+    {
+        if (updatedText is not null)
+        {
+            var updatedComment = new CommentNewModel
+            {
+                Text = updatedText,
+                Id = Comment.Id
+            };
+            var response = await Http.PutAsJsonAsync<CommentNewModel>(ApiEndpoints.CommentUrl, updatedComment);
+            if (response.IsSuccessStatusCode)
+            {
+                Comment = await response.Content.ReadFromJsonAsync<CommentDetailModel>();
+            }
+        }
+        ToggleEditingMode();
+    }
+
+    void ToggleEditingMode() => editingMode = !editingMode;
 
     protected override async Task OnInitializedAsync()
     {

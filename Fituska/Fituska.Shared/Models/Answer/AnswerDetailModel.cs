@@ -9,6 +9,7 @@ public record AnswerDetailModel : ModelBase
 {
     public string Text { get; set; }
     public DateTime CreationTime { get; set; }
+    public DateTime? ModifiedTime { get; set; }
     public Guid QuestionId { get; set; }
     public UserListModel User { get; set; }
     public List<VoteModel> Votes { get; set; } = new();
