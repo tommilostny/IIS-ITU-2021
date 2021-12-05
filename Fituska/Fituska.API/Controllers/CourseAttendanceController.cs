@@ -72,7 +72,7 @@ public class CourseAttendanceController : ControllerBase
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<CourseAttendanceListModel>(entity);
-        return Ok(detailModel);
+        var listModel = mapper.Map<CourseAttendanceListModel>(entity);
+        return Ok(listModel);
     }
 }

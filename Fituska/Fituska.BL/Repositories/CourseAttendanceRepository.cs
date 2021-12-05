@@ -11,7 +11,7 @@ public class CourseAttendanceRepository : IRepository<CourseAttendanceEntity>
 
     public void Delete(Guid entityID)
     {
-        var entity = database.CourseAttendances.Find(entityID);
+        var entity = database.CourseAttendances.FirstOrDefault(e => e.Id == entityID);
         if (entity is not null)
         {
             database.CourseAttendances.Remove(entity);
@@ -38,8 +38,7 @@ public class CourseAttendanceRepository : IRepository<CourseAttendanceEntity>
     public CourseAttendanceEntity Insert(CourseAttendanceEntity entity)
     {
         var entityInDb = database.CourseAttendances
-            .Where(e => e.UserId == entity.UserId)
-            .FirstOrDefault(e => e.CourseId == entity.CourseId);
+            .FirstOrDefault(e => e.CourseId == entity.CourseId && e.UserId == entity.UserId && e.AttendingYear == entity.AttendingYear);
 
         if (entityInDb is null)
         {

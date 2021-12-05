@@ -18,4 +18,5 @@ public record CourseDetailModel : ModelBase
     public UserListModel Lecturer { get; set; }
 
     public List<CategoryDetailModel> Categories { get; set; }
+    public List<CourseAttendanceListModel> Attendees { get; set; } = new();
 }

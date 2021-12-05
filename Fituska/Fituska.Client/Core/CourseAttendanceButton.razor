@@ -1,0 +1,50 @@
+﻿@using Fituska.Shared.Models.CourseAttendance
+@inject HttpClient Http
+
+@if (CourseAttendance is not null)
+{
+    <button class="btn btn-sm btn-outline-secondary" @onclick="RemoveAttendance">Odhlásit se z @CourseShortcut</button>
+}
+else
+{
+    <button class="btn btn-sm btn-outline-secondary" @onclick="AddAttendance">Přihlásit se do @CourseShortcut</button>
+}
+
+@code
+{
+    [Parameter]
+    public CourseAttendanceListModel? CourseAttendance { get; set; }
+
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    [Parameter]
+    public Guid CourseId { get; set; }
+
+    [Parameter]
+    public string CourseShortcut { get; set; }
+
+    async Task AddAttendance()
+    {
+        var newAttendance = new CourseAttendanceNewModel
+        {
+            AttendingYear = (short)DateTime.Now.Year,
+            CourseId = CourseId,
+            UserId = UserId
+        };
+        var response = await Http.PostAsJsonAsync(ApiEndpoints.CourseAttendanceUrl, newAttendance);
+        if (response.IsSuccessStatusCode)
+        {
+            CourseAttendance = await response.Content.ReadFromJsonAsync<CourseAttendanceListModel>();
+        }
+    }
+
+    async Task RemoveAttendance()
+    {
+        var response = await Http.DeleteAsync(ApiEndpoints.CourseAttendanceIdUrl(CourseAttendance.Id));
+        if (response.IsSuccessStatusCode)
+        {
+            CourseAttendance = null;
+        }
+    }
+}
