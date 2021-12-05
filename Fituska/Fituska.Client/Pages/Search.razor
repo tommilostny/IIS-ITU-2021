@@ -5,6 +5,7 @@
 @inherits LastPageSavableComponentBase
 
 <h3>Výsledky hledání pro: <em>@SearchTerm</em></h3>
+
 @if (result is not null)
 {
     @if (SearchRequest.IncludeAnswers && result.Answers is not null && result.Answers.Count > 0)
@@ -60,16 +61,17 @@ else
     [Parameter]
     public string SearchTerm { get; set; }
 
-    SearchResponseModel result = null;
+    SearchResponseModel? result;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
+        result = null;
         SearchRequest.SearchTerm = SearchTerm;
         var response = await Http.PostAsJsonAsync(ApiEndpoints.SearchUrl, SearchRequest);
         if (response.IsSuccessStatusCode)
         {
             result = await response.Content.ReadFromJsonAsync<SearchResponseModel>();
         }
-        await base.OnInitializedAsync();
+        await base.OnParametersSetAsync();
     }
 }

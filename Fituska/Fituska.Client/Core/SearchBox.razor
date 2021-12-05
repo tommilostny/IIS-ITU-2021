@@ -27,7 +27,14 @@
             {
                 searchFilter.ToggleSearchFilter();
             }
-            NavigationManager.NavigateTo($"/search/{searchText}");
+
+            var searchUrl = $"/search/{searchText}";
+
+            if (NavigationManager.Uri.EndsWith(searchUrl))
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            NavigationManager.NavigateTo(searchUrl);
             searchText = string.Empty;
         }
     }
