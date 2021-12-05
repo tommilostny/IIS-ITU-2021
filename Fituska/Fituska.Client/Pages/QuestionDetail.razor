@@ -18,14 +18,14 @@ else
         <h4>@question.Text</h4>
     </div>
     <p class="text-muted">
-      @UserSawString()
+        @UserSawString()
     </p>
     <p class="text-muted">
         Vytvořeno uživatelem <a href="/user/@question.User.UserName">@question.User.UserName</a>, @question.CreationTime.
     
         <AuthorizeView>
             <Authorized>
-                @if (context.User.Identity.Name == question.User.UserName)
+                @if (false && context.User.Identity.Name == question.User.UserName)
                 {
                     @if (!confirmDelete)
                     {

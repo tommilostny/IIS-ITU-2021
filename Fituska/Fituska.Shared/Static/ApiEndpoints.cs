@@ -53,6 +53,8 @@ public static class ApiEndpoints
 
     public static string CourseAttendanceIdUrl(Guid id) => $"{CourseAttendanceUrl}/{id}";
 
+    public static string CourseAttendanceUserIdUrl(Guid id) => $"{CourseAttendanceUrl}/user/{id}";
+
     public static string QuestionIdUrl(Guid id) => $"{QuestionUrl}/{id}";
 
     public static string UserIdFileUrl(Guid id) => $"{UserFileUrl}/{id}";

@@ -72,7 +72,20 @@ public class CourseAttendanceController : ControllerBase
         {
             return BadRequest();
         }
-        var detailModel = mapper.Map<CourseAttendanceListModel>(entity);
-        return Ok(detailModel);
+        var listModel = mapper.Map<CourseAttendanceListModel>(entity);
+        return Ok(listModel);
+    }
+
+    [HttpGet("user/{userId}")]
+    [OpenApiOperation("Course attendence" + nameof(GetById))]
+    public ActionResult<List<CourseAttendanceListModel>> GetByUserId(Guid userId)
+    {
+        var entity = repository.GetByUserId(userId);
+        if (entity == null)
+        {
+            return BadRequest();
+        }
+        var model = mapper.Map<List<CourseAttendanceListModel>>(entity);
+        return Ok(model);
     }
 }

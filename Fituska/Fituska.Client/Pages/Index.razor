@@ -1,10 +1,40 @@
 ﻿@page "/"
 @using Fituska.Shared.Enums
 @using Fituska.Shared.Models.Course
+@using Fituska.Shared.Models.CourseAttendance
 @inherits LastPageSavableComponentBase
 @inject HttpClient Http
 
-<!-- Zapsané kurzy? (komponenta s AuthorizeView) -->
+<AuthorizeView>
+    <Authorized>
+        @if (coureAttendances.Count > 0)
+        {
+            <h2>Zapsané kurzy</h2>
+            <div class="row">
+                @foreach (var attendance in coureAttendances)
+                {
+                    <div class="col-md-6">
+                        <a href="course/@attendance.Course.Url">
+                            <div class="card border-info courses-list">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        @attendance.Course.Shortcut (@ConverterService.SemesterDecode(attendance.Course.Semester) semestr @attendance.AttendingYear)
+                                    </h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+            <hr />
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            coureAttendances.Clear(); 
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
 <div class="row">
     <div class="col">
@@ -54,11 +84,22 @@ else
 
 @code
 {
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthenticationState { get; set; }
+
     List<CourseListModel>? courses = null;
+
+    List<CourseAttendanceListModel> coureAttendances = new();
 
     protected override async Task OnInitializedAsync()
     {
         courses = await Http.GetFromJsonAsync<List<CourseListModel>>(ApiEndpoints.CourseUrl);
+
+        var userId = await GetUserInfo.GetUserId(AuthenticationState);
+        if (userId != Guid.Empty)
+        {
+            coureAttendances = await Http.GetFromJsonAsync<List<CourseAttendanceListModel>>(ApiEndpoints.CourseAttendanceUserIdUrl(userId));
+        }
         await base.OnInitializedAsync();
     }
 }

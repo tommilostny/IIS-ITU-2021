@@ -42,6 +42,7 @@ public class CourseRepository : IRepository<CourseEntity>, ISearchableRepository
         return database.Courses
             .Include(course => course.Lecturer)
             .Include(course => course.Attendees)
+            .ThenInclude(attendance => attendance.User)
             .Include(course => course.Categories)
             .FirstOrDefault(course => course.Url == courseUrl);
     }

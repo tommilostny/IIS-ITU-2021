@@ -28,8 +28,16 @@ else
             {
                 <ReplyBox AddButtonLabel="Přidat kategorii" OnSubmit="AddCategory" />
                 <a href="/course/edit/@course.Url" class="btn btn-sm btn-outline-secondary">Upravit kurz</a>
-                <hr />
             }
+            else
+            {
+                <CourseAttendanceButton
+                    CourseId="course.Id"
+                    CourseShortcut="@course.Shortcut"
+                    UserId="new Guid(context.User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value)"
+                    CourseAttendance="course.Attendees.FirstOrDefault(ca => ca.User.UserName == context.User.Identity.Name)"/>
+            }
+            <hr />
         </Authorized>
     </AuthorizeView>
     @foreach (var category in course.Categories)
