@@ -63,6 +63,53 @@ else
             }
         </ul>
     }
+    <AuthorizeView>
+        <Authorized>
+            @if (@context.User.IsInRole(RoleNames.AdminRoleName))
+            {      
+                <br/>
+                <h4>Uživatelé</h4>
+                if (allUsers is not null)
+                {
+                    foreach (var user in allUsers)
+                    {
+                        <div class="row">
+                            <div class="col-3">
+                                <p>@user.UserName</p>
+                            </div>
+                            <div class="col">
+                            <select id="newRole" @bind="user.RoleName" class="form-select" >
+                                @foreach (string role in RoleNames.GetAll())
+                                {
+                                        @if(user.RoleName == role)
+                                        {
+                                            <option value="@role" selected >@role</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@role" @onclick="async () => await ChangeRole(user)" >@role</option>
+                                        }
+                                }
+                                @if(user.RoleName is null || user.RoleName == string.Empty )
+                                {
+                                    <option value="@RoleNames.User" selected >@RoleNames.User</option>
+                                }
+                                else
+                                {
+                                    <option value="@RoleNames.User" @onclick="async () => await ChangeRole(user)" >@RoleNames.User</option>
+                                }
+                                </select>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Načítání...</p>
+                }
+            }
+        </Authorized>
+    </AuthorizeView>
 }
 
 @code
@@ -74,6 +121,8 @@ else
     public string Username { get; set; }
 
     UserDetailModel userModel = null;
+
+    List<UserListModel> allUsers = null;
 
     List<CourseListModel> lecturingCourses = new();
 
@@ -93,6 +142,11 @@ else
             && (identityUser.IsInRole(RoleNames.ModeratorRoleName) || identityUser.IsInRole(RoleNames.AdminRoleName)))
         {
             coursesWatingForModeratorApprove = await Http.GetFromJsonAsync<List<CourseListModel>>(ApiEndpoints.CourseModeratorUrl());
+        }
+        if (identityUser.Identity.IsAuthenticated && identityUser.IsInRole(RoleNames.AdminRoleName))
+        {
+            allUsers = await GetAllUsers();
+            StateHasChanged();
         }
         await base.OnInitializedAsync();
     }
@@ -115,5 +169,26 @@ else
         {
             coursesWatingForModeratorApprove.Remove(coursesWatingForModeratorApprove.First(c => c.Id == id));
         }
+    }
+
+    async Task<List<UserListModel>> GetAllUsers()
+    {
+        var response = await Http.GetAsync(ApiEndpoints.UserBaseUrl);
+        List<UserListModel> allUsers = null;
+        if (response.IsSuccessStatusCode)
+        {
+            allUsers = await response.Content.ReadFromJsonAsync<List<UserListModel>>();
+        }
+        return allUsers;
+    }
+
+    void DeleteUser(Guid userId)
+    {
+
+    }
+
+    async Task ChangeRole(UserListModel user)
+    {
+        await Http.PutAsJsonAsync(ApiEndpoints.UserRoleChangeUrl, user);
     }
 }

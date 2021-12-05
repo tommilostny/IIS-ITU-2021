@@ -12,6 +12,7 @@ public static class ApiEndpoints
     public const string RegisterUrl = $"{UserBaseUrl}/register";
     public const string SignInUrl = $"{UserBaseUrl}/signin";
     public const string PasswordChangeUrl = $"{UserBaseUrl}/passwordchange";
+    public const string UserRoleChangeUrl = $"{UserBaseUrl}/rolechange";
 
     public const string SearchUrl = $"{ServerBaseUrl}api/search";
     public const string AnswerUrl = $"{ServerBaseUrl}api/answer";

@@ -95,7 +95,7 @@
         var response = await Http.PutAsJsonAsync(ApiEndpoints.CourseUrl, editingCourse);
         if (response.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo($"/course/{CourseUrl}");
+            NavigationManager.NavigateTo("/");
         }
         else errorText = $"Chyba {response.StatusCode}";
     }
