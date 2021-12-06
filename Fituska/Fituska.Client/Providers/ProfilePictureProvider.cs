@@ -12,6 +12,7 @@ public class ProfilePictureProvider
     private readonly ILocalStorageService _localStorageService;
     private readonly HttpClient _http;
     private readonly Base64ImageService _base64ImageService;
+    private readonly FituskaAuthenticationStateProvider _authenticationStateProvider;
 
     public string ImageSource { get; private set; } = _defaultPicture;
 
@@ -19,24 +20,19 @@ public class ProfilePictureProvider
         Task<AuthenticationState> authenticationStateTask,
         ILocalStorageService localStorageService,
         HttpClient http,
-        Base64ImageService base64ImageService)
+        Base64ImageService base64ImageService,
+        FituskaAuthenticationStateProvider authenticationStateProvider)
     {
         _authenticationStateTask = authenticationStateTask;
         _localStorageService = localStorageService;
         _http = http;
         _base64ImageService = base64ImageService;
+        _authenticationStateProvider = authenticationStateProvider;
     }
 
     public async Task<ProfilePictureProvider> Inititialize()
     {
-        try
-        {
-            await LoadProfilePicture();
-        }
-        catch
-        {
-            ImageSource = _defaultPicture;
-        }
+        await LoadProfilePicture();
         return this;
     }
 
@@ -61,17 +57,29 @@ public class ProfilePictureProvider
                 return;
             }
             if (userId is null)
-                userId = new Guid(authUser.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
-
-            var fileModel = await _http.GetFromJsonAsync<FileUserModel>(ApiEndpoints.UserIdFileUrl((Guid)userId));
-
-            if (fileModel is not null && !string.IsNullOrEmpty(fileModel.Name) && fileModel.Content.Length > 0)
             {
-                var base64Image = _base64ImageService.ImageFileToBase64(fileModel.Name, fileModel.Content);
-                await _localStorageService.SetItemAsStringAsync(StorageNames.UserPhoto, base64Image);
-                ImageSource = base64Image;
-                navMenuToNotify?.Refresh();
-                return;
+                userId = new Guid(authUser.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+            }
+            try
+            {
+                var fileModel = await _http.GetFromJsonAsync<FileUserModel>(ApiEndpoints.UserIdFileUrl((Guid)userId));
+                if (!string.IsNullOrEmpty(fileModel.Name) && fileModel.Content.Length > 0)
+                {
+                    var base64Image = _base64ImageService.ImageFileToBase64(fileModel.Name, fileModel.Content);
+                    await _localStorageService.SetItemAsStringAsync(StorageNames.UserPhoto, base64Image);
+                    ImageSource = base64Image;
+                    navMenuToNotify?.Refresh();
+                    return;
+                }
+            }
+            catch
+            {
+                if (await _localStorageService.ContainKeyAsync(StorageNames.BearerToken))
+                {
+                    await _localStorageService.RemoveItemAsync(StorageNames.BearerToken);
+                    _authenticationStateProvider.SignOut();
+                }
+                Console.WriteLine($"Unknown user with ID: {userId}");
             }
         }
         ImageSource = _defaultPicture;

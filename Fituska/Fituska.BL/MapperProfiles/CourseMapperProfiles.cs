@@ -9,6 +9,7 @@ public class CourseMapperProfiles : Profile
         CreateMap<CourseEntity, CourseDetailModel>();
         CreateMap<CourseEntity, CourseListModel>();
         CreateMap<CourseEntity, CourseNewModel>();
+        CreateMap<CourseEntity, CourseEditModel>();
 
         CreateMap<CourseNewModel, CourseEntity>()
             .ForMember(dst => dst.Attendees, config => config.Ignore())
@@ -16,6 +17,12 @@ public class CourseMapperProfiles : Profile
             .ForMember(dst => dst.Lecturer, config => config.Ignore())
             .ForMember(dst => dst.Url, config => config.MapFrom<CourseUrlResolver>())
             .ForMember(dst => dst.ModeratorApproved, config => config.MapFrom(_ => false));
+
+        CreateMap<CourseEditModel, CourseEntity>()
+            .ForMember(dst => dst.Attendees, config => config.Ignore())
+            .ForMember(dst => dst.Categories, config => config.Ignore())
+            .ForMember(dst => dst.Lecturer, config => config.Ignore())
+            .ForMember(dst => dst.Url, config => config.MapFrom<CourseUrlResolver>());
     }
 
     private class CourseUrlResolver : IValueResolver<CourseNewModel, CourseEntity, string>

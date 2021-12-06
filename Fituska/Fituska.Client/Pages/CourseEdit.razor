@@ -5,10 +5,14 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<h2>Upravit kurz</h2>
-
-@if (editingCourse is not null)
+@if (loadingError)
 {
+    <h4 class="text-danger">Zvolený kurz neexistuje.</h4>
+}
+else if (editingCourse is not null)
+{
+    <h2>Upravit kurz</h2>
+
     <EditForm Model="editingCourse" OnValidSubmit="UpdateAsync">
 
         <DataAnnotationsValidator />
@@ -81,9 +85,10 @@
     [Parameter]
     public string CourseUrl { get; set; }
 
-    CourseNewModel editingCourse;
+    CourseEditModel editingCourse;
     int creditsVal;
     bool creditsError = false;
+    bool loadingError = false;
     string? errorText;
 
     async Task UpdateAsync()
@@ -95,14 +100,23 @@
         var response = await Http.PutAsJsonAsync(ApiEndpoints.CourseUrl, editingCourse);
         if (response.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/");
+            var newUrl = await response.Content.ReadAsStringAsync();
+            NavigationManager.NavigateTo($"/course/{newUrl}");
         }
         else errorText = $"Chyba {response.StatusCode}";
     }
 
     protected override async Task OnInitializedAsync()
     {
-        editingCourse = await Http.GetFromJsonAsync<CourseNewModel>(ApiEndpoints.CourseEditUrl(CourseUrl));
+        try
+        {
+            editingCourse = await Http.GetFromJsonAsync<CourseEditModel>(ApiEndpoints.CourseEditUrl(CourseUrl));
+        }
+        catch
+        {
+            loadingError = true;
+            return;
+        }
         creditsVal = editingCourse.Credits;
         await base.OnInitializedAsync();
     }

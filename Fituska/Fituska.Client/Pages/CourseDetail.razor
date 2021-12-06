@@ -4,9 +4,13 @@
 @inherits LastPageSavableComponentBase
 @inject HttpClient Http
 
-@if (course is null)
+@if (loadingError)
 {
-    <h3>Načítání...</h3>
+    <h4 class="text-danger">Zvolený kurz neexistuje.</h4>
+}
+else if (course is null)
+{
+    <h4>Načítání...</h4>
 }
 else
 {
@@ -52,10 +56,18 @@ else
     public string CourseUrl { get; set; }
 
     CourseDetailModel course;
+    bool loadingError = false;
 
     protected override async Task OnInitializedAsync()
     {
-        course = await Http.GetFromJsonAsync<CourseDetailModel>(ApiEndpoints.CourseUrlUrl(CourseUrl));
+        try
+        {
+            course = await Http.GetFromJsonAsync<CourseDetailModel>(ApiEndpoints.CourseUrlUrl(CourseUrl));
+        }
+        catch
+        {
+            loadingError = true;
+        }
         await base.OnInitializedAsync();
     }
 

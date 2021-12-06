@@ -12,7 +12,7 @@
         <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Ne</button>
     </Authorized>
     <NotAuthorized>
-        @{ LastPageStorageService.NavigateToLastPage(); }
+        @{ NavigationManager.NavigateTo("/"); }
     </NotAuthorized>
 </AuthorizeView>
 
@@ -28,6 +28,5 @@
             AuthenticationStateProvider.SignOut();
         }
         StateHasChanged();
-        NavigationManager.NavigateTo("/");
     }
 }
