@@ -51,15 +51,15 @@ public class CourseController : ControllerBase
 
     [HttpPut]
     [OpenApiOperation("Course" + nameof(Update))]
-    public ActionResult Update(CourseNewModel model)
+    public ActionResult<string> Update(CourseEditModel model)
     {
-        CourseEntity entity = mapper.Map<CourseEntity>(model);
+        var entity = mapper.Map<CourseEntity>(model);
         entity = repository.Update(entity);
         if(entity == null)
         {
             return BadRequest();
         }
-        return Ok();
+        return Ok(entity.Url);
     }
 
     [HttpPost]
@@ -78,14 +78,14 @@ public class CourseController : ControllerBase
 
     [Route("foredit/{url}")]
     [HttpGet]
-    public ActionResult<CourseNewModel> GetForEdit(string url)
+    public ActionResult<CourseEditModel> GetForEdit(string url)
     {
         var entity = repository.GetByUrl(url);
         if (entity == null)
         {
             return BadRequest();
         }
-        return Ok(mapper.Map<CourseNewModel>(entity));
+        return Ok(mapper.Map<CourseEditModel>(entity));
     }
 
     [AllowAnonymous]

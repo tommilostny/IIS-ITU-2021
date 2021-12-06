@@ -60,8 +60,8 @@ public class CourseRepository : IRepository<CourseEntity>, ISearchableRepository
 
     public CourseEntity Update(CourseEntity entity)
     {
-        var questionToUpdate = database.Courses.Attach(entity);
-        questionToUpdate.State = EntityState.Modified;
+        var courseToUpdate = database.Courses.Attach(entity);
+        courseToUpdate.State = EntityState.Modified;
         database.SaveChanges();
         return entity;
     }

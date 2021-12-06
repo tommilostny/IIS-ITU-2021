@@ -5,9 +5,13 @@
 @inherits LastPageSavableComponentBase
 @inject HttpClient Http
 
-@if (userModel is null)
+@if (loadingError)
 {
-    <h1>Načítání...</h1>
+    <h4 class="text-danger">Uživatel <em>@Username</em> neexistuje.</h4>
+}
+else if (userModel is null)
+{
+    <h4>Načítání...</h4>
 }
 else
 {
@@ -124,11 +128,10 @@ else
     public string Username { get; set; }
 
     UserDetailModel userModel = null;
+    bool loadingError = false;
 
     List<UserListModel> allUsers = null;
-
     List<CourseListModel> lecturingCourses = new();
-
     List<CourseListModel> coursesWatingForModeratorApprove = new();
 
     string EmailLink => $"mailto:{userModel.Email}";
@@ -137,7 +140,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        userModel = await Http.GetFromJsonAsync<UserDetailModel>(ApiEndpoints.UserNameUrl(Username));
+        try
+        {
+            userModel = await Http.GetFromJsonAsync<UserDetailModel>(ApiEndpoints.UserNameUrl(Username));
+        }
+        catch
+        {
+            loadingError = true;
+            return;
+        }
         lecturingCourses = await Http.GetFromJsonAsync<List<CourseListModel>>(ApiEndpoints.CourseLecrurersUrl(userModel.Id));
 
         var identityUser = (await AuthenticationState).User;

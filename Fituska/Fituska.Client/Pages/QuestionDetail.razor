@@ -7,9 +7,13 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
-@if (question is null)
+@if (loadingError)
 {
-    <h3>Načítání...</h3>
+    <h4 class="text-danger">Zvolená otázka neexistuje.</h4>
+}
+else if (question is null)
+{
+    <h4>Načítání...</h4>
 }
 else
 {
@@ -82,19 +86,28 @@ else
     List<UserSawQuestionModel> userSawQuestion = new();
     QuestionDetailModel question;
 
+    bool loadingError = false;
+    bool confirmDelete = false;
+    bool answerAddSuccess = true;
+    string userName;
+
     int UserSawThisCount()
     {
         if (userSawQuestion is null) return 0;
         return userSawQuestion.Count;
     }
-    bool confirmDelete = false;
-    bool answerAddSuccess = true;
-    string userName;
 
     protected override async Task OnInitializedAsync()
     {
-        question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
-
+        try
+        {
+            question = await Http.GetFromJsonAsync<QuestionDetailModel>(ApiEndpoints.QuestionIdUrl(Id));
+        }
+        catch
+        {
+            loadingError = true;
+            return;
+        }
         var authUser = (await AuthenticationState).User;
         if (authUser.Identity.IsAuthenticated)
         {

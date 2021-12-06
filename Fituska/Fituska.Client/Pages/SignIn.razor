@@ -4,6 +4,15 @@
 @inject HttpClient Http
 @inject ILocalStorageService LocalStorageService
 @inject LastPageStorageService LastPageStorageService
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        @{
+            NavigationManager.NavigateTo($"/user/{context.User.Identity.Name}"); 
+        }
+    </Authorized>
+</AuthorizeView>
 
 <h2>Přihlášení</h2>
 

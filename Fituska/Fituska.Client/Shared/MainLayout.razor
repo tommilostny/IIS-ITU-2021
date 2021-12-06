@@ -40,7 +40,7 @@
             Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(StorageNames.Bearer, savedToken);            
             StateHasChanged();
         }
-        var photoProvider = new ProfilePictureProvider(AuthenticationState, LocalStorageService, Http, Base64Service);
+        var photoProvider = new ProfilePictureProvider(AuthenticationState, LocalStorageService, Http, Base64Service, AuthenticationStateProvider);
         profilePicture = await photoProvider.Inititialize();
 
         await base.OnInitializedAsync();
